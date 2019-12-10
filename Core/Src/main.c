@@ -769,13 +769,7 @@ void StartTask_PwrMngt(void const * argument)
 	osDelay(1000);
 	set_PSU_DRS0101(ON);
 
-	PWM_BUZZ = 50;
-	osDelay(20);
-	PWM_BUZZ = 0;
-	osDelay(100);
-	PWM_BUZZ = 100;
-	osDelay(20);
-	PWM_BUZZ = 0;
+	BIP_1();
 
 	for(;;)
 	{
@@ -851,7 +845,8 @@ void StartTask_Default(void const * argument)
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
 			set_LED_B0(ON);
-
+			BIP_0();
+/*
 			Flex_Oled_Menu ++;
 			if(Flex_Oled_Menu > 5) { Flex_Oled_Menu = 1; }
 			Flex_OLED_clearDisplay(CLEAR_ALL);
@@ -860,8 +855,8 @@ void StartTask_Default(void const * argument)
 
 			osDelay(100);
 			LTC4015_GetChargerState(&ChargerState);
-
-
+*/
+			HoodServos_Init();
 
 
 		}
@@ -873,6 +868,21 @@ void StartTask_Default(void const * argument)
 		if(Input.SW_HOOD == GPIO_PIN_SET)
 		{
 			set_LED_B0(ON);
+			BIP_0();
+
+			NeckServos_Init();
+			EarsServos_Init();
+			HoodServos_Init();
+		}
+		else
+		{
+			set_LED_B0(OFF);
+		}
+
+		if(Input.SIG_HOOD2 == GPIO_PIN_RESET)
+		{
+			set_LED_B0(ON);
+
 		}
 		else
 		{
@@ -906,6 +916,8 @@ void Board_PwrMngt(void)
 		// Park Head and Ears
 		// Park Hood ?
 		// Park Legs
+
+		BIP_2();
 
 		for(i =0 ; i<10 ; i++)
 		{

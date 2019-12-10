@@ -8,10 +8,12 @@
 #define ON  	1
 #define HIGH 	1
 #define TRUE	1
+#define OPEN	1
 
 #define OFF 	0
 #define LOW  	0
 #define FALSE	0
+#define CLOSE	0
 
 #define ABS(x)      ((x) < 0 ? -(x) : (x))
 #define MIN(x,y)	((x)<(y)?(x):(y))
