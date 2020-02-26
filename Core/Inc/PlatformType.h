@@ -137,12 +137,9 @@ else \
 HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
 
 
-
-
 #define RPI_SHTDWN_MAX_TIMEOUT	5
 #define RPI_SHTDWN_TIME 		15000
 #define I2C_MAX_TIMEOUT 		250
-
 
 
 typedef enum
@@ -167,6 +164,7 @@ typedef struct
 {
 	GPIO_PinState SW1;
 	GPIO_PinState SW_HOOD;
+	GPIO_PinState SW_OLED_MENU;
 	GPIO_PinState SW_PI_BOOT;
 	GPIO_PinState RPI_RUNNING;
 	GPIO_PinState SIG_HOOD1;
@@ -230,6 +228,18 @@ typedef enum
 }
 HoodStatus_em;
 
+
+
+
+
+typedef struct
+{
+	uint16_t EarL_pos;
+	uint16_t EarR_pos;
+	uint16_t NeckPith_pos;
+	uint16_t NeckYaw_pos;
+}
+Head_st;
 
 
 #endif /* INC_PLATFORMTYPE_H_ */

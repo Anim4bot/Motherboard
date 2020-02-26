@@ -1,6 +1,6 @@
 #include "LTC4015.h"
 #include "LTC4015_formats.h"
-//#include "LTC4015_reg_defs.h"
+#include "LTC4015_reg_defs.h"
 
 
 HAL_StatusTypeDef LTC4015_write16(uint8_t Reg, uint16_t Val)
@@ -59,8 +59,29 @@ void LTC4015_GetChargerState(uint16_t* LTC4015_State)
 	BatCurrent 	 = (((I_BAT[1]<<8) | I_BAT[1])*1.46487E-6)/20.0E-3;
 	DCCurrent 	 = (((I_IN[1]<<8)  | I_IN[1])*1.46487E-6)/4.0E-3;
 
+}
+
+
+void LTC4015_Test(void)
+{
+	volatile HAL_StatusTypeDef status;
+
+	volatile uint8_t data[3];
+	volatile uint8_t received[2];
+	volatile float Val;
+
+	data[0] = REG_IBAT;
+	data[1] = LTC4015_ADDR;
+	data[2] = REG_IBAT;
+
+	//status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, sizeof(data), 100);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, sizeof(data), &received, 2, 100);
+
+	Val = (received[0]<<8 | received[1]);
+	Val = (Val*1.46487E-6)/20.0E-3;
 
 }
+
 
 void LTC4015_Init(void)
 {

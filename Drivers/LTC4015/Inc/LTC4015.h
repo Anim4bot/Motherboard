@@ -11,76 +11,76 @@ extern I2C_HandleTypeDef  hi2c2;
 
 
 #define VBAT_LO_ALERT_LIMIT 		0x01 //R/W 15:0 Battery voltage low alert limit, signed, same format as VBAT (0x3A)
-#define VBAT_HI_ALERT_LIMIT 		0x02 //R/W 15:0 Battery voltage high alert limit, signed, same format as VBAT (0x3A)
-#define VIN_LO_ALERT_LIMIT 			0x03 //R/W 15:0 Input voltage low alert limit, signed, same format as VIN (0x3B)
-#define VIN_HI_ALERT_LIMIT 			0x04 //R/W 15:0 Input voltage high alert limit, signed, same format as VIN (0x3B)
-#define VSYS_LO_ALERT_LIMIT 		0x05 //R/W 15:0 Output voltage low alert limit, signed, same format as VSYS (0x3C)
-#define VSYS_HI_ALERT_LIMIT 		0x06 //R/W 15:0 Output voltage high alert limit, signed, same format as VSYS (0x3C)
-#define IIN_HI_ALERT_LIMIT 			0x07 //R/W 15:0 Input current high alert limit, signed, same format as IIN (0x3D)
-#define IBAT_LO_ALERT_LIMIT 		0x08 //R/W 15:0 Charge current low alert limit, signed, same format as IBAT (0x3E)
-#define DIE_TEMP_HI_ALERT_LIMIT 	0x09 //R/W 15:0 Die temperature high alert limit, signed, same format as DIE_TEMP (0x3F)
-#define BSR_HI_ALERT_LIMIT 			0x0A //R/W 15:0 Battery series resistance high alert limit, signed, same format as BSR (0x41)
-#define NTC_RATIO_HI_ALERT_LIMIT	0x0B //R/W 15:0 Thermistor ratio high (cold battery) alert limit, signed, same format as NTC_RATIO (0x40)
-#define NTC_RATIO_LO_ALERT_LIMIT 	0x0C //R/W 15:0 Thermistor ratio low (hot battery) alert limit, signed, same format as NTC_RATIO (0x40)
-#define EN_LIMIT_ALERTS 			0x0D //R/W 15:0 Enable limit monitoring and alert notification via SMBALERT en_meas_sys_valid_alert 0x0D R/W 15 enable meas_sys_valid_alert (0x36)
-#define EN_CHARGER_STATE_ALERTS 	0x0E //R/W 15:0 Enable charger state alert notification via SMBALERT
-#define EN_CHARGE_STATUS_ALERTS 	0x0F //R/W 15:0 Enable charge status alert notification via SMBALERT
-#define QCOUNT_LO_ALERT_LIMIT 		0x10 //R/W 15:0 Coulomb counter QCOUNT low alert limit, same format as QCOUNT (0x13)
-#define QCOUNT_HI_ALERT_LIMIT 		0x11 //R/W 15:0 Coulomb counter QCOUNT high alert limit, same format as QCOUNT (0x13)
-#define QCOUNT_PRESCALE_FACTOR 		0x12 //R/W 15:0 Coulomb counter prescale factor
-#define QCOUNT 						0x13 //R/W 15:0 Coulomb counter value
-#define CONFIG_BITS 				0x14 //R/W 15:0 Configuration Settings 0x0000
-#define IIN_LIMIT_SETTING 			0x15 //R/W 5:0 Input current limit setting = (IIN_LIMIT_SETTING + 1) • 500µV / RSNSI
-#define VIN_UVCL_SETTING 			0x16 //R/W 7:0 UVCLFB input undervoltage limit = (VIN_UVCL_SETTING + 1) • 4.6875mV
-#define ARM_SHIP_MODE 				0x19 //R/W 15:0 Write 0x534D to arm ship mode. Once armed, ship mode cannot be disarmed
-#define ICHARGE_TARGET 				0x1A //R/W2 4:0 Maximum charge current target = (ICHARGE_TARGET + 1) • 1mV/RSNSB
-#define VCHARGE_SETTING 			0x1B //R/W2 5:0 Charge voltage target. See detailed description for equations.
-#define C_OVER_X_THRESHOLD 			0x1C //R/W2 15:0 Two’s complement Low IBAT threshold for C/x termination
-#define MAX_CV_TIME 				0x1D //R/W2 15:0 Time in seconds with battery charger in the CV state before timer termination occurs (lithium chemistries only)
-#define MAX_CHARGE_TIME 			0x1E //R/W2 15:0 Time in seconds before a max_charge_time fault is declared. Set to zero to disable max_charge_time fault
-#define JEITA_T1 					0x1F //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 2 and 1 (off) 0x3F00
-#define JEITA_T2 					0x20 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 3 and 2 0x372A
-#define JEITA_T3	 				0x21 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 4 and 3 0x1F27
-#define JEITA_T4 					0x22 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 5 and 4 0x1BCC
-#define JEITA_T5 					0x23 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 6 and 5 0x18B9
-#define JEITA_T6 					0x24 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 7 (off) and 6 0x136D
-#define VCHARGE_JEITA_6_5 			0x25 //R/W2 9:0 VCHARGE values for JEITA temperature regions 6 and 5 See Note 1
-#define VCHARGE_JEITA_4_3_2 		0x26 //R/W2 14:0 VCHARGE values for JEITA temperature regions 4, 3, and 2 See Note 1
-#define ICHARGE_JEITA_6_5 			0x27 //R/W2 9:0 ICHARGE_TARGET values for JEITA temperature regions 6 and 5 0x01EF
-#define ICHARGE_JEITA_4_3_2	 		0x28 //R/W2 14:0 ICHARGE_TARGET value for JEITA temperature regions 4, 3, and 2 0x7FEF
-#define CHARGER_CONFIG_BITS 		0x29 //R/W2 2:0 Battery charger configuration settings, bits 15:3 are reserved. See Note 1
-#define VABSORB_DELTA				0x2A //R/W2 5:0 LiFePO4/lead-acid absorb voltage adder, bits 15:6 are reserved. See Note 1
-#define MAX_ABSORB_TIME 			0x2B //R/W2 15:0 Maximum time for LiFePO4/lead-acid absorb charge See Note 1
-#define VEQUALIZE_DELTA 			0x2C //R/W2 5:0 Lead-acid equalize charge voltage adder, bits 15:6 are reserved. 0x002A
-#define EQUALIZE_TIME 				0x2D //R/W2 15:0 Lead-acid equalization time 0x0E10
-#define LIFEP04_RECHARGE_THRESHOLD 	0x2E //R/W 15:0 LiFeP04 recharge threshold 0x4410
+#define REG_VBAT_HI_ALERT_LIMIT 		0x02 //R/W 15:0 Battery voltage high alert limit, signed, same format as VBAT (0x3A)
+#define REG_VIN_LO_ALERT_LIMIT 			0x03 //R/W 15:0 Input voltage low alert limit, signed, same format as VIN (0x3B)
+#define REG_VIN_HI_ALERT_LIMIT 			0x04 //R/W 15:0 Input voltage high alert limit, signed, same format as VIN (0x3B)
+#define REG_VSYS_LO_ALERT_LIMIT 		0x05 //R/W 15:0 Output voltage low alert limit, signed, same format as VSYS (0x3C)
+#define REG_VSYS_HI_ALERT_LIMIT 		0x06 //R/W 15:0 Output voltage high alert limit, signed, same format as VSYS (0x3C)
+#define REG_IIN_HI_ALERT_LIMIT 			0x07 //R/W 15:0 Input current high alert limit, signed, same format as IIN (0x3D)
+#define REG_IBAT_LO_ALERT_LIMIT 		0x08 //R/W 15:0 Charge current low alert limit, signed, same format as IBAT (0x3E)
+#define REG_DIE_TEMP_HI_ALERT_LIMIT 	0x09 //R/W 15:0 Die temperature high alert limit, signed, same format as DIE_TEMP (0x3F)
+#define REG_BSR_HI_ALERT_LIMIT 			0x0A //R/W 15:0 Battery series resistance high alert limit, signed, same format as BSR (0x41)
+#define REG_NTC_RATIO_HI_ALERT_LIMIT	0x0B //R/W 15:0 Thermistor ratio high (cold battery) alert limit, signed, same format as NTC_RATIO (0x40)
+#define REG_NTC_RATIO_LO_ALERT_LIMIT 	0x0C //R/W 15:0 Thermistor ratio low (hot battery) alert limit, signed, same format as NTC_RATIO (0x40)
+#define REG_EN_LIMIT_ALERTS 			0x0D //R/W 15:0 Enable limit monitoring and alert notification via SMBALERT en_meas_sys_valid_alert 0x0D R/W 15 enable meas_sys_valid_alert (0x36)
+#define REG_EN_CHARGER_STATE_ALERTS 	0x0E //R/W 15:0 Enable charger state alert notification via SMBALERT
+#define REG_EN_CHARGE_STATUS_ALERTS 	0x0F //R/W 15:0 Enable charge status alert notification via SMBALERT
+#define REG_QCOUNT_LO_ALERT_LIMIT 		0x10 //R/W 15:0 Coulomb counter QCOUNT low alert limit, same format as QCOUNT (0x13)
+#define REG_QCOUNT_HI_ALERT_LIMIT 		0x11 //R/W 15:0 Coulomb counter QCOUNT high alert limit, same format as QCOUNT (0x13)
+#define REG_QCOUNT_PRESCALE_FACTOR 		0x12 //R/W 15:0 Coulomb counter prescale factor
+#define REG_QCOUNT 						0x13 //R/W 15:0 Coulomb counter value
+#define REG_CONFIG_BITS 				0x14 //R/W 15:0 Configuration Settings 0x0000
+#define REG_IIN_LIMIT_SETTING 			0x15 //R/W 5:0 Input current limit setting = (IIN_LIMIT_SETTING + 1) • 500µV / RSNSI
+#define REG_VIN_UVCL_SETTING 			0x16 //R/W 7:0 UVCLFB input undervoltage limit = (VIN_UVCL_SETTING + 1) • 4.6875mV
+#define REG_ARM_SHIP_MODE 				0x19 //R/W 15:0 Write 0x534D to arm ship mode. Once armed, ship mode cannot be disarmed
+#define REG_ICHARGE_TARGET 				0x1A //R/W2 4:0 Maximum charge current target = (ICHARGE_TARGET + 1) • 1mV/RSNSB
+#define REG_VCHARGE_SETTING 			0x1B //R/W2 5:0 Charge voltage target. See detailed description for equations.
+#define REG_C_OVER_X_THRESHOLD 			0x1C //R/W2 15:0 Two’s complement Low IBAT threshold for C/x termination
+#define REG_MAX_CV_TIME 				0x1D //R/W2 15:0 Time in seconds with battery charger in the CV state before timer termination occurs (lithium chemistries only)
+#define REG_MAX_CHARGE_TIME 			0x1E //R/W2 15:0 Time in seconds before a max_charge_time fault is declared. Set to zero to disable max_charge_time fault
+#define REG_JEITA_T1 					0x1F //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 2 and 1 (off) 0x3F00
+#define REG_JEITA_T2 					0x20 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 3 and 2 0x372A
+#define REG_JEITA_T3	 				0x21 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 4 and 3 0x1F27
+#define REG_JEITA_T4 					0x22 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 5 and 4 0x1BCC
+#define REG_JEITA_T5 					0x23 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 6 and 5 0x18B9
+#define REG_JEITA_T6 					0x24 //R/W2 15:0 Value of NTC_RATIO for transition between JEITA regions 7 (off) and 6 0x136D
+#define REG_VCHARGE_JEITA_6_5 			0x25 //R/W2 9:0 VCHARGE values for JEITA temperature regions 6 and 5 See Note 1
+#define REG_VCHARGE_JEITA_4_3_2 		0x26 //R/W2 14:0 VCHARGE values for JEITA temperature regions 4, 3, and 2 See Note 1
+#define REG_ICHARGE_JEITA_6_5 			0x27 //R/W2 9:0 ICHARGE_TARGET values for JEITA temperature regions 6 and 5 0x01EF
+#define REG_ICHARGE_JEITA_4_3_2	 		0x28 //R/W2 14:0 ICHARGE_TARGET value for JEITA temperature regions 4, 3, and 2 0x7FEF
+#define REG_CHARGER_CONFIG_BITS 		0x29 //R/W2 2:0 Battery charger configuration settings, bits 15:3 are reserved. See Note 1
+#define REG_VABSORB_DELTA				0x2A //R/W2 5:0 LiFePO4/lead-acid absorb voltage adder, bits 15:6 are reserved. See Note 1
+#define REG_MAX_ABSORB_TIME 			0x2B //R/W2 15:0 Maximum time for LiFePO4/lead-acid absorb charge See Note 1
+#define REG_VEQUALIZE_DELTA 			0x2C //R/W2 5:0 Lead-acid equalize charge voltage adder, bits 15:6 are reserved. 0x002A
+#define REG_EQUALIZE_TIME 				0x2D //R/W2 15:0 Lead-acid equalization time 0x0E10
+#define REG_LIFEP04_RECHARGE_THRESHOLD 	0x2E //R/W 15:0 LiFeP04 recharge threshold 0x4410
 
-#define MAX_CHARGE_TIMER 		0x30 //R 15:0 For lithium chemistries, indicates the time (in sec) that the battery has been charging 64
-#define CV_TIMER 				0x31 //R 15:0 For lithium chemistries, indicates the time (in sec) that the battery has been in constant-voltage regulation 64
-#define ABSORB_TIMER 			0x32 //R 15:0 For LiFePO4 and lead-acid batteries, indicates the time (in sec) that the battery has been in absorb phase 64
-#define EQUALIZE_TIMER 			0x33 //R 15:0 For lead-acid batteries, indicates the time (in sec) that the battery has been in EQUALIZE phase
-#define CHARGER_STATE			0x34 //R 15:0 Real time battery charger state indicator. Individual bits are mutually exclusive. Bits 15:11 are reserved.
-#define CHARGE_STATUS 			0x35 //R 15:0 Charge status indicator. Individual bits are mutually exclusive. Only active in charging states
-#define LIMIT_ALERTS			0x36 //R 15:0 Limit alert register.Individual bits are enabled by EN_LIMIT_ALERTS (0x0D).Writing 0 to any bit clears that alert.Once set, alert bits remain high until cleared or disabled.
-#define CHARGER_STATE_ALERTS 	0x37 //R 15:0 Charger state alert register.Individual bits are enabled by EN_CHARGER_STATE_ALERTS (0x0E).Writing 0 to any bit clears that alert. Once set, alert bits remain high until cleared or disabled.
-#define CHARGE_STATUS_ALERTS 	0x38 //R 5:0 Alerts that CHARGE_STATUS indicators have occurred Individual bits are enabled by EN_CHARGE_STATUS_ALERTS (0x0F) Writing 0 to any bit clears that alert. Once set, alert bits remain high until cleared or disabled.
-#define SYSTEM_STATUS 			0x39 //R 15:0 Real time system status indicator bits
-#define VBAT 					0x3A //R 15:0 Two’s complement ADC measurement result for the BATSENS pin.VBATSENS/cellcount = [VBAT] • 192.264µV for lithium chemistries.VBATSENS/cellcount = [VBAT] • 128.176µV for lead-acid.
-#define VIN 					0x3B //R 15:0 Two’s complement ADC measurement result for VIN.VVIN = [VIN] • 1.648mV
-#define VSYS 					0x3C //R 15:0 Two’s complement ADC measurement result for VSYS. VSYS = [VSYS] • 1.648mV
-#define IBAT 					0x3D //R 15:0 Two’s complement ADC measurement result for (VCSP – VCSN). Charge current (into the battery) is represented as a positive number. Battery current = [IBAT] • 1.46487µV/RSNSB
-#define IIN 					0x3E //R 15:0 Two’s complement ADC measurement result for (VCLP – VCLN). Input current = [IIN] • 1.46487µV/RSNSI
-#define DIE_TEMP				0x3F //R 15:0 Two’s complement ADC measurement result for die temperature. Temperature = (DIE_TEMP – 12010)/45.6°C
-#define NTC_RATIO 				0x40 //R 15:0 Two’s complement ADC measurement result for NTC thermistor ratio. RNTC = NTC_RATIO • RNTCBIAS/(21845.0 – NTC_RATIO)
-#define BSR 					0x41 //R 15:0 Calculated battery series resistance.For lithium chemistries, series resistance/cellcount = BSR • RSNSB/500.0 For lead-acid chemistries, series resistance/cellcount = BSR • RSNSB/750.0
-#define JEITA_REGION 			0x42 //R 2:0 JEITA temperature region of the NTC thermistor (Li Only). Active only when EN_JEITA=1
-#define CHEM_CELLS 				0x43 //R 11:0 Readout of CHEM and CELLS pin settings 70
-#define ICHARGE_DAC 			0x44 //R 4:0 Charge current control DAC control bits
-#define VCHARGE_DAC 			0x45 //R 5:0 Charge voltage control DAC control bits
-#define IIN_LIMIT_DAC			0x46 //R 5:0 Input current limit control DAC control word
-#define VBAT_FILT 				0x47 //R 15:0 Digitally filtered two’s complement ADC measurement result for battery voltage
-#define ICHARGE_BSR 			0x48 //R 15:0 This 16-bit two's complement word is the value of IBAT (0x3D) used in calculating BSR.
-#define MEAS_SYS_VALID 			0x4A //R 0 Measurement valid bit, bit 0 is a 1 when the telemetry(ADC) system is ready
+#define REG_MAX_CHARGE_TIMER 		0x30 //R 15:0 For lithium chemistries, indicates the time (in sec) that the battery has been charging 64
+#define REG_CV_TIMER 				0x31 //R 15:0 For lithium chemistries, indicates the time (in sec) that the battery has been in constant-voltage regulation 64
+#define REG_ABSORB_TIMER 			0x32 //R 15:0 For LiFePO4 and lead-acid batteries, indicates the time (in sec) that the battery has been in absorb phase 64
+#define REG_EQUALIZE_TIMER 			0x33 //R 15:0 For lead-acid batteries, indicates the time (in sec) that the battery has been in EQUALIZE phase
+#define REG_CHARGER_STATE			0x34 //R 15:0 Real time battery charger state indicator. Individual bits are mutually exclusive. Bits 15:11 are reserved.
+#define REG_CHARGE_STATUS 			0x35 //R 15:0 Charge status indicator. Individual bits are mutually exclusive. Only active in charging states
+#define REG_LIMIT_ALERTS			0x36 //R 15:0 Limit alert register.Individual bits are enabled by EN_LIMIT_ALERTS (0x0D).Writing 0 to any bit clears that alert.Once set, alert bits remain high until cleared or disabled.
+#define REG_CHARGER_STATE_ALERTS 	0x37 //R 15:0 Charger state alert register.Individual bits are enabled by EN_CHARGER_STATE_ALERTS (0x0E).Writing 0 to any bit clears that alert. Once set, alert bits remain high until cleared or disabled.
+#define REG_CHARGE_STATUS_ALERTS 	0x38 //R 5:0 Alerts that CHARGE_STATUS indicators have occurred Individual bits are enabled by EN_CHARGE_STATUS_ALERTS (0x0F) Writing 0 to any bit clears that alert. Once set, alert bits remain high until cleared or disabled.
+#define REG_SYSTEM_STATUS 			0x39 //R 15:0 Real time system status indicator bits
+#define REG_VBAT 					0x3A //R 15:0 Two’s complement ADC measurement result for the BATSENS pin.VBATSENS/cellcount = [VBAT] • 192.264µV for lithium chemistries.VBATSENS/cellcount = [VBAT] • 128.176µV for lead-acid.
+#define REG_VIN 					0x3B //R 15:0 Two’s complement ADC measurement result for VIN.VVIN = [VIN] • 1.648mV
+#define REG_VSYS 					0x3C //R 15:0 Two’s complement ADC measurement result for VSYS. VSYS = [VSYS] • 1.648mV
+#define REG_IBAT 					0x3D //R 15:0 Two’s complement ADC measurement result for (VCSP – VCSN). Charge current (into the battery) is represented as a positive number. Battery current = [IBAT] • 1.46487µV/RSNSB
+#define REG_IIN 					0x3E //R 15:0 Two’s complement ADC measurement result for (VCLP – VCLN). Input current = [IIN] • 1.46487µV/RSNSI
+#define REG_DIE_TEMP				0x3F //R 15:0 Two’s complement ADC measurement result for die temperature. Temperature = (DIE_TEMP – 12010)/45.6°C
+#define REG_NTC_RATIO 				0x40 //R 15:0 Two’s complement ADC measurement result for NTC thermistor ratio. RNTC = NTC_RATIO • RNTCBIAS/(21845.0 – NTC_RATIO)
+#define REG_BSR 					0x41 //R 15:0 Calculated battery series resistance.For lithium chemistries, series resistance/cellcount = BSR • RSNSB/500.0 For lead-acid chemistries, series resistance/cellcount = BSR • RSNSB/750.0
+#define REG_JEITA_REGION 			0x42 //R 2:0 JEITA temperature region of the NTC thermistor (Li Only). Active only when EN_JEITA=1
+#define REG_CHEM_CELLS 				0x43 //R 11:0 Readout of CHEM and CELLS pin settings 70
+#define REG_ICHARGE_DAC 			0x44 //R 4:0 Charge current control DAC control bits
+#define REG_VCHARGE_DAC 			0x45 //R 5:0 Charge voltage control DAC control bits
+#define REG_IIN_LIMIT_DAC			0x46 //R 5:0 Input current limit control DAC control word
+#define REG_VBAT_FILT 				0x47 //R 15:0 Digitally filtered two’s complement ADC measurement result for battery voltage
+#define REG_ICHARGE_BSR 			0x48 //R 15:0 This 16-bit two's complement word is the value of IBAT (0x3D) used in calculating BSR.
+#define REG_MEAS_SYS_VALID 			0x4A //R 0 Measurement valid bit, bit 0 is a 1 when the telemetry(ADC) system is ready
 
 
 //EN_LIMIT_ALERTS

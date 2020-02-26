@@ -105,7 +105,7 @@ I2C2_Bus_enum I2C2_Bus = I2C2_Free;
 
 uint8_t CPUChargeBuff[8];
 uint8_t Flex_OLED_Initialized = FALSE;
-Flex_Oled_Menu_em Flex_Oled_Menu = Standby;
+Flex_Oled_Menu_em Flex_Oled_Menu = Debug;
 Flex_Oled_Menu_em previousMenu = Standby;
 
 uint16_t Rpi_Shutdown_ctr = 0;
@@ -291,7 +291,7 @@ static void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 400000;
+  hi2c2.Init.ClockSpeed = 100000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -769,11 +769,11 @@ void StartTask_PwrMngt(void const * argument)
 	osDelay(1000);
 	set_PSU_DRS0101(ON);
 
-	PWM_BUZZ = 50;
+	PWM_BUZZ = 5;
 	osDelay(20);
 	PWM_BUZZ = 0;
-	osDelay(100);
-	PWM_BUZZ = 100;
+	osDelay(50);
+	PWM_BUZZ = 5;
 	osDelay(20);
 	PWM_BUZZ = 0;
 
@@ -833,6 +833,8 @@ void StartTask_Activity(void const * argument)
 		osDelay(75);
 		set_LED_ACT(OFF);
 		osDelay(1000);
+
+		LTC4015_Test();
 	}
 
 }
@@ -848,20 +850,19 @@ void StartTask_Default(void const * argument)
 	for(;;)
 	{
 
-		if(Input.SW1 == GPIO_PIN_SET)
+		if(Input.SW_OLED_MENU == GPIO_PIN_SET)
 		{
 			set_LED_B0(ON);
 
 			Flex_Oled_Menu ++;
 			if(Flex_Oled_Menu > 5) { Flex_Oled_Menu = 1; }
 			Flex_OLED_clearDisplay(CLEAR_ALL);
-			Flex_OLED_rectFill(0,0,160,32,BLACK, NORM);
-			Flex_OLED_Update();
-
 			osDelay(100);
-			LTC4015_GetChargerState(&ChargerState);
+			//Flex_OLED_rectFill(0,0,160,32,BLACK, NORM);
+			Flex_OLED_Update();
+			osDelay(100);
 
-
+			//LTC4015_GetChargerState(&ChargerState);
 
 
 		}
@@ -870,13 +871,13 @@ void StartTask_Default(void const * argument)
 			set_LED_B0(OFF);
 		}
 
-		if(Input.SW_HOOD == GPIO_PIN_SET)
+		if(Input.SW1 == GPIO_PIN_SET)
 		{
-			set_LED_B0(ON);
+			NeckServos_Init();
 		}
 		else
 		{
-			set_LED_B0(OFF);
+
 		}
 
 		osDelay(150);
@@ -1159,7 +1160,8 @@ void StartTask_Kinematic(void const * argument)
 void CheckInputs(void)
 {
 	Input.SW1 			= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
-	Input.SW_HOOD		= HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
+	//Input.SW_HOOD		= HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
+	Input.SW_OLED_MENU	= HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
 	Input.SW_PI_BOOT	= HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_14);
 	Input.RPI_RUNNING   = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9);
 	Input.SIG_HOOD1		= HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8);

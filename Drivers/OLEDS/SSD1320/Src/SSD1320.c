@@ -16,6 +16,14 @@ const uint8_t MenuCubeSize = 8;
 static uint8_t screenMemory [640] = {0};
 
 
+void Flex_OLED_Rst(void)
+{
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+	osDelay(50);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+}
+
+
 HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -670,7 +678,7 @@ void Flex_OLED_Menus_Debug()
 {
 	uint8_t buff1[16];
 
-	Flex_OLED_rectFill(160-2,32-MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	Flex_OLED_rectFill(156-2,32-MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff1, "DEBUG ");
@@ -684,7 +692,7 @@ void Flex_OLED_Menus_Charging(uint8_t charge)
 {
 	uint8_t loop, i;
 
-	Flex_OLED_rectFill(160-2,32-2*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	Flex_OLED_rectFill(156-2,32-2*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 	Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
@@ -710,7 +718,7 @@ void Flex_OLED_Menus_Power()
 {
 	uint8_t buff[16];
 
-	Flex_OLED_rectFill(160-2,32-3*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	Flex_OLED_rectFill(156-2,32-3*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff, "POWER");
@@ -724,7 +732,7 @@ void Flex_OLED_Menu_Sensors(Sensors_st *sensor)
 {
 	uint8_t buff1[32], buff2[32], buff3[32];
 
-	Flex_OLED_rectFill(160-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)sensor->IMU.Pitch, (int16_t)sensor->TempPSU);
