@@ -7,9 +7,9 @@
 
 extern I2C_HandleTypeDef  hi2c2;
 
-#define LM75B_I2C_PORT		hi2c2
-#define LSM9DS1_AG_ADDR 	0x6B
-#define LSM9DS1_M_ADDR 		0x1E
+#define LSM9DS1_I2C_PORT	hi2c2
+#define LSM9DS1_AG_ADDR 	0xD6
+#define LSM9DS1_M_ADDR 		0x3C
 
 
 /////////////////////////////////////////
@@ -127,16 +127,6 @@ typedef enum
 }
 gyro_scale;
 
-// mag_scale defines all possible FSR's of the magnetometer:
-typedef enum
-{
-	M_SCALE_4GS,  // 00:  4Gs
-	M_SCALE_8GS,  // 01:  8Gs
-	M_SCALE_12GS, // 10:  12Gs
-	M_SCALE_16GS, // 11:  16Gs
-}
-mag_scale;
-
 // gyro_odr defines all possible data rate/bandwidth combos of the gyro:
 typedef enum
 {
@@ -173,19 +163,6 @@ typedef enum
 }
 accel_abw;
 
-// mag_odr defines all possible output data rates of the magnetometer:
-typedef enum
-{
-	M_ODR_0625, // 0.625 Hz (0)
-	M_ODR_125,  // 1.25 Hz (1)
-	M_ODR_250,  // 2.5 Hz (2)
-	M_ODR_5,	// 5 Hz (3)
-	M_ODR_10,   // 10 Hz (4)
-	M_ODR_20,   // 20 Hz (5)
-	M_ODR_40,   // 40 Hz (6)
-	M_ODR_80	// 80 Hz (7)
-}
-mag_odr;
 
 typedef enum
 {
@@ -232,13 +209,6 @@ typedef enum
 }
 gyro_interrupt_generator;
 
-typedef enum
-{
-	ZIEN = (1 << 5),
-	YIEN = (1 << 6),
-	XIEN = (1 << 7)
-}
-mag_interrupt_generator;
 
 typedef enum
 {
@@ -264,6 +234,7 @@ typedef enum
 }
 fifoMode_type;
 
+
 typedef struct
 {
 	uint8_t enabled;
@@ -282,15 +253,7 @@ typedef struct
 	uint8_t enableZ;
 	uint8_t latchInterrupt;
 }
-gyroSettings;
-
-typedef struct
-{
-	uint8_t commInterface; 	// Can be I2C, SPI 4-wire or SPI 3-wire
-	uint8_t agAddress;	 	// I2C address or SPI CS pin
-	uint8_t mAddress;	  	// I2C address or SPI CS pin
-}
-deviceSettings;
+gyro;
 
 typedef struct
 {
@@ -300,33 +263,29 @@ typedef struct
 	uint8_t enableX;
 	uint8_t enableY;
 	uint8_t enableZ;
-	int8_t bandwidth;
+	int8_t  bandwidth;
 	uint8_t highResEnable;
 	uint8_t highResBandwidth;
 }
-accelSettings;
-
-typedef struct
-{
-	uint8_t enabled;
-	uint8_t scale;
-	uint8_t sampleRate;
-	uint8_t tempCompensationEnable;
-	uint8_t XYPerformance;
-	uint8_t ZPerformance;
-	uint8_t lowPowerEnable;
-	uint8_t operatingMode;
-}
-magSettings;
+accel;
 
 
 typedef struct
 {
-	deviceSettings device;
-	gyroSettings gyro;
-	accelSettings accel;
-	magSettings mag;
+	gyro gyro;
+	accel accel;
 }
 IMUSettings;
+
+
+
+HAL_StatusTypeDef LSM9DS1_Write8(uint8_t Reg, uint8_t data);
+uint8_t LSM9DS1_Read8(uint8_t Reg);
+uint16_t LSM9DS1_Read16(uint8_t Reg);
+void LSM9DS1_Init(void);
+HAL_StatusTypeDef LSM9DS1_ReadAcc(float *xAcc, float *yAcc, float *zAcc);
+HAL_StatusTypeDef LSM9DS1_readAngle(float *rollF, float *pitchF);
+HAL_StatusTypeDef LSM9DS1_ReadGyro(float *xRot, float *yRot, float *zRot);
+
 
 #endif /* LSM9DS1_H_ */

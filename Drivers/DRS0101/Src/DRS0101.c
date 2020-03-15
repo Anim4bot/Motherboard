@@ -121,7 +121,7 @@ void DRS0101_setAngle(uint8_t id, uint8_t angle, uint8_t playtime_ui8, uint8_t s
 	//if (angle > 160.0 || angle < -160.0) { return; }
 	//if(playtime_ui8 > 255)   { playtime_ui8 = 255; }
 
-	position_ui16 = (uint16_t)((angle/0.325) + 512);
+	position_ui16 = (uint16_t)round((angle/0.325) + 512);
 	position_ui16 = position_ui16;
 
 	Payload[0]  = HEADER;                         // Packet Header (0xFF)

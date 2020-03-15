@@ -144,7 +144,7 @@ extern I2C_HandleTypeDef  hi2c1;
 #define DEFAULT_POFFSET_UR      0       // 0 offset
 #define DEFAULT_POFFSET_DL      0       // 0 offset
 #define DEFAULT_CONFIG1         0x60    // No 12x wait (WTIME) factor
-#define DEFAULT_LDRIVE          LED_DRIVE_100MA
+#define DEFAULT_LDRIVE          LED_DRIVE_50MA
 #define DEFAULT_PGAIN           PGAIN_4X
 #define DEFAULT_AGAIN           AGAIN_4X
 #define DEFAULT_PILT            0       // Low proximity threshold
@@ -167,29 +167,29 @@ extern I2C_HandleTypeDef  hi2c1;
 
 
 /* Direction definitions */
-typedef enum
+enum
 {
-	DIR_NONE  	= 0,
-	DIR_LEFT	= 1,
-	DIR_RIGHT	= 2,
-	DIR_UP		= 3,
-	DIR_DOWN	= 4,
-	DIR_NEAR	= 5,
-	DIR_FAR		= 6,
-	DIR_ALL		= 7
-}Gesture_enum;
+	DIR_NONE,
+	DIR_LEFT,
+	DIR_RIGHT,
+	DIR_UP,
+	DIR_DOWN,
+	DIR_NEAR,
+	DIR_FAR,
+	DIR_ALL
+};
 
 /* State definitions */
 enum
 {
-	NA_STATE	= 0,
-	NEAR_STATE	= 1,
-	FAR_STATE	= 2,
-	ALL_STATE	=3
+	NA_STATE,
+	NEAR_STATE,
+	FAR_STATE,
+	ALL_STATE
 };
 
 /* Container for gesture data */
-typedef struct
+typedef struct gesture_data_type
 {
     uint8_t u_data[32];
     uint8_t d_data[32];
@@ -230,11 +230,10 @@ uint8_t APDS9960_SetLEDBoost(uint8_t boost);
 uint8_t APDS9960_SetGestureMode(uint8_t mode);
 uint8_t APDS9960_EnablePower(void);
 uint8_t APDS9960_IsGestureAvailable(void);
-uint8_t APDS9960_EeadGesture(void);
+uint8_t APDS9960_ReadGesture(void);
 uint8_t APDS9960_ProcessGestureData(void);
 uint8_t APDS9960_DecodeGesture(void);
 uint8_t APDS9960_ReadSensor(void);
-
 
 
 #endif /* APDS9960_H_ */

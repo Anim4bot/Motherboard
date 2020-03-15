@@ -342,7 +342,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -769,13 +769,7 @@ void StartTask_PwrMngt(void const * argument)
 	osDelay(1000);
 	set_PSU_DRS0101(ON);
 
-	PWM_BUZZ = 5;
-	osDelay(20);
-	PWM_BUZZ = 0;
-	osDelay(50);
-	PWM_BUZZ = 5;
-	osDelay(20);
-	PWM_BUZZ = 0;
+	BIP_0();
 
 	for(;;)
 	{
@@ -871,9 +865,11 @@ void StartTask_Default(void const * argument)
 			set_LED_B0(OFF);
 		}
 
+
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
 			NeckServos_Init();
+			Gaits_StandPosition(75);
 		}
 		else
 		{
@@ -916,6 +912,7 @@ void Board_PwrMngt(void)
 			osDelay(50);
 		}
 
+		BIP_3();
 		osDelay(1000);
 		set_PSU_5V(OFF);
 		osDelay(500);
@@ -1044,7 +1041,7 @@ void StartTask_FlexOled(void const * argument)
 void StartTask_Sensors(void const * argument)
 {
 	float Pitch, Roll;
-	float Rx, Ry, Rz;
+	float rotX, rotY, rotZ;
 	uint32_t val;
 	float Temp_PSU = 0;
 	float Temp_CHG = 0;
@@ -1059,6 +1056,7 @@ void StartTask_Sensors(void const * argument)
 	I2C2_Bus = I2C2_Busy;
 	LM75B_Init();
 	ADC101_Init();
+	LSM9DS1_Init();
 	I2C2_Bus = I2C2_Free;
 
 	for(;;)
@@ -1069,6 +1067,9 @@ void StartTask_Sensors(void const * argument)
 			LM75B_PSU_GetTemp(&Temp_PSU);
 			Temp_AVG = (Temp_CHG + Temp_PSU)/2;
 			ADC101_readIR(&IR_Val);
+			LSM9DS1_readAngle(&Roll, &Pitch);
+			LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
+
 
 			if(ADXL345_Status == Ready)
 			{

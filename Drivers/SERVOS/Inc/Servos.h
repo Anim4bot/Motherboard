@@ -33,4 +33,8 @@ extern TIM_HandleTypeDef htim4;
 */
 
 
+void NeckServos_Init(void);
+void EarsServos_Init(void);
+void HoodServos_Init(void);
+
 #endif /* SERVOS_H_ */

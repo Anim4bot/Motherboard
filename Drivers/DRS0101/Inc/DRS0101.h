@@ -213,5 +213,25 @@ ServoStatus;
 #define DRS0101_WLED   	0x1C	//White
 #define DRS0101_Ignore  0xFF
 
+#define ID_COXA_RF		0x01
+#define ID_COXA_RM		0x02
+#define ID_COXA_RR		0x03
+#define ID_COXA_LF		0x06
+#define ID_COXA_LM		0x05
+#define ID_COXA_LR		0x04
+
+#define ID_FEMUR_RF		0x09
+#define ID_FEMUR_RM		0x11
+#define ID_FEMUR_RR		0x15
+#define ID_FEMUR_LF		0x08
+#define ID_FEMUR_LM		0x05
+#define ID_FEMUR_LR		0x04
+
+void DRS0101_Reboot(uint8_t id);
+void DRS0101_Clear(uint8_t id);
+void DRS0101_setTorque(uint8_t id, uint8_t cmdTorque);
+void DRS0101_setPosition(uint8_t id, uint16_t position_ui16, uint8_t playtime_ui8, uint8_t setLED);
+void DRS0101_setAngle(uint8_t id, uint8_t angle, uint8_t playtime_ui8, uint8_t setLED);
+
 
 #endif /* DRS0101_INC_DRS0101_H_ */

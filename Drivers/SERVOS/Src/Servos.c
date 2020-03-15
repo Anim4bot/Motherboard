@@ -18,6 +18,25 @@ void NeckServos_Init(void)
 }
 
 
+void Head_setPosition(uint8_t pitch, uint8_t yaw, uint8_t speed)
+{
+	uint16_t i;
+	uint16_t temp;
+
+	/*
+	 * if current pos > desired pos --> steps to do = current pos - desired pos et..
+	 *
+	set_PWR_SERVO_NECK(ON);
+	for(i = ; i<= ; i++)
+	{
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, i);
+		HAL_Delay(15);
+	}
+	set_PWR_SERVO_NECK(OFF);
+	*/
+}
+
+
 void EarsServos_Init(void)
 {
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -62,23 +81,6 @@ void Head_Init(uint8_t speed)
 }
 
 void Head_ParkPos(uint8_t speed)
-{
-	uint16_t i;
-	uint16_t temp;
-
-	/*
-	set_PWR_SERVO_NECK(ON);
-	for(i = ; i<= ; i++)
-	{
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, i);
-		HAL_Delay(15);
-	}
-	set_PWR_SERVO_NECK(OFF);
-	*/
-}
-
-
-void Head_setPosition(uint8_t pitch, uint8_t yaw, uint8_t speed)
 {
 	uint16_t i;
 	uint16_t temp;

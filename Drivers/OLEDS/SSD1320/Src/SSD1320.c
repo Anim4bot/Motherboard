@@ -305,7 +305,7 @@ uint8_t Flex_OLED_clearDisplay(uint8_t mode)
 	}
 
 	ready = 1;
-	HAL_Delay(100);
+	HAL_Delay(10);
 
 	return ready;
 }
