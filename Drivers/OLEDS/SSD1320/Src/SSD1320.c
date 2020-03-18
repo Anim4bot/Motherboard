@@ -1,5 +1,7 @@
 #include "SSD1320.h"
 
+extern Sensors_st Sensor;
+extern Charger_st Charger;
 
 //uint8_t screenMemory[FLEX_OLED_BUFF_SIZE] = {0};
 static SSD1320_t SSD1320;
@@ -728,22 +730,22 @@ void Flex_OLED_Menus_Power()
 }
 
 
-void Flex_OLED_Menu_Sensors(Sensors_st *sensor)
+void Flex_OLED_Menu_Sensors(void)
 {
 	uint8_t buff1[32], buff2[32], buff3[32];
 
 	Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
-	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)sensor->IMU.Pitch, (int16_t)sensor->TempPSU);
+	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
 	Flex_OLED_String(buff1, NORM);
 
 	Flex_OLED_setCursor(2,12);
-	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d", (int16_t)sensor->IMU.Roll, (int16_t)sensor->TempCharger);
+	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d", (int16_t)Sensor.IMU.Roll, (int16_t)Sensor.TempCharger);
 	Flex_OLED_String(buff2, NORM);
 
 	Flex_OLED_setCursor(2,2);
-	sprintf(buff3, "IR: %.4d     FAN: %.3d", (int16_t)sensor->dist_IR, (int16_t)sensor->Fan_Speed);
+	sprintf(buff3, "IR: %.4d     FAN: %.3d", (int16_t)Sensor.dist_IR, (int16_t)Sensor.Fan_Speed);
 	Flex_OLED_String(buff3, NORM);
 
 	Flex_OLED_Update();
@@ -751,8 +753,27 @@ void Flex_OLED_Menu_Sensors(Sensors_st *sensor)
 }
 
 
-void Flex_OLED_Menus_Battery(Sensors_st *sensor)
+void Flex_OLED_Menus_Battery(void)
 {
+
+	uint8_t buff1[32], buff2[32], buff3[32];
+
+	Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+
+	Flex_OLED_setCursor(2,22);
+	sprintf(buff1, "Vsys: %+.2dV  Isys: %+.2dA", (int16_t)Charger.Power.SysVoltage, (int16_t)Charger.Power.SysCurrent);
+	Flex_OLED_String(buff1, NORM);
+
+	Flex_OLED_setCursor(2,12);
+	sprintf(buff2, "Vbat: %+.2dV  Ibat: %+.2dA", (int16_t)Charger.Power.BatVoltage, (int16_t)Charger.Power.BatCurrent);
+	Flex_OLED_String(buff2, NORM);
+
+	Flex_OLED_setCursor(2,2);
+	sprintf(buff3, "SysPower: %.2dW", (int16_t)Charger.Power.SysPower);
+	Flex_OLED_String(buff3, NORM);
+
+	Flex_OLED_Update();
+
 	/*
 		Flex_OLED_setContrast(40);
 		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing

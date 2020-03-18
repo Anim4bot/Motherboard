@@ -4,17 +4,18 @@
 #include "stm32f4xx_hal.h"
 #include "PlatformType.h"
 
-extern I2C_HandleTypeDef  hi2c2;
+extern I2C_HandleTypeDef hi2c2;
+
 
 #define LTC4015_I2C_PORT	hi2c2
 #define LTC4015_ADDR 		0xD0
 
 
-#define VBAT_LO_ALERT_LIMIT 		0x01 //R/W 15:0 Battery voltage low alert limit, signed, same format as VBAT (0x3A)
-#define REG_VBAT_HI_ALERT_LIMIT 		0x02 //R/W 15:0 Battery voltage high alert limit, signed, same format as VBAT (0x3A)
-#define REG_VIN_LO_ALERT_LIMIT 			0x03 //R/W 15:0 Input voltage low alert limit, signed, same format as VIN (0x3B)
-#define REG_VIN_HI_ALERT_LIMIT 			0x04 //R/W 15:0 Input voltage high alert limit, signed, same format as VIN (0x3B)
-#define REG_VSYS_LO_ALERT_LIMIT 		0x05 //R/W 15:0 Output voltage low alert limit, signed, same format as VSYS (0x3C)
+#define REG_VBAT_LO_ALERT_LIMIT 		0x01 //R/W 15:0 Battery voltage low alert limit, signed, same format as VBAT (0x3A)
+#define REG_REG_VBAT_HI_ALERT_LIMIT 	0x02 //R/W 15:0 Battery voltage high alert limit, signed, same format as VBAT (0x3A)
+#define REG_REG_VIN_LO_ALERT_LIMIT 		0x03 //R/W 15:0 Input voltage low alert limit, signed, same format as VIN (0x3B)
+#define REG_REG_VIN_HI_ALERT_LIMIT 		0x04 //R/W 15:0 Input voltage high alert limit, signed, same format as VIN (0x3B)
+#define REG_REG_VSYS_LO_ALERT_LIMIT 	0x05 //R/W 15:0 Output voltage low alert limit, signed, same format as VSYS (0x3C)
 #define REG_VSYS_HI_ALERT_LIMIT 		0x06 //R/W 15:0 Output voltage high alert limit, signed, same format as VSYS (0x3C)
 #define REG_IIN_HI_ALERT_LIMIT 			0x07 //R/W 15:0 Input current high alert limit, signed, same format as IIN (0x3D)
 #define REG_IBAT_LO_ALERT_LIMIT 		0x08 //R/W 15:0 Charge current low alert limit, signed, same format as IBAT (0x3E)
@@ -131,75 +132,138 @@ extern I2C_HandleTypeDef  hi2c2;
 #define en_lead_acid_temp_comp 	0x0002	//1 enable lead-acid charge voltage temperature compensation See Note 1
 #define en_jeita 				0x0001	//0 enable jeita temperature profile
 
-//CHARGER_STATE
-#define equalize_charge 		0x0400	//10 indicates battery charger is in lead-acid equalization charge state
-#define absorb_charge 			0x0200	//9 indicates battery charger is in absorb charge state
-#define charger_suspended 		0x0100	//8 indicates battery charger is in charger suspended state
-#define precharge 				0x0080	//7 indicates battery charger is in precondition charge state 64
-#define cc_cv_charge 			0x0040	//6 indicates battery charger is in constant-current constant-voltage state
-#define ntc_pause 				0x0020	//5 indicates battery charger is in thermistor pause state
-#define timer_term 				0x0010	//4 indicates battery charger is in timer termination state
-#define c_over_x_term 			0x0008	//3 indicates battery charger is in C/x termination state
-#define max_charge_time_fault 	0x0004	//2 indicates battery charger is in max_charge_time_fault state
-#define bat_missing_fault 		0x0002	//1 indicates battery charger is in missing battery fault state
-#define bat_short_fault			0x0001	//0 indicates battery charger is in shorted battery fault state
 
-//CHARGE_STATUS
-#define vin_uvcl_active 	//3 indicates the input undervoltage control loop is actively controlling power delivery based on VIN_UVCL_SETTING (0x16) 65
-#define iin_limit_active 	//2 indicates the input current limit control loop is actively controlling power delivery based on IIN_LIMIT_DAC (0x46) 65
-#define constant_current 	//1 indicates the charge current control loop is actively controlling power delivery based on ICHARGE_DAC (0x44) 65
-#define constant_voltage 	//0 indicates the battery voltage control loop is actively controlling power delivery based on VCHARGE_DAC (0x45)
 
-//LIMIT_ALERTS
-#define meas_sys_valid_alert 	0x8000	//15 indicates that measurement system results have become valid.
-#define qcount_lo_alert 		0x2000	//13 indicates QCOUNT has fallen below QCOUNT_LO_ALERT_LIMIT (0x10)
-#define qcount_hi_alert 		0x1000	//12 indicates QCOUNT has exceeded QCOUNT_HI_ALERT_LIMIT (0x11)
-#define vbat_lo_alert 			0x0800	//11 indicates VBAT has fallen below VBAT_LO_ALERT_LIMIT (0x01)
-#define vbat_hi_alert 			0x0400	//10 indicates VBAT has exceeded VBAT_HI_ALERT_LIMIT (0x02)
-#define vin_lo_alert 			0x0200	//9 indicates VIN has fallen below VIN_LO_ALERT_LIMIT (0x03)
-#define vin_hi_alert			0x0100 	//8 indicates VIN has exceeded VIN_HI_ALERT_LIMIT (0x04)
-#define vsys_lo_alert			0x0080 	//7 indicates VSYS has fallen below VSYS_LO_ALERT_LIMIT (0x05)
-#define vsys_hi_alert 			0x0040	//6 indicates VSYS has exceeded VIN_HI_ALERT_LIMIT (0x06)
-#define iin_hi_alert 			0x0020	//5 indicates IIN has exceeded IIN_HI_ALERT_LIMIT (0x07)
-#define ibat_lo_alert 			0x0010	//4 indicates IBAT has fallen below IBAT_LO_ALERT_LIMIT (0x08)
-#define die_temp_hi_alert 		0x0008	//3 indicates DIE_TEMP has exceeded DIE_TEMP_HI_ALERT_LIMIT (0x09)
-#define bsr_hi_alert 			0x0004	//2 indicates BSR has exceeded BSR_HI_ALERT_LIMIT (0x0A)
-#define ntc_ratio_hi_alert 		0x0002 	//1 indicates NTC_RATIO has exceeded NTC_RATIO_HI_ALERT_LIMIT(cold battery; 0x0B)
-#define ntc_ratio_lo_alert 		0x0001	//0 indicates NTC_RATIO has exceeded NTC_RATIO_LO_ALERT_LIMIT(hot battery; 0x0C)
+typedef enum
+{
+	equalize_charge, 		// 0x0400	//10 indicates battery charger is in lead-acid equalization charge state
+	absorb_charge, 			// 0x0200	//9 indicates battery charger is in absorb charge state
+	charger_suspended, 		// 0x0100	//8 indicates battery charger is in charger suspended state
+	precharge, 				// 0x0080	//7 indicates battery charger is in precondition charge state 64
+	cc_cv_charge, 			// 0x0040	//6 indicates battery charger is in constant-current constant-voltage state
+	ntc_pause, 				// 0x0020	//5 indicates battery charger is in thermistor pause state
+	timer_term, 			// 0x0010	//4 indicates battery charger is in timer termination state
+	c_over_x_term, 			// 0x0008	//3 indicates battery charger is in C/x termination state
+	max_charge_time_fault, 	// 0x0004	//2 indicates battery charger is in max_charge_time_fault state
+	bat_missing_fault, 		// 0x0002	//1 indicates battery charger is in missing battery fault state
+	bat_short_fault			// 0x0001	//0 indicates battery charger is in shorted battery fault state
+}
+LTC4015_ChargerState;
 
-//CHARGER_STATE_ALERTS
-#define equalize_charge_alert 		0x0400	//10 alert indicates charger has entered lead-acid equalize_charge state (0x34)
-#define absorb_charge_alert	 		0x0200	//9 alert indicates charger has entered absorb_charge state (0x34)
-#define charger_suspended_alert 	0x0100	//8 alert indicates charger has entered charger_suspended(off) state (0x34)
-#define precharge_alert 			0x0080	//7 alert indicates charger has entered precharge charge state (0x34)
-#define cc_cv_charge_alert 			0x0040	//6 alert indicates charger has entered cc_cv_charge state (constant-current constant-voltage; 0x34)
-#define ntc_pause_alert 			0x0020	//5 alert indicates charger has entered ntc_pause state (0x34)
-#define timer_term_alert 			0x0010	//4 alert indicates charger has entered timer_term state (0x34)
-#define c_over_x_term_alert 		0x0008	//3 alert indicates charger has entered c_over_x term state (C/x termination; 0x34)
-#define max_charge_time_fault_alert 0x0004	//2 alert indicates charger has entered max_charge_time_fault state (0x34)
-#define bat_missing_fault_alert 	0x0002	//1 alert indicates charger has entered bat_missing_fault state (0x34)
-#define bat_short_fault_alert 		0x0001	//0 alert indicates charger has entered bat_short_fault state (0x34)
 
-//CHARGE_STATUS_ALERTS
-#define vin_uvcl_active_alert 	0x0008	//3 alert indicates vin_uvcl_active state entered (VIN undervoltage currentlimit, 0x35)
-#define iin_limit_active_alert	0x0004	//2 alert indicates iin_limit_active state entered (VIN current limit; 0x35)
-#define constant_current_alert 	0x0002	//1 alert indicates constant_current state entered (0x35)
-#define constant_voltage_alert 	0x0001	//0 alert indicates constant_voltage state entered (0x35)
+typedef enum
+{
+	vin_uvcl_active, 	//3 indicates the input undervoltage control loop is actively controlling power delivery based on VIN_UVCL_SETTING (0x16) 65
+	iin_limit_active, 	//2 indicates the input current limit control loop is actively controlling power delivery based on IIN_LIMIT_DAC (0x46) 65
+	constant_current, 	//1 indicates the charge current control loop is actively controlling power delivery based on ICHARGE_DAC (0x44) 65
+	constant_voltage 	//0 indicates the battery voltage control loop is actively controlling power delivery based on VCHARGE_DAC (0x45)
+}
+LTC4015_ChargeStatus;
 
-//SYSTEM_STATUS
-#define charger_enabled 	0x1000	//13 indicates that the battery charger is active
-#define mppt_en_pin 		0x0800	//11 indicates the mppt_en pin is set to enable maximum power point tracking
-#define equalize_req 		0x0400	//10 indicates a rising edge has been detected at the EQ pin, and an lead-acid equalize charge is queued
-#define drvcc_good 			0x0200	//9 indicates DRVCC voltage is above switching charger undervoltage lockout level (4.3V typical)
-#define cell_count_error 	0x0080	//8 indicates an invalid combination of CELLS pin settings
-#define ok_to_charge 		0x0040	//6 indicates all system conditions are met to allow battery charger operation
-#define no_rt 				0x0020	//5 indicates no resistor has been detected at the rt pin
-#define thermal_shutdown 	0x0010	//4 indicates die temperature is greater than thermal shutdown level (160°C typical)
-#define vin_ovlo 			0x0008	//3 indicates vin voltage is greater than overvoltage lockout level (38.6V typical)
-#define vin_gt_vbat 		0x0004	//2 indicates vin voltage is sufficiently greater than batsens for switching charger operation (200mV typical)
-#define intvcc_gt_4p3v 		0x0002	//1 indicates INTVCC voltage is above switching charger undervoltage lockout level (4.3V typ)
-#define intvcc_gt_2p8v 		0x0001	//0 indicates INTVCC voltage is greater than measurement system lockout level (2.8V typical)
 
+typedef enum
+{
+	meas_sys_valid_alert, 	// 0x8000	//15 indicates that measurement system results have become valid.
+	qcount_lo_alert, 		// 0x2000	//13 indicates QCOUNT has fallen below QCOUNT_LO_ALERT_LIMIT (0x10)
+	qcount_hi_alert, 		// 0x1000	//12 indicates QCOUNT has exceeded QCOUNT_HI_ALERT_LIMIT (0x11)
+	vbat_lo_alert, 			// 0x0800	//11 indicates VBAT has fallen below VBAT_LO_ALERT_LIMIT (0x01)
+	vbat_hi_alert, 			// 0x0400	//10 indicates VBAT has exceeded VBAT_HI_ALERT_LIMIT (0x02)
+	vin_lo_alert, 			// 0x0200	//9 indicates VIN has fallen below VIN_LO_ALERT_LIMIT (0x03)
+	vin_hi_alert,			// 0x0100 	//8 indicates VIN has exceeded VIN_HI_ALERT_LIMIT (0x04)
+	vsys_lo_alert,			// 0x0080 	//7 indicates VSYS has fallen below VSYS_LO_ALERT_LIMIT (0x05)
+	vsys_hi_alert, 			// 0x0040	//6 indicates VSYS has exceeded VIN_HI_ALERT_LIMIT (0x06)
+	iin_hi_alert, 			// 0x0020	//5 indicates IIN has exceeded IIN_HI_ALERT_LIMIT (0x07)
+	ibat_lo_alert, 			// 0x0010	//4 indicates IBAT has fallen below IBAT_LO_ALERT_LIMIT (0x08)
+	die_temp_hi_alert, 		// 0x0008	//3 indicates DIE_TEMP has exceeded DIE_TEMP_HI_ALERT_LIMIT (0x09)
+	bsr_hi_alert, 			// 0x0004	//2 indicates BSR has exceeded BSR_HI_ALERT_LIMIT (0x0A)
+	ntc_ratio_hi_alert,		// 0x0002 	//1 indicates NTC_RATIO has exceeded NTC_RATIO_HI_ALERT_LIMIT(cold battery; 0x0B)
+	ntc_ratio_lo_alert 		// 0x0001	//0 indicates NTC_RATIO has exceeded NTC_RATIO_LO_ALERT_LIMIT(hot battery; 0x0C)
+}
+LTC4015_LimitAlerts;
+
+
+typedef enum
+{
+	equalize_charge_alert, 			// 0x0400	//10 alert indicates charger has entered lead-acid equalize_charge state (0x34)
+	absorb_charge_alert,	 		// 0x0200	//9 alert indicates charger has entered absorb_charge state (0x34)
+	charger_suspended_alert, 		// 0x0100	//8 alert indicates charger has entered charger_suspended(off) state (0x34)
+	precharge_alert, 				// 0x0080	//7 alert indicates charger has entered precharge charge state (0x34)
+	cc_cv_charge_alert, 			// 0x0040	//6 alert indicates charger has entered cc_cv_charge state (constant-current constant-voltage; 0x34)
+	ntc_pause_alert, 				// 0x0020	//5 alert indicates charger has entered ntc_pause state (0x34)
+	timer_term_alert, 				// 0x0010	//4 alert indicates charger has entered timer_term state (0x34)
+	c_over_x_term_alert, 			// 0x0008	//3 alert indicates charger has entered c_over_x term state (C/x termination; 0x34)
+	max_charge_time_fault_alert, 	// 0x0004	//2 alert indicates charger has entered max_charge_time_fault state (0x34)
+	bat_missing_fault_alert, 		// 0x0002	//1 alert indicates charger has entered bat_missing_fault state (0x34)
+	bat_short_fault_alert 			// 0x0001	//0 alert indicates charger has entered bat_short_fault state (0x34)
+}
+LTC4015_ChargeStateAlerts;
+
+
+typedef enum
+{
+	vin_uvcl_active_alert, 		// 0x0008	//3 alert indicates vin_uvcl_active state entered (VIN undervoltage currentlimit, 0x35)
+	iin_limit_active_alert,		// 0x0004	//2 alert indicates iin_limit_active state entered (VIN current limit; 0x35)
+	constant_current_alert, 	// 0x0002	//1 alert indicates constant_current state entered (0x35)
+	constant_voltage_alert 		// 0x0001	//0 alert indicates constant_voltage state entered (0x35)
+}
+LTC4015_ChargeStatusAlerts;
+
+
+typedef enum
+{
+	charger_enabled, 	// 0x1000	//13 indicates that the battery charger is active
+	mppt_en_pin, 		// 0x0800	//11 indicates the mppt_en pin is set to enable maximum power point tracking
+	equalize_req, 		// 0x0400	//10 indicates a rising edge has been detected at the EQ pin, and an lead-acid equalize charge is queued
+	drvcc_good, 		// 0x0200	//9 indicates DRVCC voltage is above switching charger undervoltage lockout level (4.3V typical)
+	cell_count_error, 	// 0x0080	//8 indicates an invalid combination of CELLS pin settings
+	ok_to_charge, 		// 0x0040	//6 indicates all system conditions are met to allow battery charger operation
+	no_rt, 				// 0x0020	//5 indicates no resistor has been detected at the rt pin
+	thermal_shutdown, 	// 0x0010	//4 indicates die temperature is greater than thermal shutdown level (160°C typical)
+	vin_ovlo, 			// 0x0008	//3 indicates vin voltage is greater than overvoltage lockout level (38.6V typical)
+	vin_gt_vbat, 		// 0x0004	//2 indicates vin voltage is sufficiently greater than batsens for switching charger operation (200mV typical)
+	intvcc_gt_4p3v, 	// 0x0002	//1 indicates INTVCC voltage is above switching charger undervoltage lockout level (4.3V typ)
+	intvcc_gt_2p8v 		// 0x0001	//0 indicates INTVCC voltage is greater than measurement system lockout level (2.8V typical)
+}
+LTC4015_SystemStatus;
+
+
+typedef struct
+{
+	float Die_temp;
+	float InputVoltage;
+	float SysVoltage;
+	float SysCurrent;
+	float SysPower;
+	float BatVoltage;
+	float BatCurrent;
+	float BatPower;
+}
+LTC4015_Power_st;
+
+
+typedef enum
+{
+	Precharge,
+	Charging,
+	Charged,
+	Alert,
+	Pause,
+}
+LTC4015_GlobalState;
+
+
+typedef struct
+{
+	LTC4015_Power_st Power;
+	LTC4015_SystemStatus SystemStatus;
+	LTC4015_ChargeStatus ChargeStatus;
+	LTC4015_ChargerState ChargeState;
+	LTC4015_ChargeStatusAlerts ChargeStatusAlerts;
+	LTC4015_ChargeStateAlerts ChargeStateAlerts;
+	LTC4015_LimitAlerts LimitAlerts;
+	LTC4015_GlobalState GlobalState;
+}
+Charger_st;
 
 
 #endif /* LTC4015_H_ */

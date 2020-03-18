@@ -7,15 +7,7 @@
 
 #include "PlatformType.h"
 #include "SubRoutines.h"
-#include "DRS0101.h"
-#include "SSD1306.h"
-#include "SSD1320.h"
-#include "APDS9960.h"
-#include "LM75B.h"
-#include "LTC4015.h"
-#include "ADC101.h"
-#include "LSM9DS1.h"
-#include "Servos.h"
+
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -95,6 +87,7 @@ extern void vTaskGetRunTimeStats( char *pcWriteBuffer );
 Input_st Input;
 Gesture_st Gesture;
 Sensors_st Sensor;
+extern Charger_st Charger;
 
 DeviceStatus_enum ITG3205_Status;
 DeviceStatus_enum ADXL345_Status;
@@ -291,7 +284,7 @@ static void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 100000;
+  hi2c2.Init.ClockSpeed = 200000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -762,6 +755,9 @@ static void MX_GPIO_Init(void)
 
 void StartTask_PwrMngt(void const * argument)
 {
+	LTC4015_ChargerState ChargerState = 0xFF;
+	LTC4015_SystemStatus SystemStatus = 0xFF;
+
 	set_PSU_3V3(ON);
 	set_MAIN_SWITCH(ON);
 	osDelay(500);
@@ -771,15 +767,22 @@ void StartTask_PwrMngt(void const * argument)
 
 	BIP_0();
 
+	//LTC4015_Init();
+
 	for(;;)
 	{
 		RPi_PwrMngt();
 		Board_PwrMngt();
 
-		PWM_FAN = (uint16_t)(Sensor.TempPSU*20);
+		//LTC4015_GetChargerState(&ChargerState);
+		//LTC4015_GetSystemStatus(&SystemStatus);
+		LTC4015_Init();
+		LTC4015_GetPowerVal();
+
+		PWM_FAN = (uint16_t)(Sensor.TempPSU*25);
 		Sensor.Fan_Speed = PWM_FAN;
 
-		osDelay(100);
+		osDelay(250);
 	}
 
 }
@@ -828,7 +831,6 @@ void StartTask_Activity(void const * argument)
 		set_LED_ACT(OFF);
 		osDelay(1000);
 
-		LTC4015_Test();
 	}
 
 }
@@ -855,9 +857,6 @@ void StartTask_Default(void const * argument)
 			//Flex_OLED_rectFill(0,0,160,32,BLACK, NORM);
 			Flex_OLED_Update();
 			osDelay(100);
-
-			//LTC4015_GetChargerState(&ChargerState);
-
 
 		}
 		else
@@ -1000,7 +999,7 @@ void StartTask_FlexOled(void const * argument)
 	osDelay(100);
 	Flex_OLED_Init();
 	OLED_Ready = Flex_OLED_StartupAnimation();
-	Flex_Oled_Menu = Sensors;
+	Flex_Oled_Menu = Battery;
 
 	Flex_OLED_setContrast(50);
 
@@ -1016,14 +1015,14 @@ void StartTask_FlexOled(void const * argument)
 				case Debug:
 					Flex_OLED_Menus_Debug();
 				break;
-				case Charging:
-					Flex_OLED_Menus_Charging();
+				case Battery:
+					Flex_OLED_Menus_Battery();
 				break;
 				case PwrMngt:
 					Flex_OLED_Menus_Power();
 				break;
 				case Sensors:
-					Flex_OLED_Menu_Sensors(&Sensor);
+					Flex_OLED_Menu_Sensors();
 				break;
 
 				default:
@@ -1067,8 +1066,8 @@ void StartTask_Sensors(void const * argument)
 			LM75B_PSU_GetTemp(&Temp_PSU);
 			Temp_AVG = (Temp_CHG + Temp_PSU)/2;
 			ADC101_readIR(&IR_Val);
-			LSM9DS1_readAngle(&Roll, &Pitch);
-			LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
+			//LSM9DS1_readAngle(&Roll, &Pitch);
+			//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
 
 
 			if(ADXL345_Status == Ready)

@@ -9,7 +9,7 @@
 #include "AnimabotLogo.h"
 
 extern SPI_HandleTypeDef hspi2;
-extern Sensors_st Sensor;
+
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))

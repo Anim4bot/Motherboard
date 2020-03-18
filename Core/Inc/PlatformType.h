@@ -3,7 +3,15 @@
 
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
-
+#include "DRS0101.h"
+#include "SSD1306.h"
+#include "SSD1320.h"
+#include "APDS9960.h"
+#include "LM75B.h"
+#include "LTC4015.h"
+#include "ADC101.h"
+#include "LSM9DS1.h"
+#include "Servos.h"
 
 #define ON  	1
 #define HIGH 	1
@@ -217,7 +225,7 @@ typedef enum
 	Standby  = 0,
 	Normal   = 1,
 	Debug    = 2,
-	Charging = 3,
+	Battery = 3,
 	PwrMngt  = 4,
 	Sensors  = 5
 }

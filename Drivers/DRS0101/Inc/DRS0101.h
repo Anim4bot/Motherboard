@@ -222,10 +222,10 @@ ServoStatus;
 
 #define ID_FEMUR_RF		0x09
 #define ID_FEMUR_RM		0x11
-#define ID_FEMUR_RR		0x15
+#define ID_FEMUR_RR		0x16
 #define ID_FEMUR_LF		0x08
-#define ID_FEMUR_LM		0x05
-#define ID_FEMUR_LR		0x04
+#define ID_FEMUR_LM		0x14
+#define ID_FEMUR_LR		0x18
 
 void DRS0101_Reboot(uint8_t id);
 void DRS0101_Clear(uint8_t id);
