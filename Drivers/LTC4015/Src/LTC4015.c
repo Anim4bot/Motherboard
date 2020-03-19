@@ -32,11 +32,17 @@ HAL_StatusTypeDef LTC4015_read16(uint8_t Reg, uint16_t *data)
 
 void LTC4015_Init(void)
 {
-	volatile HAL_StatusTypeDef status;
-
-	uint16_t RegConfigBits = 0b0000000000010200;
+	HAL_StatusTypeDef status;
+	uint16_t RegConfigBits = 0b0000000000010100;
 
 	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
+	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
+
+}
+
+
+LTC4015_GlobalState LTC4015_Mngt(void)
+{
 
 }
 
@@ -46,12 +52,16 @@ void LTC4015_GetPowerVal(void)
 	HAL_StatusTypeDef status;
 
 	uint8_t received[2];
-	volatile float Die_temp;
-	volatile float InputVoltage;
-	volatile float SysVoltage;
-	volatile float BatVoltage;
-	volatile float BatCurrent;
-	volatile float SysCurrent;
+	volatile float Die_temp = 0xFFFF;
+	volatile float InputVoltage = 0xFFFF;
+	volatile float SysVoltage = 0xFFFF;
+	volatile float BatVoltage = 0xFFFF;
+	volatile float BatCurrent = 0xFFFF;
+	volatile float SysCurrent = 0xFFFF;
+	volatile uint16_t ChargeTime = 0xFFFF;
+
+	uint16_t RegConfigBits = 0b0000000000010100;
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 50);
 	Die_temp = (((received[1]<<8) | received[0])-12010)/45.6;
@@ -71,13 +81,16 @@ void LTC4015_GetPowerVal(void)
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 50);
 	BatCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
 
-	Charger.Power.Die_temp = Die_temp;							// Result in °C
-	Charger.Power.InputVoltage = InputVoltage/1000.0;			// Convert to Volt
-	Charger.Power.SysVoltage = (SysVoltage/1000.0);				// Convert to Volt
-	Charger.Power.SysCurrent = SysCurrent;						// Result in A
-	Charger.Power.SysPower = (SysCurrent*SysVoltage/1000.0);	// Power in Watt
-	Charger.Power.BatVoltage = BatVoltage;						//
-	Charger.Power.BatCurrent = BatCurrent;						//
+	//status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_MAX_CHARGE_TIMER, 1, (uint8_t*)received, 2, 50);
+	//ChargeTime 	 = ((received[1]<<8) | received[0]);
+
+	Charger.Power.Die_temp = Die_temp;								// Result in °C
+	Charger.Power.InputVoltage = ABS(InputVoltage/1000.0);			// in V
+	Charger.Power.SysVoltage   = ABS(SysVoltage/1000.0);			// in V
+	Charger.Power.SysCurrent   = ABS(SysCurrent);					// in A
+	Charger.Power.SysPower     = ABS(SysCurrent*SysVoltage/1000.0);	// Power in Watt
+	Charger.Power.BatVoltage   = ABS(BatVoltage);					// in V
+	Charger.Power.BatCurrent   = ABS(BatCurrent);					// in A
 
 }
 

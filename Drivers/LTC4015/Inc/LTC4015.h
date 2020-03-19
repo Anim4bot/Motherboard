@@ -243,11 +243,12 @@ LTC4015_Power_st;
 
 typedef enum
 {
-	Precharge,
+	Discharging,
 	Charging,
 	Charged,
 	Alert,
-	Pause,
+	TempHigh,
+	Pause
 }
 LTC4015_GlobalState;
 

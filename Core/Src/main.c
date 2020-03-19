@@ -264,7 +264,7 @@ static void MX_I2C1_Init(void)
 {
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.ClockSpeed = 600000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -767,7 +767,7 @@ void StartTask_PwrMngt(void const * argument)
 
 	BIP_0();
 
-	//LTC4015_Init();
+	LTC4015_Init();
 
 	for(;;)
 	{
@@ -776,7 +776,6 @@ void StartTask_PwrMngt(void const * argument)
 
 		//LTC4015_GetChargerState(&ChargerState);
 		//LTC4015_GetSystemStatus(&SystemStatus);
-		LTC4015_Init();
 		LTC4015_GetPowerVal();
 
 		PWM_FAN = (uint16_t)(Sensor.TempPSU*25);
@@ -800,7 +799,6 @@ void StartTask_System(void const * argument)
 	//EarsServos_Init();
 	//HoodServos_Init();
 
-	//LTC4015_Init();
 	SSD1306_Init();
 
 	PWM_LED_PI = 0;
@@ -853,8 +851,6 @@ void StartTask_Default(void const * argument)
 			Flex_Oled_Menu ++;
 			if(Flex_Oled_Menu > 5) { Flex_Oled_Menu = 1; }
 			Flex_OLED_clearDisplay(CLEAR_ALL);
-			osDelay(100);
-			//Flex_OLED_rectFill(0,0,160,32,BLACK, NORM);
 			Flex_OLED_Update();
 			osDelay(100);
 
@@ -897,7 +893,7 @@ void Board_PwrMngt(void)
 		Board_Shutdown_ctr = 0;
 	}
 
-	if(Board_Shutdown_ctr == 30)
+	if(Board_Shutdown_ctr == 15)
 	{
 		// Park Head and Ears
 		// Park Hood ?
@@ -1032,7 +1028,7 @@ void StartTask_FlexOled(void const * argument)
 		previousMenu = Flex_Oled_Menu;
 
 	}
-	osDelay(10);
+	osDelay(500);
 }
 
 
@@ -1052,34 +1048,25 @@ void StartTask_Sensors(void const * argument)
 	osDelay(250);
 	//I2C_Device_Check();
 
-	I2C2_Bus = I2C2_Busy;
 	LM75B_Init();
 	ADC101_Init();
 	LSM9DS1_Init();
-	I2C2_Bus = I2C2_Free;
 
 	for(;;)
 	{
-		if(I2C2_Bus == I2C2_Free)
+		LM75B_CHG_GetTemp(&Temp_CHG);
+		LM75B_PSU_GetTemp(&Temp_PSU);
+		Temp_AVG = (Temp_CHG + Temp_PSU)/2;
+		ADC101_readIR(&IR_Val);
+		//LSM9DS1_readAngle(&Roll, &Pitch);
+		//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
+
+
+		if(ADXL345_Status == Ready)
 		{
-			LM75B_CHG_GetTemp(&Temp_CHG);
-			LM75B_PSU_GetTemp(&Temp_PSU);
-			Temp_AVG = (Temp_CHG + Temp_PSU)/2;
-			ADC101_readIR(&IR_Val);
-			//LSM9DS1_readAngle(&Roll, &Pitch);
-			//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
-
-
-			if(ADXL345_Status == Ready)
-			{
-				I2C2_Bus = I2C2_Busy;
-				//ADXL345B_readAngle(&Roll, &Pitch);
-				I2C2_Bus = I2C2_Free;
-			}
-		}
-		else
-		{
-
+			//I2C2_Bus = I2C2_Busy;
+			//ADXL345B_readAngle(&Roll, &Pitch);
+			//I2C2_Bus = I2C2_Free;
 		}
 
 		Sensor.IMU.Pitch   	= Pitch;
@@ -1123,17 +1110,13 @@ void StartTask_Bluetooth(void const * argument)
 
 void StartTask_Behavior(void const * argument)
 {
-	osDelay(3500);
-	I2C2_Bus = I2C2_Busy;
+	osDelay(3000);
 	Eyes_WakeUp();
-	I2C2_Bus = I2C2_Free;
 
 	for(;;)
 	{
 		osDelay(7500);
-		I2C2_Bus = I2C2_Busy;
 		Eyes_BlinkLow();
-		I2C2_Bus = I2C2_Free;
 	}
 
 }

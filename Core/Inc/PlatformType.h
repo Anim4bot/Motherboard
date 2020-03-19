@@ -3,6 +3,9 @@
 
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 #include "DRS0101.h"
 #include "SSD1306.h"
 #include "SSD1320.h"

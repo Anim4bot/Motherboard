@@ -680,7 +680,7 @@ void Flex_OLED_Menus_Debug()
 {
 	uint8_t buff1[16];
 
-	Flex_OLED_rectFill(156-2,32-MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	//Flex_OLED_rectFill(156-2,32-MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff1, "DEBUG ");
@@ -694,7 +694,7 @@ void Flex_OLED_Menus_Charging(uint8_t charge)
 {
 	uint8_t loop, i;
 
-	Flex_OLED_rectFill(156-2,32-2*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	//Flex_OLED_rectFill(156-2,32-2*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 	Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
@@ -720,7 +720,7 @@ void Flex_OLED_Menus_Power()
 {
 	uint8_t buff[16];
 
-	Flex_OLED_rectFill(156-2,32-3*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	//Flex_OLED_rectFill(156-2,32-3*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff, "POWER");
@@ -734,7 +734,7 @@ void Flex_OLED_Menu_Sensors(void)
 {
 	uint8_t buff1[32], buff2[32], buff3[32];
 
-	Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	//Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
 	Flex_OLED_setCursor(2,22);
 	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
@@ -755,44 +755,60 @@ void Flex_OLED_Menu_Sensors(void)
 
 void Flex_OLED_Menus_Battery(void)
 {
+	uint8_t xOffset = 80;
+	uint8_t loop, i;
+	uint8_t buff1[24], buff2[24], buff3[24];
+	volatile uint8_t test[2];
+	volatile uint16_t tdata;
 
-	uint8_t buff1[32], buff2[32], buff3[32];
+	//Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
-	Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
+	Flex_OLED_setContrast(20);
 
-	Flex_OLED_setCursor(2,22);
-	sprintf(buff1, "Vsys: %+.2dV  Isys: %+.2dA", (int16_t)Charger.Power.SysVoltage, (int16_t)Charger.Power.SysCurrent);
-	Flex_OLED_String(buff1, NORM);
+	if(Charger.Power.InputVoltage > 12.00)
+	{
 
-	Flex_OLED_setCursor(2,12);
-	sprintf(buff2, "Vbat: %+.2dV  Ibat: %+.2dA", (int16_t)Charger.Power.BatVoltage, (int16_t)Charger.Power.BatCurrent);
-	Flex_OLED_String(buff2, NORM);
+		Flex_OLED_setCursor(60,16);
+		sprintf(buff1,"VIN  : %.2fV", Charger.Power.InputVoltage);
+		Flex_OLED_String(buff1, NORM);
+		Flex_OLED_setCursor(60,6);
+		sprintf(buff2, "IBAT : %.2fA", Charger.Power.BatCurrent);
+		Flex_OLED_String(buff2, NORM);
 
-	Flex_OLED_setCursor(2,2);
-	sprintf(buff3, "SysPower: %.2dW", (int16_t)Charger.Power.SysPower);
-	Flex_OLED_String(buff3, NORM);
 
-	Flex_OLED_Update();
-
-	/*
-		Flex_OLED_setContrast(40);
 		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 		Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
 
 		Flex_OLED_Update();
 
-		for(loop = 0; loop <1 ; loop++)
+		for(loop = 0; loop<1 ; loop++)
 		{
 			Flex_OLED_rectFill(6, 6, 28, 20, BLACK, NORM);
 			for (i=0 ; i<=28 ; i++)
 			{
 				Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
 				Flex_OLED_Update();
-				osDelay(15);
+				osDelay(10);
 			}
 		}
-		Flex_OLED_clearDisplay(CLEAR_ALL);
-	*/
+
+	}
+	else
+	{
+/*
+		Flex_OLED_setCursor(2,22);
+		sprintf(buff1,"VBATT : %.2fV", Charger.Power.BatVoltage);
+		Flex_OLED_String(buff1, NORM);
+		Flex_OLED_setCursor(2,12);
+		sprintf(buff2,"IBATT : %.2fA", Charger.Power.BatCurrent);
+		Flex_OLED_String(buff2, NORM);
+		Flex_OLED_setCursor(2,2);
+		sprintf(buff3,"Power : %.2fW", Charger.Power.SysPower);
+		Flex_OLED_String(buff3, NORM);
+*/
+		Flex_OLED_Update();
+	}
+
 }
 
 
