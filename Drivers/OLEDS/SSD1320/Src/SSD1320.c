@@ -633,9 +633,9 @@ uint8_t Flex_OLED_StartupAnimation(void)
 
 	Flex_OLED_setContrast(0);
 
-	for (ctr = 0 ; ctr < sizeof(AnimabotLogo3) ; ctr++)
+	for (ctr = 0 ; ctr < sizeof(AnimabotLogo2) ; ctr++)
 	{
-	  ssd1320_WriteData(AnimabotLogo3[ctr]); //Write byte directly to display
+	  ssd1320_WriteData(AnimabotLogo2[ctr]); //Write byte directly to display
 	}
 
 	for (i=0 ; i<LogoContrast ; i++)
@@ -732,19 +732,19 @@ void Flex_OLED_Menus_Power()
 
 void Flex_OLED_Menu_Sensors(void)
 {
-	uint8_t buff1[32], buff2[32], buff3[32];
+	uint8_t buff1[48], buff2[48], buff3[48];
 
 	//Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
-	Flex_OLED_setCursor(2,22);
+	Flex_OLED_setCursor(10,22);
 	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
 	Flex_OLED_String(buff1, NORM);
 
-	Flex_OLED_setCursor(2,12);
+	Flex_OLED_setCursor(10,12);
 	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d", (int16_t)Sensor.IMU.Roll, (int16_t)Sensor.TempCharger);
 	Flex_OLED_String(buff2, NORM);
 
-	Flex_OLED_setCursor(2,2);
+	Flex_OLED_setCursor(10,2);
 	sprintf(buff3, "IR: %.4d     FAN: %.3d", (int16_t)Sensor.dist_IR, (int16_t)Sensor.Fan_Speed);
 	Flex_OLED_String(buff3, NORM);
 
@@ -757,24 +757,24 @@ void Flex_OLED_Menus_Battery(void)
 {
 	uint8_t xOffset = 80;
 	uint8_t loop, i;
-	uint8_t buff1[24], buff2[24], buff3[24];
+	uint8_t buff1[64], buff2[64], buff3[64];
 	volatile uint8_t test[2];
 	volatile uint16_t tdata;
 
 	//Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
-	Flex_OLED_setContrast(20);
+	Flex_OLED_setContrast(50);
 
 	if(Charger.Power.InputVoltage > 12.00)
 	{
-
+/*
 		Flex_OLED_setCursor(60,16);
-		sprintf(buff1,"VIN  : %.2fV", Charger.Power.InputVoltage);
+		sprintf(buff1,"VIN  : %.2fV", (int16_t)Charger.Power.InputVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(60,6);
-		sprintf(buff2, "IBAT : %.2fA", Charger.Power.BatCurrent);
+		sprintf(buff2, "IBAT : %.2fA", (int16_t)Charger.Power.BatCurrent);
 		Flex_OLED_String(buff2, NORM);
-
+*/
 
 		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 		Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
@@ -788,13 +788,24 @@ void Flex_OLED_Menus_Battery(void)
 			{
 				Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
 				Flex_OLED_Update();
-				osDelay(10);
+				osDelay(5);
 			}
 		}
 
 	}
 	else
 	{
+/*
+		Flex_OLED_setCursor(2,22);
+		sprintf(buff1,"VBATT : %dV", 11);
+		Flex_OLED_String(buff1, NORM);
+		Flex_OLED_setCursor(2,12);
+		sprintf(buff2,"IBATT : %dA", 1);
+		Flex_OLED_String(buff2, NORM);
+		Flex_OLED_setCursor(2,2);
+		sprintf(buff3,"Power : %dW", 11);
+		Flex_OLED_String(buff3, NORM);
+*/
 /*
 		Flex_OLED_setCursor(2,22);
 		sprintf(buff1,"VBATT : %.2fV", Charger.Power.BatVoltage);

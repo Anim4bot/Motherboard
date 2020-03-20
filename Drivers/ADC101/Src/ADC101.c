@@ -13,7 +13,7 @@ HAL_StatusTypeDef ADC101_Init(void)
 }
 
 
-HAL_StatusTypeDef ADC101_readIR(uint16_t *ConvVal)
+HAL_StatusTypeDef ADC101_ReadIR(uint16_t *ConvVal)
 {
 	HAL_StatusTypeDef status;
 	uint8_t data[2];

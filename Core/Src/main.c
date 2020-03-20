@@ -284,7 +284,7 @@ static void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 200000;
+  hi2c2.Init.ClockSpeed = 400000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -778,7 +778,7 @@ void StartTask_PwrMngt(void const * argument)
 		//LTC4015_GetSystemStatus(&SystemStatus);
 		LTC4015_GetPowerVal();
 
-		PWM_FAN = (uint16_t)(Sensor.TempPSU*25);
+		PWM_FAN = (uint16_t)(Sensor.TempPSU*20);
 		Sensor.Fan_Speed = PWM_FAN;
 
 		osDelay(250);
@@ -995,7 +995,7 @@ void StartTask_FlexOled(void const * argument)
 	osDelay(100);
 	Flex_OLED_Init();
 	OLED_Ready = Flex_OLED_StartupAnimation();
-	Flex_Oled_Menu = Battery;
+	Flex_Oled_Menu = Sensors;
 
 	Flex_OLED_setContrast(50);
 
@@ -1051,15 +1051,19 @@ void StartTask_Sensors(void const * argument)
 	LM75B_Init();
 	ADC101_Init();
 	LSM9DS1_Init();
+	osDelay(100);
 
 	for(;;)
 	{
 		LM75B_CHG_GetTemp(&Temp_CHG);
 		LM75B_PSU_GetTemp(&Temp_PSU);
 		Temp_AVG = (Temp_CHG + Temp_PSU)/2;
-		ADC101_readIR(&IR_Val);
-		//LSM9DS1_readAngle(&Roll, &Pitch);
+		osDelay(10);
+		ADC101_ReadIR(&IR_Val);
+		osDelay(10);
+		LSM9DS1_ReadAngle(&Roll, &Pitch);
 		//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
+		osDelay(10);
 
 
 		if(ADXL345_Status == Ready)

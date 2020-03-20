@@ -52,16 +52,22 @@ void LTC4015_GetPowerVal(void)
 	HAL_StatusTypeDef status;
 
 	uint8_t received[2];
-	volatile float Die_temp = 0xFFFF;
-	volatile float InputVoltage = 0xFFFF;
-	volatile float SysVoltage = 0xFFFF;
-	volatile float BatVoltage = 0xFFFF;
-	volatile float BatCurrent = 0xFFFF;
-	volatile float SysCurrent = 0xFFFF;
-	volatile uint16_t ChargeTime = 0xFFFF;
+	float Die_temp = 0xFFFF;
+	float InputVoltage = 0xFFFF;
+	float SysVoltage = 0xFFFF;
+	float BatVoltage = 0xFFFF;
+	float BatCurrent = 0xFFFF;
+	float SysCurrent = 0xFFFF;
+	uint16_t ChargeTime = 0xFFFF;
 
-	uint16_t RegConfigBits = 0b0000000000010100;
-	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
+	uint16_t RegConfigBits1 = 0x0014;
+	uint16_t RegConfigBits2 = 0x0000;
+
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0000, 2, 50);
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0014, 2, 50);
+
+	HAL_Delay(10);
+	osDelay(10);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 50);
 	Die_temp = (((received[1]<<8) | received[0])-12010)/45.6;
