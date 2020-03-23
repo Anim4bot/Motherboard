@@ -145,43 +145,43 @@ int main(void)
 	/* Create the thread(s) */
 
 	/* definition and creation of Task_PwrMngt */
-	osThreadDef(Task_PwrMngt, StartTask_PwrMngt, osPriorityHigh, 0, 128);
+	osThreadDef(Task_PwrMngt, StartTask_PwrMngt, osPriorityHigh, 0, 256);
 	Task_PwrMngtHandle = osThreadCreate(osThread(Task_PwrMngt), NULL);
 
 	/* definition and creation of Task_System */
-	osThreadDef(Task_System, StartTask_System, osPriorityHigh, 0, 128);
+	osThreadDef(Task_System, StartTask_System, osPriorityHigh, 0, 256);
 	Task_SystemHandle = osThreadCreate(osThread(Task_System), NULL);
 
 	/* definition and creation of Task_Activity */
-	osThreadDef(Task_Activity, StartTask_Activity, osPriorityIdle, 0, 128);
+	osThreadDef(Task_Activity, StartTask_Activity, osPriorityLow, 0, 128);
 	Task_ActivityHandle = osThreadCreate(osThread(Task_Activity), NULL);
 
 	/* definition and creation of Task_Default */
-	osThreadDef(Task_Default, StartTask_Default, osPriorityNormal, 0, 128);
+	osThreadDef(Task_Default, StartTask_Default, osPriorityNormal, 0, 256);
 	Task_DefaultHandle = osThreadCreate(osThread(Task_Default), NULL);
 
 	/* definition and creation of Task_Oled */
-	osThreadDef(Task_FlexOled, StartTask_FlexOled, osPriorityNormal, 0, 128);
+	osThreadDef(Task_FlexOled, StartTask_FlexOled, osPriorityNormal, 0, 256);
 	Task_FlexOledHandle = osThreadCreate(osThread(Task_FlexOled), NULL);
 
 	/* definition and creation of Task_Sensors */
-	osThreadDef(Task_Sensors, StartTask_Sensors, osPriorityNormal, 0, 128);
+	osThreadDef(Task_Sensors, StartTask_Sensors, osPriorityHigh, 0, 256);
 	Task_SensorsHandle = osThreadCreate(osThread(Task_Sensors), NULL);
 
 	/* definition and creation of Task_Rpi */
-	osThreadDef(Task_Rpi, StartTask_Rpi, osPriorityHigh, 0, 128);
+	osThreadDef(Task_Rpi, StartTask_Rpi, osPriorityNormal, 0, 256);
 	Task_RpiHandle = osThreadCreate(osThread(Task_Rpi), NULL);
 
 	/* definition and creation of Task_Bluetooth */
-	osThreadDef(Task_Bluetooth, StartTask_Bluetooth, osPriorityNormal, 0, 128);
+	osThreadDef(Task_Bluetooth, StartTask_Bluetooth, osPriorityNormal, 0, 256);
 	Task_BluetoothHandle = osThreadCreate(osThread(Task_Bluetooth), NULL);
 
 	/* definition and creation of Task_Behavior */
-	osThreadDef(Task_Behavior, StartTask_Behavior, osPriorityNormal, 0, 128);
+	osThreadDef(Task_Behavior, StartTask_Behavior, osPriorityNormal, 0, 256);
 	Task_BehaviorHandle = osThreadCreate(osThread(Task_Behavior), NULL);
 
 	/* definition and creation of Task_Kinematic */
-	osThreadDef(Task_Kinematic, StartTask_Kinematic, osPriorityNormal, 0, 128);
+	osThreadDef(Task_Kinematic, StartTask_Kinematic, osPriorityNormal, 0, 256);
 	Task_KinematicHandle = osThreadCreate(osThread(Task_Kinematic), NULL);
 
 	/* definition and creation of myQueue01 */
@@ -646,103 +646,110 @@ static void MX_USART3_UART_Init(void)
 static void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+	GPIO_InitTypeDef GPIO_InitStruct;
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOE_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOD_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin 
-                          |PI_GPIO_A_Pin|PI_SIG_OFF_Pin|PI_SIG_ON_Pin|PI_PWR_ON_OFF_Pin, GPIO_PIN_RESET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOE, SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin
+						  |PI_GPIO_A_Pin|PI_SIG_OFF_Pin|PI_SIG_ON_Pin|PI_PWR_ON_OFF_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, PI_SPI_CS_Pin|LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin 
-                          |PSU_EN_Pin, GPIO_PIN_RESET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOA, PI_SPI_CS_Pin|LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin
+						  |PSU_EN_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin, GPIO_PIN_RESET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOB, PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, MAIN_SWITCH_Pin|EYES_RST_Pin|REG_5V_EN_Pin|BT_CS_Pin 
-                          |BT_RESET_Pin, GPIO_PIN_RESET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOD, MAIN_SWITCH_Pin|EYES_RST_Pin|REG_5V_EN_Pin|BT_CS_Pin
+						  |BT_RESET_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : SERVO_PWR_EARS_Pin SERVO_PWR_NECK_Pin SERVO_PWR_HOOD_Pin REG_3V3_EN_Pin */
-  GPIO_InitStruct.Pin = SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+	/*Configure GPIO pins : SERVO_PWR_EARS_Pin SERVO_PWR_NECK_Pin SERVO_PWR_HOOD_Pin REG_3V3_EN_Pin */
+	GPIO_InitStruct.Pin = SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LTC4015_ALERT_Pin SIG_SYSTEM_Pin HODD_SW1_Pin HOOD_SW2_Pin */
-  GPIO_InitStruct.Pin = LTC4015_ALERT_Pin|SIG_SYSTEM_Pin|HODD_SW1_Pin|HOOD_SW2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	/*Configure GPIO pins : LTC4015_ALERT_Pin SIG_SYSTEM_Pin HODD_SW1_Pin HOOD_SW2_Pin */
+	GPIO_InitStruct.Pin = LTC4015_ALERT_Pin|SIG_SYSTEM_Pin|HODD_SW1_Pin|HOOD_SW2_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PI_SPI_CS_Pin */
-  GPIO_InitStruct.Pin = PI_SPI_CS_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(PI_SPI_CS_GPIO_Port, &GPIO_InitStruct);
+	/*Configure GPIO pin : PI_SPI_CS_Pin */
+	GPIO_InitStruct.Pin = PI_SPI_CS_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(PI_SPI_CS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PI_I2C_LINE_Pin FLEX_OLED_CS_Pin FLEX_OLED_RST_Pin */
-  GPIO_InitStruct.Pin = PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	/*Configure GPIO pins : PI_I2C_LINE_Pin FLEX_OLED_CS_Pin FLEX_OLED_RST_Pin */
+	GPIO_InitStruct.Pin = PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PI_I2C_BUSY_Pin PI_GPIO_B_Pin SW_PI_BOOT_Pin SW_HOOD_Pin */
-  GPIO_InitStruct.Pin = PI_I2C_BUSY_Pin|PI_GPIO_B_Pin|SW_PI_BOOT_Pin|SW_HOOD_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+	/*Configure GPIO pins : PI_I2C_BUSY_Pin PI_GPIO_B_Pin SW_PI_BOOT_Pin SW_HOOD_Pin */
+	GPIO_InitStruct.Pin = PI_I2C_BUSY_Pin|PI_GPIO_B_Pin|SW_PI_BOOT_Pin|SW_HOOD_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PI_GPIO_A_Pin PI_SIG_OFF_Pin PI_SIG_ON_Pin PI_PWR_ON_OFF_Pin */
-  GPIO_InitStruct.Pin = PI_GPIO_A_Pin|PI_SIG_OFF_Pin|PI_SIG_ON_Pin|PI_PWR_ON_OFF_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+	/*Configure GPIO pins : PI_GPIO_A_Pin PI_SIG_OFF_Pin PI_SIG_ON_Pin PI_PWR_ON_OFF_Pin */
+	GPIO_InitStruct.Pin = PI_GPIO_A_Pin|PI_SIG_OFF_Pin|PI_SIG_ON_Pin|PI_PWR_ON_OFF_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MAIN_SWITCH_Pin REG_5V_EN_Pin */
-  GPIO_InitStruct.Pin = MAIN_SWITCH_Pin|REG_5V_EN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+	/*Configure GPIO pins : MAIN_SWITCH_Pin REG_5V_EN_Pin */
+	GPIO_InitStruct.Pin = MAIN_SWITCH_Pin|REG_5V_EN_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : EYES_RST_Pin BT_CS_Pin BT_RESET_Pin */
-  GPIO_InitStruct.Pin = EYES_RST_Pin|BT_CS_Pin|BT_RESET_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+	/*Configure GPIO pins : EYES_RST_Pin BT_CS_Pin BT_RESET_Pin */
+	GPIO_InitStruct.Pin = EYES_RST_Pin|BT_CS_Pin|BT_RESET_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SW_USER_Pin */
-  GPIO_InitStruct.Pin = SW_USER_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SW_USER_GPIO_Port, &GPIO_InitStruct);
+	/*Configure GPIO pin : SW_USER_Pin */
+	GPIO_InitStruct.Pin = SW_USER_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(SW_USER_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_ACT_Pin LED_B0_Pin LED_ERR_Pin PSU_EN_Pin */
-  GPIO_InitStruct.Pin = LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin|PSU_EN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	/*Configure GPIO pins : LED_ACT_Pin LED_B0_Pin LED_ERR_Pin PSU_EN_Pin */
+	GPIO_InitStruct.Pin = LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin|PSU_EN_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : DOCK_SENS_Pin */
-  GPIO_InitStruct.Pin = DOCK_SENS_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DOCK_SENS_GPIO_Port, &GPIO_InitStruct);
+	/*Configure GPIO pin : DOCK_SENS_Pin */
+	GPIO_InitStruct.Pin = DOCK_SENS_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(DOCK_SENS_GPIO_Port, &GPIO_InitStruct);
 
+	/* Flex OLED Display */
+    GPIO_InitStruct.Pin = FLEX_OLED_SCK_Pin|FLEX_OLED_MOSI_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
 
@@ -778,10 +785,10 @@ void StartTask_PwrMngt(void const * argument)
 		//LTC4015_GetSystemStatus(&SystemStatus);
 		LTC4015_GetPowerVal();
 
-		PWM_FAN = (uint16_t)(Sensor.TempPSU*20);
+		PWM_FAN = (uint16_t)(Sensor.TempPSU*15);
 		Sensor.Fan_Speed = PWM_FAN;
 
-		osDelay(250);
+		osDelay(75);
 	}
 
 }
@@ -871,7 +878,7 @@ void StartTask_Default(void const * argument)
 
 		}
 
-		osDelay(150);
+		osDelay(125);
 	}
 
 }
@@ -950,7 +957,6 @@ void RPi_PwrMngt(void)
 	}
 
 
-
 	if( (Rpi_Shutdown_ctr >= RPI_SHTDWN_MAX_TIMEOUT) /*&& (Input.RPI_RUNNING == GPIO_PIN_SET)*/ )
 	{
 		set_RPI_PWR(FALSE);
@@ -995,7 +1001,7 @@ void StartTask_FlexOled(void const * argument)
 	osDelay(100);
 	Flex_OLED_Init();
 	OLED_Ready = Flex_OLED_StartupAnimation();
-	Flex_Oled_Menu = Sensors;
+	Flex_Oled_Menu = Battery;
 
 	Flex_OLED_setContrast(50);
 
@@ -1028,7 +1034,7 @@ void StartTask_FlexOled(void const * argument)
 		previousMenu = Flex_Oled_Menu;
 
 	}
-	osDelay(500);
+	osDelay(250);
 }
 
 
@@ -1058,9 +1064,7 @@ void StartTask_Sensors(void const * argument)
 		LM75B_CHG_GetTemp(&Temp_CHG);
 		LM75B_PSU_GetTemp(&Temp_PSU);
 		Temp_AVG = (Temp_CHG + Temp_PSU)/2;
-		osDelay(10);
 		ADC101_ReadIR(&IR_Val);
-		osDelay(10);
 		LSM9DS1_ReadAngle(&Roll, &Pitch);
 		//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
 		osDelay(10);
@@ -1080,7 +1084,7 @@ void StartTask_Sensors(void const * argument)
 		Sensor.TempAverage  = Temp_AVG;
 		Sensor.dist_IR		= IR_Val;
 
-		osDelay(100);
+		osDelay(150);
 	}
 }
 
@@ -1137,7 +1141,6 @@ void StartTask_Kinematic(void const * argument)
 	}
 
 }
-
 
 /*******************************************************************************************************************************************************/
 /*******************************************************************************************************************************************************/

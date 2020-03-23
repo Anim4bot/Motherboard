@@ -16,7 +16,7 @@ HAL_StatusTypeDef LTC4015_write16(uint8_t Reg, uint16_t Val)
 	data[0] = Val<<8;
 	data[1] = Val;
 
-	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, &Reg, 1, data, 2, 50);
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, &Reg, 1, data, 2, 1000);
 	return status;
 }
 
@@ -25,7 +25,7 @@ HAL_StatusTypeDef LTC4015_read16(uint8_t Reg, uint16_t *data)
 {
 	HAL_StatusTypeDef status;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, &Reg, 1, *data, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, &Reg, 1, *data, 2, 1000);
 	return status;
 }
 
@@ -33,9 +33,16 @@ HAL_StatusTypeDef LTC4015_read16(uint8_t Reg, uint16_t *data)
 void LTC4015_Init(void)
 {
 	HAL_StatusTypeDef status;
+	uint8_t data[3];
 	uint16_t RegConfigBits = 0b0000000000010100;
 
-	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
+	data[0] = REG_CONFIG_BITS;
+	data[2] = 0b00000000;
+	data[1] = 0b00010100;
+	status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 50);
+
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 1000);
+
 	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
 
 }
@@ -63,28 +70,35 @@ void LTC4015_GetPowerVal(void)
 	uint16_t RegConfigBits1 = 0x0014;
 	uint16_t RegConfigBits2 = 0x0000;
 
-	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0000, 2, 50);
-	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0014, 2, 50);
+	uint8_t data[3];
+
+	data[0] = REG_CONFIG_BITS;
+	data[2] = 0b00000000;
+	data[1] = 0b00010100;
+	status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 1000);
+
+	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0000, 2, 1000);
+	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0014, 2, 1000);
 
 	HAL_Delay(10);
 	osDelay(10);
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
 	Die_temp = (((received[1]<<8) | received[0])-12010)/45.6;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VIN, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VIN, 1, (uint8_t*)received, 2, 1000);
 	InputVoltage = ((received[1]<<8) | received[0])*1.648;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IIN, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IIN, 1, (uint8_t*)received, 2, 1000);
 	SysCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/4.0E-3;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VSYS, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VSYS, 1, (uint8_t*)received, 2, 1000);
 	SysVoltage 	 = ((received[1]<<8) | received[0])*1.648;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VBAT, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VBAT, 1, (uint8_t*)received, 2, 1000);
 	BatVoltage 	 = (((received[1]<<8) | received[0])*192.264E-6)*3;
 
-	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 50);
+	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 1000);
 	BatCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
 
 	//status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_MAX_CHARGE_TIMER, 1, (uint8_t*)received, 2, 50);
@@ -108,7 +122,7 @@ void LTC4015_GetSystemStatus(LTC4015_SystemStatus* status)
 	uint8_t i=0;
 	uint16_t tempstatus = 0xFF;
 
-	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 50);
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
 	tempstatus = ((received[1]<<8) | received[0]);
 
 	switch (tempstatus)
@@ -172,7 +186,7 @@ void LTC4015_GetChargerState(LTC4015_ChargerState* state)
 	uint8_t i=0;
 	uint16_t tempstate;
 
-	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 50);
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
 	tempstate = ((received[1]<<8) | received[0]);
 
 	switch (tempstate)

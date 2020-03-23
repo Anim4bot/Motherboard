@@ -30,13 +30,11 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	HAL_StatusTypeDef status;
-	uint8_t payload[1];
 
-
-	GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_15;
+	GPIO_InitStruct.Pin = FLEX_OLED_SCK_Pin|FLEX_OLED_MOSI_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	set_OLED_SYS_CS(LOW);
@@ -45,6 +43,7 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);		//CLK
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);		//CLK
 
+
     GPIO_InitStruct.Pin = FLEX_OLED_SCK_Pin|FLEX_OLED_MOSI_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -52,7 +51,7 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-	status = HAL_SPI_Transmit(&hspi2, &cmd, sizeof(cmd), 10);
+	status = HAL_SPI_Transmit(&hspi2, (uint8_t*)&cmd, 1, 1000);
 
 	set_OLED_SYS_CS(HIGH);
 
@@ -733,22 +732,24 @@ void Flex_OLED_Menus_Power()
 void Flex_OLED_Menu_Sensors(void)
 {
 	uint8_t buff1[48], buff2[48], buff3[48];
+	uint8_t xPos = 16;
 
 	//Flex_OLED_rectFill(156-2,32-4*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
 
-	Flex_OLED_setCursor(10,22);
-	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
+	Flex_OLED_setCursor(xPos,22);
+	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d  ", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
 	Flex_OLED_String(buff1, NORM);
 
-	Flex_OLED_setCursor(10,12);
-	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d", (int16_t)Sensor.IMU.Roll, (int16_t)Sensor.TempCharger);
+	Flex_OLED_setCursor(xPos,12);
+	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d  ", (int16_t)Sensor.IMU.Roll, (int16_t)Sensor.TempCharger);
 	Flex_OLED_String(buff2, NORM);
 
-	Flex_OLED_setCursor(10,2);
-	sprintf(buff3, "IR: %.4d     FAN: %.3d", (int16_t)Sensor.dist_IR, (int16_t)Sensor.Fan_Speed);
+	Flex_OLED_setCursor(xPos,2);
+	sprintf(buff3, "IR: %.4d     FAN: %.3d  ", (int16_t)Sensor.dist_IR, (int16_t)Sensor.Fan_Speed);
 	Flex_OLED_String(buff3, NORM);
 
 	Flex_OLED_Update();
+	osDelay(50);
 
 }
 
@@ -767,14 +768,14 @@ void Flex_OLED_Menus_Battery(void)
 
 	if(Charger.Power.InputVoltage > 12.00)
 	{
-/*
+
 		Flex_OLED_setCursor(60,16);
-		sprintf(buff1,"VIN  : %.2fV", (int16_t)Charger.Power.InputVoltage);
+		sprintf(buff1,"VIN  : %.2fV", Charger.Power.InputVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(60,6);
-		sprintf(buff2, "IBAT : %.2fA", (int16_t)Charger.Power.BatCurrent);
+		sprintf(buff2,"IBAT : %.2fA", Charger.Power.BatCurrent);
 		Flex_OLED_String(buff2, NORM);
-*/
+
 
 		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 		Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
@@ -806,17 +807,17 @@ void Flex_OLED_Menus_Battery(void)
 		sprintf(buff3,"Power : %dW", 11);
 		Flex_OLED_String(buff3, NORM);
 */
-/*
-		Flex_OLED_setCursor(2,22);
-		sprintf(buff1,"VBATT : %.2fV", Charger.Power.BatVoltage);
+
+		Flex_OLED_setCursor(10,22);
+		sprintf(buff1,"VBATT : %.2fV", Charger.Power.SysVoltage);
 		Flex_OLED_String(buff1, NORM);
-		Flex_OLED_setCursor(2,12);
-		sprintf(buff2,"IBATT : %.2fA", Charger.Power.BatCurrent);
+		Flex_OLED_setCursor(10,12);
+		sprintf(buff2,"IBATT : %.2fA", Charger.Power.SysCurrent);
 		Flex_OLED_String(buff2, NORM);
-		Flex_OLED_setCursor(2,2);
+		Flex_OLED_setCursor(10,2);
 		sprintf(buff3,"Power : %.2fW", Charger.Power.SysPower);
 		Flex_OLED_String(buff3, NORM);
-*/
+
 		Flex_OLED_Update();
 	}
 

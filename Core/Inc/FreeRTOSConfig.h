@@ -97,7 +97,7 @@
 /* USER CODE END 0 */       
 #endif
 
-#define configUSE_PREEMPTION                     1
+#define configUSE_PREEMPTION                     0
 #define configSUPPORT_STATIC_ALLOCATION          0
 #define configSUPPORT_DYNAMIC_ALLOCATION         1
 #define configUSE_IDLE_HOOK                      0

@@ -279,9 +279,6 @@ IMUSettings;
 
 
 
-HAL_StatusTypeDef LSM9DS1_Write8(uint8_t Reg, uint8_t data);
-uint8_t LSM9DS1_Read8(uint8_t Reg);
-uint16_t LSM9DS1_Read16(uint8_t Reg);
 void LSM9DS1_Init(void);
 HAL_StatusTypeDef LSM9DS1_ReadAcc(float *xAcc, float *yAcc, float *zAcc);
 HAL_StatusTypeDef LSM9DS1_readAngle(float *rollF, float *pitchF);
