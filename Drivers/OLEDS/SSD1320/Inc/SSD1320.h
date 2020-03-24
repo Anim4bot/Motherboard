@@ -119,6 +119,7 @@ typedef struct
 SSD1320_t;
 
 
+
 // RAW LCD functions
 HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd);
 HAL_StatusTypeDef ssd1320_WriteData(uint8_t cmd);

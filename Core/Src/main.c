@@ -762,8 +762,10 @@ static void MX_GPIO_Init(void)
 
 void StartTask_PwrMngt(void const * argument)
 {
-	LTC4015_ChargerState ChargerState = 0xFF;
-	LTC4015_SystemStatus SystemStatus = 0xFF;
+	LTC4015_ChargerState ChargerState = 0x0000;
+	LTC4015_SystemStatus SystemStatus = 0x0000;
+	LTC4015_ChargeStatus ChargeStatus = 0x0000;
+	LTC4015_LimitAlerts LimitAlerts = 0x0000;
 
 	set_PSU_3V3(ON);
 	set_MAIN_SWITCH(ON);
@@ -774,15 +776,16 @@ void StartTask_PwrMngt(void const * argument)
 
 	BIP_0();
 
-	LTC4015_Init();
 
 	for(;;)
 	{
 		RPi_PwrMngt();
 		Board_PwrMngt();
 
-		//LTC4015_GetChargerState(&ChargerState);
-		//LTC4015_GetSystemStatus(&SystemStatus);
+		LTC4015_GetChargerState(&ChargerState);
+		LTC4015_GetSystemStatus(&SystemStatus);
+		LTC4015_GetChargeStatus(&ChargeStatus);
+		LTC4015_GetLimitAlerts(&LimitAlerts);
 		LTC4015_GetPowerVal();
 
 		PWM_FAN = (uint16_t)(Sensor.TempPSU*15);
@@ -807,6 +810,7 @@ void StartTask_System(void const * argument)
 	//HoodServos_Init();
 
 	SSD1306_Init();
+	LTC4015_Init();
 
 	PWM_LED_PI = 0;
 	PWM_FAN = 500;

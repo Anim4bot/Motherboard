@@ -4,8 +4,10 @@
 
 Charger_st Charger;
 
-LTC4015_SystemStatus logSystemStatus[5] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-LTC4015_ChargerState logChargerState[5] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+LTC4015_SystemStatus logSystemStatus[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+LTC4015_ChargerState logChargerState[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+LTC4015_ChargerState logChargeStatus[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+LTC4015_ChargerState logLimitAlerts[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
 
 
 HAL_StatusTypeDef LTC4015_write16(uint8_t Reg, uint16_t Val)
@@ -78,6 +80,7 @@ void LTC4015_GetPowerVal(void)
 	status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 1000);
 
 	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0000, 2, 1000);
+
 	status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0014, 2, 1000);
 
 	HAL_Delay(10);
@@ -101,8 +104,6 @@ void LTC4015_GetPowerVal(void)
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 1000);
 	BatCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
 
-	//status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_MAX_CHARGE_TIMER, 1, (uint8_t*)received, 2, 50);
-	//ChargeTime 	 = ((received[1]<<8) | received[0]);
 
 	Charger.Power.Die_temp = Die_temp;								// Result in °C
 	Charger.Power.InputVoltage = ABS(InputVoltage/1000.0);			// in V
@@ -120,10 +121,10 @@ void LTC4015_GetSystemStatus(LTC4015_SystemStatus* status)
 	HAL_StatusTypeDef stat;
 	uint8_t received[2];
 	uint8_t i=0;
-	uint16_t tempstatus = 0xFF;
+	uint16_t tempstatus = 0x0000;
 
-	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
-	tempstatus = ((received[1]<<8) | received[0]);
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_SYSTEM_STATUS, 1, (uint8_t*)received, 2, 1000);
+	*status = ((received[1]<<8) | received[0]);
 
 	switch (tempstatus)
 	{
@@ -157,8 +158,8 @@ void LTC4015_GetSystemStatus(LTC4015_SystemStatus* status)
 		case vin_gt_vbat:
 			*status = vin_gt_vbat;
 		break;
-		case intvcc_gt_4p3v:
-			*status = intvcc_gt_4p3v;
+		case intvcc_gt_4p3:
+			*status = intvcc_gt_4p3;
 		break;
 		break;
 		case intvcc_gt_2p8v:
@@ -184,9 +185,9 @@ void LTC4015_GetChargerState(LTC4015_ChargerState* state)
 	HAL_StatusTypeDef stat;
 	uint8_t received[2];
 	uint8_t i=0;
-	uint16_t tempstate;
+	uint16_t tempstate = 0x0000;
 
-	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CHARGER_STATE, 1, (uint8_t*)received, 2, 1000);
 	tempstate = ((received[1]<<8) | received[0]);
 
 	switch (tempstate)
@@ -236,5 +237,119 @@ void LTC4015_GetChargerState(LTC4015_ChargerState* state)
 		i++;
 	}
 
-	Charger.ChargeState = *state;
+	Charger.ChargerState = *state;
+}
+
+
+void LTC4015_GetChargeStatus(LTC4015_ChargeStatus* status)
+{
+	HAL_StatusTypeDef stat;
+	uint8_t received[2];
+	uint8_t i=0;
+	uint16_t tempstate = 0x0000;
+
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CHARGE_STATUS, 1, (uint8_t*)received, 2, 1000);
+	tempstate = ((received[1]<<8) | received[0]);
+
+	switch (tempstate)
+	{
+		case vin_uvcl_active:
+			*status = vin_uvcl_active;
+		break;
+		case iin_limit_active:
+			*status = iin_limit_active;
+		break;
+		case constant_current:
+			*status = constant_current;
+		break;
+		case constant_voltage:
+			*status = constant_voltage;
+		break;
+		default:
+			*status = NOK;
+		break;
+	}
+
+	if(*status != logChargeStatus[i])
+	{
+		logChargerState[i] = *status;
+		if(i>9) { i=0; }
+		i++;
+	}
+
+	Charger.ChargeStatus = *status;
+}
+
+
+
+void LTC4015_GetLimitAlerts(LTC4015_LimitAlerts* alert)
+{
+	HAL_StatusTypeDef stat;
+	uint8_t received[2];
+	uint8_t i=0;
+	uint16_t temp = 0x0000;
+
+	stat = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_SYSTEM_STATUS, 1, (uint8_t*)received, 2, 1000);
+	temp = ((received[1]<<8) | received[0]);
+
+	switch (temp)
+	{
+		case meas_sys_valid_alert:
+			*alert = meas_sys_valid_alert;
+		break;
+		case qcount_lo_alert:
+			*alert = qcount_lo_alert;
+		break;
+		case qcount_hi_alert:
+			*alert = qcount_hi_alert;
+		break;
+		case vbat_lo_alert:
+			*alert = vbat_lo_alert;
+		break;
+		case vbat_hi_alert:
+			*alert = vbat_hi_alert;
+		break;
+		case vin_lo_alert:
+			*alert = vin_lo_alert;
+		break;
+		case vin_hi_alert:
+			*alert = vin_hi_alert;
+		break;
+		case vsys_lo_alert:
+			*alert = vsys_lo_alert;
+		break;
+		case vsys_hi_alert:
+			*alert = vsys_hi_alert;
+		break;
+		case iin_hi_alert:
+			*alert = iin_hi_alert;
+		break;
+		case ibat_lo_alert:
+			*alert = ibat_lo_alert;
+		break;
+		break;
+		case die_temp_hi_alert:
+			*alert = die_temp_hi_alert;
+		break;
+		case bsr_hi_alert:
+			*alert = bsr_hi_alert;
+		break;
+		case ntc_ratio_hi_alert:
+			*alert = ntc_ratio_hi_alert;
+		break;
+		case ntc_ratio_lo_alert:
+			*alert = ntc_ratio_lo_alert;
+		break;
+		default:
+			*alert = NOK;
+		break;
+	}
+
+	if(*alert != logSystemStatus[i])
+	{
+		logLimitAlerts[i] = *alert;
+		if(i>9) { i=0; }
+		i++;
+	}
+	Charger.LimitAlerts = *alert;
 }
