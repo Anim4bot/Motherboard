@@ -98,8 +98,7 @@ I2C2_Bus_enum I2C2_Bus = I2C2_Free;
 
 uint8_t CPUChargeBuff[8];
 uint8_t Flex_OLED_Initialized = FALSE;
-Flex_Oled_Menu_em Flex_Oled_Menu = Debug;
-Flex_Oled_Menu_em previousMenu = Standby;
+Flex_Oled_Menu_em Flex_Oled_Menu = Battery;
 
 uint16_t Rpi_Shutdown_ctr = 0;
 uint16_t Board_Shutdown_ctr = 0;
@@ -762,10 +761,12 @@ static void MX_GPIO_Init(void)
 
 void StartTask_PwrMngt(void const * argument)
 {
-	LTC4015_ChargerState ChargerState = 0x0000;
-	LTC4015_SystemStatus SystemStatus = 0x0000;
-	LTC4015_ChargeStatus ChargeStatus = 0x0000;
-	LTC4015_LimitAlerts LimitAlerts = 0x0000;
+	LTC4015_ChargerState chargerState = 0x0000;
+	LTC4015_ChargeStatus chargeStatus = 0x0000;
+	LTC4015_LimitAlerts limitAlerts = 0x0000;
+	LTC4015_ChargeStateAlerts stateAlerts = 0x0000;
+	LTC4015_ChargeStatusAlerts statusAlerts = 0x0000;
+	LTC4015_SystemStatus systemStatus = 0x0000;
 
 	set_PSU_3V3(ON);
 	set_MAIN_SWITCH(ON);
@@ -782,10 +783,12 @@ void StartTask_PwrMngt(void const * argument)
 		RPi_PwrMngt();
 		Board_PwrMngt();
 
-		LTC4015_GetChargerState(&ChargerState);
-		LTC4015_GetSystemStatus(&SystemStatus);
-		LTC4015_GetChargeStatus(&ChargeStatus);
-		LTC4015_GetLimitAlerts(&LimitAlerts);
+		LTC4015_GetChargerState(&chargerState);
+		LTC4015_GetChargeStatus(&chargeStatus);
+		LTC4015_GetLimitAlerts(&limitAlerts);
+		LTC4015_GetChargerStateAlerts(&stateAlerts);
+		LTC4015_GetChargeStatusAlerts(&statusAlerts);
+		LTC4015_GetSystemStatus(&systemStatus);
 		LTC4015_GetPowerVal();
 
 		PWM_FAN = (uint16_t)(Sensor.TempPSU*15);
@@ -860,7 +863,7 @@ void StartTask_Default(void const * argument)
 			set_LED_B0(ON);
 
 			Flex_Oled_Menu ++;
-			if(Flex_Oled_Menu > 5) { Flex_Oled_Menu = 1; }
+			if(Flex_Oled_Menu > 2) { Flex_Oled_Menu = 0; }
 			Flex_OLED_clearDisplay(CLEAR_ALL);
 			Flex_OLED_Update();
 			osDelay(100);
@@ -1000,42 +1003,28 @@ void StartTask_FlexOled(void const * argument)
 {
 	uint8_t OLED_Ready = 0;
 
-	uint8_t buff1[24], buff2[24],buff3[9];
-
 	osDelay(100);
 	Flex_OLED_Init();
 	OLED_Ready = Flex_OLED_StartupAnimation();
-	Flex_Oled_Menu = Battery;
-
 	Flex_OLED_setContrast(50);
 
 	for(;;)
 	{
-		if( (OLED_Ready) && (Flex_Oled_Menu != Standby) )
+		switch(Flex_Oled_Menu)
 		{
-			switch(Flex_Oled_Menu)
-			{
-				case Normal:
-					Flex_OLED_Menus_Normal();
-				break;
-				case Debug:
-					Flex_OLED_Menus_Debug();
-				break;
-				case Battery:
-					Flex_OLED_Menus_Battery();
-				break;
-				case PwrMngt:
-					Flex_OLED_Menus_Power();
-				break;
-				case Sensors:
-					Flex_OLED_Menu_Sensors();
-				break;
+			case Battery:
+				Flex_OLED_Menu_Battery();
+			break;
+			case Modes:
+				Flex_OLED_Menu_Modes();
+			break;
+			case Sensors:
+				Flex_OLED_Menu_Sensors();
+			break;
 
-				default:
-				break;
-			}
+			default:
+			break;
 		}
-		previousMenu = Flex_Oled_Menu;
 
 	}
 	osDelay(250);

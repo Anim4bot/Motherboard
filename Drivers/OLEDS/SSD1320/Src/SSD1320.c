@@ -2,7 +2,7 @@
 
 extern Sensors_st Sensor;
 extern Charger_st Charger;
-uint8_t previousMode = 0xFF, currentMode = 0xFF;
+uint8_t previousMode = 0xFE, currentMode = 0xFF;
 
 //uint8_t screenMemory[FLEX_OLED_BUFF_SIZE] = {0};
 static SSD1320_t SSD1320;
@@ -662,69 +662,15 @@ uint8_t Flex_OLED_StartupAnimation(void)
 
 
 
-void Flex_OLED_Menus_Normal()
+void Flex_OLED_Menu_Modes()
 {
 	int ctr;
 	uint8_t buff1[16];
 
 	Flex_OLED_setPixel(1, 1, WHITE, NORM);
-	Flex_OLED_setPixel(159, 1, WHITE, NORM);
+	Flex_OLED_setPixel(148, 1, WHITE, NORM);
 	Flex_OLED_setPixel(1, 31, WHITE, NORM);
-	Flex_OLED_setPixel(159, 31, WHITE, NORM);
-
-	Flex_OLED_Update();
-}
-
-
-void Flex_OLED_Menus_Debug()
-{
-	uint8_t buff1[16];
-
-	//Flex_OLED_rectFill(156-2,32-MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
-
-	Flex_OLED_setCursor(2,22);
-	sprintf(buff1, "DEBUG ");
-	Flex_OLED_String(buff1, NORM);
-
-	Flex_OLED_Update();
-}
-
-
-void Flex_OLED_Menus_Charging(uint8_t charge)
-{
-	uint8_t loop, i;
-
-	//Flex_OLED_rectFill(156-2,32-2*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
-
-	Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
-	Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
-	Flex_OLED_rectFill(6, 6, 18, 20, WHITE, NORM);		// battery charge
-
-	Flex_OLED_Update();
-/*
-	for(loop = 0; loop <1 ; loop++)
-	{
-		Flex_OLED_rectFill(6, 6, 28, 20, BLACK, NORM);
-		for (i=0 ; i<=28 ; i++)
-		{
-			Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
-			Flex_OLED_Update();
-			osDelay(15);
-		}
-	}
-	*/
-}
-
-
-void Flex_OLED_Menus_Power()
-{
-	uint8_t buff[16];
-
-	//Flex_OLED_rectFill(156-2,32-3*MenuCubeSize,MenuCubeSize,MenuCubeSize, WHITE, NORM);
-
-	Flex_OLED_setCursor(2,22);
-	sprintf(buff, "POWER");
-	Flex_OLED_String(buff, NORM);
+	Flex_OLED_setPixel(148, 31, WHITE, NORM);
 
 	Flex_OLED_Update();
 }
@@ -755,7 +701,7 @@ void Flex_OLED_Menu_Sensors(void)
 }
 
 
-void Flex_OLED_Menus_Battery(void)
+void Flex_OLED_Menu_Battery(void)
 {
 	uint8_t xOffset = 80;
 	uint8_t loop, i;
@@ -767,21 +713,19 @@ void Flex_OLED_Menus_Battery(void)
 
 	Flex_OLED_setContrast(50);
 
-	if(previousMode != currentMode)
-	{
-		Flex_OLED_clearDisplay(CLEAR_ALL);
-		Flex_OLED_Update();
-		osDelay(100);
-	}
 
-	if(Charger.Power.InputVoltage > 13.00)
+	if( (Charger.Power.InputVoltage > 11.50) && (Charger.Power.InputVoltage < 14.00) )
 	{
 		currentMode = 0;
-		Flex_OLED_setCursor(60,16);
-		sprintf(buff1,"VIN  : %.2fV", Charger.Power.InputVoltage);
+
+		Flex_OLED_setCursor(60,22);
+		sprintf(buff1,"Vbat: %2.2fV", Charger.Power.BatVoltage);
 		Flex_OLED_String(buff1, NORM);
-		Flex_OLED_setCursor(60,6);
-		sprintf(buff2,"IBAT : %.2fA", Charger.Power.BatCurrent);
+		Flex_OLED_setCursor(60,12);
+		sprintf(buff2,"Ibat: %2.2fA", Charger.Power.BatCurrent);
+		Flex_OLED_String(buff2, NORM);
+		Flex_OLED_setCursor(60,2);
+		sprintf(buff2,"Temp: %.2d", (uint16_t)Charger.Power.Die_temp);
 		Flex_OLED_String(buff2, NORM);
 
 
@@ -806,20 +750,27 @@ void Flex_OLED_Menus_Battery(void)
 	{
 		currentMode = 1;
 		Flex_OLED_setCursor(10,22);
-		sprintf(buff1,"VBATT : %.2fV", Charger.Power.SysVoltage);
+		sprintf(buff1,"VBATT : %2.2fV", Charger.Power.SysVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(10,12);
-		sprintf(buff2,"IBATT : %.2fA", Charger.Power.SysCurrent);
+		sprintf(buff2,"IBATT : %2.2fA", Charger.Power.SysCurrent);
 		Flex_OLED_String(buff2, NORM);
 		Flex_OLED_setCursor(10,2);
-		sprintf(buff3,"Power : %.2fW", Charger.Power.SysPower);
+		sprintf(buff3,"Power : %2.2fW", Charger.Power.SysPower);
 		Flex_OLED_String(buff3, NORM);
 
 		Flex_OLED_Update();
+
+	}
+
+	if(previousMode != currentMode)
+	{
+		Flex_OLED_clearDisplay(CLEAR_ALL);
+		Flex_OLED_Update();
+		osDelay(100);
 	}
 
 	previousMode = currentMode;
-
 }
 
 

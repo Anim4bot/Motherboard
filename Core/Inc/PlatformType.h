@@ -225,12 +225,10 @@ Sensors_st;
 
 typedef enum
 {
-	Standby  = 0,
-	Normal   = 1,
-	Debug    = 2,
-	Battery = 3,
-	PwrMngt  = 4,
-	Sensors  = 5
+	Battery  = 0,
+	Sensors  = 1,
+	Modes    = 2
+
 }
 Flex_Oled_Menu_em;
 
