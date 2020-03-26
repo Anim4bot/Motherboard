@@ -2,7 +2,7 @@
 #include "LTC4015_formats.h"
 //#include "LTC4015_reg_defs.h"
 
-Charger_st Charger;
+
 
 LTC4015_SystemStatus logSystemStatus[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
 LTC4015_ChargerState logChargerState[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
@@ -36,16 +36,12 @@ void LTC4015_Init(void)
 {
 	HAL_StatusTypeDef status;
 	uint8_t data[3];
-	uint16_t RegConfigBits = 0b0000000000010100;
 
 	data[0] = REG_CONFIG_BITS;
-	data[2] = 0b00000000;
 	data[1] = 0b00010100;
-	//status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 50);
+	data[2] = 0b00000000;
 
-	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 1000);
-
-	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, (uint16_t*)RegConfigBits, 2, 50);
+	status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 1000);
 
 }
 
@@ -68,14 +64,8 @@ HAL_StatusTypeDef LTC4015_GetPowerVal(void)
 	float BatCurrent = 0xFFFF;
 	float SysCurrent = 0xFFFF;
 
-	uint8_t data[3];
-
-	data[0] = REG_CONFIG_BITS;
-	data[2] = 0b00000000;
-	data[1] = 0b00010100;
-
 	//status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 1000);
-	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0x0014, 2, 1000);
+	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0b0000000000001010, 2, 1000);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
 	Die_temp = (((received[1]<<8) | received[0])-12010)/45.6;
@@ -94,6 +84,9 @@ HAL_StatusTypeDef LTC4015_GetPowerVal(void)
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 1000);
 	BatCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
+
+
+	// ADD FILTERING !!!
 
 
 	Charger.Power.Die_temp = Die_temp;								// Result in °C

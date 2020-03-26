@@ -148,7 +148,7 @@ void Flex_OLED_lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_
 void Flex_OLED_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
 void Flex_OLED_rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
 
-uint8_t Flex_OLED_StartupAnimation(void);
+uint8_t Flex_OLED_StartupAnimation(uint8_t speed);
 void Flex_OLED_Menu_Modes(void);
 void Flex_OLED_Menu_Sensors(void);
 void Flex_OLED_Menu_Battery(void);

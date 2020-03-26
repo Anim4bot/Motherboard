@@ -266,5 +266,6 @@ typedef struct
 }
 Charger_st;
 
+Charger_st Charger;
 
 #endif /* LTC4015_H_ */

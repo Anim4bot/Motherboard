@@ -233,6 +233,14 @@ typedef enum
 Flex_Oled_Menu_em;
 
 
+typedef struct
+{
+	Flex_Oled_Menu_em OLED_Menu;
+	uint8_t OLED_Contrast;
+	uint8_t LogoDelay;
+
+}OLED_st;
+
 typedef enum
 {
 	Closed  = 0,
@@ -240,9 +248,6 @@ typedef enum
 	Undef    = 2
 }
 HoodStatus_em;
-
-
-
 
 
 typedef struct
@@ -253,6 +258,19 @@ typedef struct
 	uint16_t NeckYaw_pos;
 }
 Head_st;
+
+
+typedef struct
+{
+	Head_st Head;
+	OLED_st OLED;
+	Sensors_st Sensors;
+	//Charger_st Charger;
+
+}
+Robot_st;
+
+Robot_st Robot;
 
 
 #endif /* INC_PLATFORMTYPE_H_ */

@@ -786,10 +786,29 @@ void StartTask_PwrMngt(void const * argument)
 		LTC4015_GetChargerState(&chargerState);
 		LTC4015_GetChargeStatus(&chargeStatus);
 		LTC4015_GetLimitAlerts(&limitAlerts);
-		LTC4015_GetChargerStateAlerts(&stateAlerts);
-		LTC4015_GetChargeStatusAlerts(&statusAlerts);
-		LTC4015_GetSystemStatus(&systemStatus);
+		//LTC4015_GetChargerStateAlerts(&stateAlerts);
+		//LTC4015_GetChargeStatusAlerts(&statusAlerts);
+		//LTC4015_GetSystemStatus(&systemStatus);
 		LTC4015_GetPowerVal();
+
+		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.75)) && (Input.SIG_SYS == GPIO_PIN_SET) )
+		{
+			set_LED_ERR(ON);
+			BIP_0();
+			//Board_Shutdown_ctr++;
+		}
+/*
+		else
+		{
+			set_LED_ERR(OFF);
+			Board_Shutdown_ctr = 0;
+		}
+
+		if(Board_Shutdown_ctr == 15)
+		{
+			BoardShutdownProcedure();
+		}
+*/
 
 		PWM_FAN = (uint16_t)(Sensor.TempPSU*15);
 		Sensor.Fan_Speed = PWM_FAN;
@@ -921,17 +940,7 @@ void Board_PwrMngt(void)
 			osDelay(50);
 		}
 
-		BIP_3();
-		osDelay(1000);
-		set_PSU_5V(OFF);
-		osDelay(500);
-		set_PSU_DRS0101(OFF);
-		osDelay(1000);
-		set_MAIN_SWITCH(OFF);
-		osDelay(1000);
-		set_LED_ERR(OFF);
-		set_PSU_3V3(OFF);
-
+		BoardShutdownProcedure();
 	}
 
 }
@@ -1005,29 +1014,33 @@ void StartTask_FlexOled(void const * argument)
 
 	osDelay(100);
 	Flex_OLED_Init();
-	OLED_Ready = Flex_OLED_StartupAnimation();
-	Flex_OLED_setContrast(50);
+	Robot.OLED.OLED_Contrast = 50;
+	Flex_OLED_setContrast(Robot.OLED.OLED_Contrast);
+	OLED_Ready = Flex_OLED_StartupAnimation(10);
 
 	for(;;)
 	{
-		switch(Flex_Oled_Menu)
+		if( (OLED_Ready == OK) && (Input.SIG_SYS == GPIO_PIN_SET) )
 		{
-			case Battery:
-				Flex_OLED_Menu_Battery();
-			break;
-			case Modes:
-				Flex_OLED_Menu_Modes();
-			break;
-			case Sensors:
-				Flex_OLED_Menu_Sensors();
-			break;
+			switch(Flex_Oled_Menu)
+			{
+				case Battery:
+					Flex_OLED_Menu_Battery();
+				break;
+				case Modes:
+					Flex_OLED_Menu_Modes();
+				break;
+				case Sensors:
+					Flex_OLED_Menu_Sensors();
+				break;
 
-			default:
-			break;
+				default:
+				break;
+			}
 		}
-
+		osDelay(250);
 	}
-	osDelay(250);
+
 }
 
 

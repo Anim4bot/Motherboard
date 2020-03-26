@@ -11,4 +11,6 @@ void BIP_1(void);
 void BIP_2(void);
 void BIP_3(void);
 
+void BoardShutdownProcedure(void);
+
 #endif /* INC_SUBROUTINES_H_ */
