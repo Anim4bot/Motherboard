@@ -47,11 +47,13 @@ typedef struct
 SSD1306_RIGHT_st;
 
 
+
 extern unsigned char EyeL[];
 extern unsigned char EyeR[];
 
 extern unsigned char EyeL_v1[];
 extern unsigned char EyeR_v1[];
+
 
 
 //  Function definitions
@@ -98,6 +100,5 @@ void SSD1306_fillCircleLeft(int16_t x0, int16_t y0, int16_t r, uint8_t corners, 
 void SSD1306_fillCircleRight(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, uint16_t color);
 void SSD1306_fillRoundRectLeft(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
 void SSD1306_fillRoundRectRight(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
-
 
 #endif

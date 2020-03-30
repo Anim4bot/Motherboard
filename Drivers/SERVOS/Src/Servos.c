@@ -1,4 +1,5 @@
 #include "Servos.h"
+#include "Robot.h"
 
 Head_st Head;
 

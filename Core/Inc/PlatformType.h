@@ -6,6 +6,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "math.h"
+/*
 #include "DRS0101.h"
 #include "SSD1306.h"
 #include "SSD1320.h"
@@ -15,6 +17,8 @@
 #include "ADC101.h"
 #include "LSM9DS1.h"
 #include "Servos.h"
+#include "EyeAnimations.h"
+*/
 
 #define ON  	1
 #define HIGH 	1
@@ -190,7 +194,8 @@ typedef struct
 }
 Input_st;
 
-
+/********************************************************************************************/
+/*
 typedef struct
 {
 	uint8_t Up;
@@ -223,23 +228,6 @@ typedef struct
 Sensors_st;
 
 
-typedef enum
-{
-	Battery  = 0,
-	Sensors  = 1,
-	Modes    = 2
-
-}
-Flex_Oled_Menu_em;
-
-
-typedef struct
-{
-	Flex_Oled_Menu_em OLED_Menu;
-	uint8_t OLED_Contrast;
-	uint8_t LogoDelay;
-
-}OLED_st;
 
 typedef enum
 {
@@ -256,21 +244,21 @@ typedef struct
 	uint16_t EarR_pos;
 	uint16_t NeckPith_pos;
 	uint16_t NeckYaw_pos;
+	//Eyes_enum Eyes;
 }
 Head_st;
 
-
 typedef struct
 {
+	Eyes_st Eyes;
 	Head_st Head;
 	OLED_st OLED;
 	Sensors_st Sensors;
-	//Charger_st Charger;
+	Charger_st Charger;
 
 }
 Robot_st;
-
 Robot_st Robot;
-
+*/
 
 #endif /* INC_PLATFORMTYPE_H_ */

@@ -1,9 +1,9 @@
 #include "SSD1320.h"
+#include "Robot.h"
 
-extern Sensors_st Sensor;
-extern Charger_st Charger;
 uint8_t previousMode = 0, currentMode = 0;
 uint8_t color = 1;
+
 
 //uint8_t screenMemory[FLEX_OLED_BUFF_SIZE] = {0};
 static SSD1320_t SSD1320;
@@ -704,7 +704,7 @@ void Flex_OLED_Menu_Sensors(void)
 void Flex_OLED_Menu_Battery(void)
 {
 	uint8_t xOffset = 80;
-	uint8_t loop, i;
+	uint8_t loop, i, j;
 	uint8_t buff1[32], buff2[32], buff3[32];
 	volatile uint8_t test[2];
 	volatile uint16_t tdata;
@@ -759,10 +759,8 @@ void Flex_OLED_Menu_Battery(void)
 		Flex_OLED_String(buff3, NORM);
 
 		color = !color;
-		Flex_OLED_setPixel(1, 1, color, NORM);
-		Flex_OLED_setPixel(148, 1, color, NORM);
-		Flex_OLED_setPixel(1, 31, color, NORM);
-		Flex_OLED_setPixel(148, 31, color, NORM);
+		Flex_OLED_setPixel(149, 1, color, NORM);
+		Flex_OLED_setPixel(149, 31, color, NORM);
 
 		Flex_OLED_Update();
 	}

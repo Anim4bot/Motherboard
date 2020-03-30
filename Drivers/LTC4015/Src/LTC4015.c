@@ -1,7 +1,6 @@
 #include "LTC4015.h"
 #include "LTC4015_formats.h"
-//#include "LTC4015_reg_defs.h"
-
+#include "Robot.h"
 
 
 LTC4015_SystemStatus logSystemStatus[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
@@ -35,6 +34,8 @@ HAL_StatusTypeDef LTC4015_read16(uint8_t Reg, uint16_t *data)
 void LTC4015_Init(void)
 {
 	HAL_StatusTypeDef status;
+	float SysCurrent = 0;
+	uint8_t received[2];
 	uint8_t data[3];
 
 	data[0] = REG_CONFIG_BITS;
@@ -46,47 +47,45 @@ void LTC4015_Init(void)
 }
 
 
-LTC4015_GlobalState LTC4015_Mngt(void)
-{
-
-}
-
-
 HAL_StatusTypeDef LTC4015_GetPowerVal(void)
 {
 	HAL_StatusTypeDef status;
 
 	uint8_t received[2];
-	float Die_temp = 0xFFFF;
-	float InputVoltage = 0xFFFF;
-	float SysVoltage = 0xFFFF;
-	float BatVoltage = 0xFFFF;
-	float BatCurrent = 0xFFFF;
-	float SysCurrent = 0xFFFF;
+	float tempdata = 0;
+	float Die_temp = 0;
+	float InputVoltage = 0;
+	float SysVoltage = 0;
+	float BatVoltage = 0;
+	float BatCurrent = 0;
+	float SysCurrent = 0;
 
-	//status = HAL_I2C_Master_Transmit(&LTC4015_I2C_PORT, LTC4015_ADDR, &data, 3, 1000);
-	//status = HAL_I2C_Mem_Write(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_CONFIG_BITS, 1, 0b0000000000001010, 2, 1000);
+	float C1 = 0.50;
+	float C2 = (1 - C1);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_DIE_TEMP, 1, (uint8_t*)received, 2, 1000);
 	Die_temp = (((received[1]<<8) | received[0])-12010)/45.6;
+	//Die_temp  = (uint16_t)(C1 * (Die_temp) ) + (C2 * dietemptemp);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VIN, 1, (uint8_t*)received, 2, 1000);
 	InputVoltage = ((received[1]<<8) | received[0])*1.648;
+	//InputVoltage  = (uint16_t)(C1 * (InputVoltage) ) + (C2 * inputvolttemp);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IIN, 1, (uint8_t*)received, 2, 1000);
-	SysCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/4.0E-3;
+	SysCurrent = (((received[1]<<8) | received[0])*1.46487E-6)/4.0E-3;
+	//SysCurrent  = (uint16_t)(C1 * (SysCurrent) ) + (C2 * syscurrtemp);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VSYS, 1, (uint8_t*)received, 2, 1000);
-	SysVoltage 	 = ((received[1]<<8) | received[0])*1.648;
+	SysVoltage = ((received[1]<<8) | received[0])*1.648;
+	//SysVoltage  = (uint16_t)(C1 * (SysVoltage) ) + (C2 * sysvolttemp);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_VBAT, 1, (uint8_t*)received, 2, 1000);
-	BatVoltage 	 = (((received[1]<<8) | received[0])*192.264E-6)*3;
+	BatVoltage = (((received[1]<<8) | received[0])*192.264E-6)*3;
+	//BatVoltage  = (uint16_t)(C1 * (BatVoltage) ) + (C2 * batvolttemp);
 
 	status = HAL_I2C_Mem_Read(&LTC4015_I2C_PORT, LTC4015_ADDR, REG_IBAT, 1, (uint8_t*)received, 2, 1000);
-	BatCurrent 	 = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
-
-
-	// ADD FILTERING !!!
+	BatCurrent = (((received[1]<<8) | received[0])*1.46487E-6)/20.0E-3;
+	//BatCurrent  = (uint16_t)(C1 * (BatCurrent) ) + (C2 * batcurrtemp);
 
 
 	Charger.Power.Die_temp = Die_temp;								// Result in °C

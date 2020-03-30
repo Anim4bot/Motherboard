@@ -8,6 +8,8 @@ SSD1306_LEFT_st SSD1306_Left;
 SSD1306_RIGHT_st SSD1306_Right;
 
 
+
+
 HAL_StatusTypeDef SSD1306_WriteCmdRight(uint8_t command)
 {
 	HAL_StatusTypeDef status;

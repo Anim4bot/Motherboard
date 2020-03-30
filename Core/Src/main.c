@@ -7,8 +7,7 @@
 
 #include "PlatformType.h"
 #include "SubRoutines.h"
-
-
+#include "Robot.h"
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
@@ -84,10 +83,13 @@ void I2C_Device_Check(void);
 extern void vTaskGetRunTimeStats( char *pcWriteBuffer );
 
 /* User variables ---------------------------------------------------*/
+
+
+
 Input_st Input;
 Gesture_st Gesture;
 Sensors_st Sensor;
-extern Charger_st Charger;
+
 
 DeviceStatus_enum ITG3205_Status;
 DeviceStatus_enum ADXL345_Status;
@@ -786,9 +788,6 @@ void StartTask_PwrMngt(void const * argument)
 		LTC4015_GetChargerState(&chargerState);
 		LTC4015_GetChargeStatus(&chargeStatus);
 		LTC4015_GetLimitAlerts(&limitAlerts);
-		//LTC4015_GetChargerStateAlerts(&stateAlerts);
-		//LTC4015_GetChargeStatusAlerts(&statusAlerts);
-		//LTC4015_GetSystemStatus(&systemStatus);
 		LTC4015_GetPowerVal();
 
 		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.75)) && (Input.SIG_SYS == GPIO_PIN_SET) )
@@ -1038,7 +1037,7 @@ void StartTask_FlexOled(void const * argument)
 				break;
 			}
 		}
-		osDelay(250);
+		osDelay(100);
 	}
 
 }
@@ -1073,15 +1072,6 @@ void StartTask_Sensors(void const * argument)
 		ADC101_ReadIR(&IR_Val);
 		LSM9DS1_ReadAngle(&Roll, &Pitch);
 		//LSM9DS1_ReadGyro(&rotX, &rotY, &rotZ);
-		osDelay(10);
-
-
-		if(ADXL345_Status == Ready)
-		{
-			//I2C2_Bus = I2C2_Busy;
-			//ADXL345B_readAngle(&Roll, &Pitch);
-			//I2C2_Bus = I2C2_Free;
-		}
 
 		Sensor.IMU.Pitch   	= Pitch;
 		Sensor.IMU.Roll    	= Roll;
@@ -1090,7 +1080,7 @@ void StartTask_Sensors(void const * argument)
 		Sensor.TempAverage  = Temp_AVG;
 		Sensor.dist_IR		= IR_Val;
 
-		osDelay(150);
+		osDelay(50);
 	}
 }
 
@@ -1124,13 +1114,16 @@ void StartTask_Bluetooth(void const * argument)
 
 void StartTask_Behavior(void const * argument)
 {
+
+	Robot.Eyes.Contrast = 50;
+
 	osDelay(3000);
-	Eyes_WakeUp();
+	Eyes_WakingUp(medium);
 
 	for(;;)
 	{
 		osDelay(7500);
-		Eyes_BlinkLow();
+		Eyes_Blink();
 	}
 
 }

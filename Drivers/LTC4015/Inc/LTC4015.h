@@ -6,10 +6,8 @@
 
 extern I2C_HandleTypeDef hi2c2;
 
-
 #define LTC4015_I2C_PORT	hi2c2
 #define LTC4015_ADDR 		0xD0
-
 
 #define REG_VBAT_LO_ALERT_LIMIT 		0x01 //R/W 15:0 Battery voltage low alert limit, signed, same format as VBAT (0x3A)
 #define REG_REG_VBAT_HI_ALERT_LIMIT 	0x02 //R/W 15:0 Battery voltage high alert limit, signed, same format as VBAT (0x3A)
@@ -227,45 +225,7 @@ typedef enum
 LTC4015_SystemStatus;
 
 
-typedef struct
-{
-	float Die_temp;
-	float InputVoltage;
-	float SysVoltage;
-	float SysCurrent;
-	float SysPower;
-	float BatVoltage;
-	float BatCurrent;
-	float BatPower;
-}
-LTC4015_Power_st;
 
 
-typedef enum
-{
-	Discharging,
-	Charging,
-	Charged,
-	Alert,
-	TempHigh,
-	Pause
-}
-LTC4015_GlobalState;
-
-
-typedef struct
-{
-	LTC4015_Power_st Power;
-	LTC4015_SystemStatus SystemStatus;
-	LTC4015_ChargerState ChargerState;
-	LTC4015_ChargeStatus ChargeStatus;
-	LTC4015_LimitAlerts LimitAlerts;
-	LTC4015_ChargeStatusAlerts ChargeStatusAlerts;
-	LTC4015_ChargeStateAlerts ChargeStateAlerts;
-	//LTC4015_GlobalState GlobalState;
-}
-Charger_st;
-
-Charger_st Charger;
 
 #endif /* LTC4015_H_ */

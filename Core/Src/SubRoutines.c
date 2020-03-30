@@ -1,5 +1,6 @@
 #include "SubRoutines.h"
 #include "PlatformType.h"
+#include "Robot.h"
 
 void BIP_0(void)
 {
@@ -57,13 +58,12 @@ void BoardShutdownProcedure(void)
 	for(i=Robot.OLED.OLED_Contrast ; i>1 ; i--)
 	{
 		Flex_OLED_setContrast(i);
-		osDelay(5);
+		osDelay(2);
 	}
 
-	osDelay(1000);
+	osDelay(1500);
 	set_MAIN_SWITCH(OFF);
-	osDelay(1000);
-	set_LED_ERR(OFF);
+	osDelay(500);
 	set_PSU_3V3(OFF);
 
 }

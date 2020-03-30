@@ -213,6 +213,10 @@ ServoStatus;
 #define DRS0101_WLED   	0x1C	//White
 #define DRS0101_Ignore  0xFF
 
+
+
+
+//SERVOS ID
 #define ID_COXA_RF		0x01
 #define ID_COXA_RM		0x02
 #define ID_COXA_RR		0x03
@@ -226,6 +230,36 @@ ServoStatus;
 #define ID_FEMUR_LF		0x08
 #define ID_FEMUR_LM		0x14
 #define ID_FEMUR_LR		0x18
+
+
+/*
+#define ID_SERVO_LF_COXA  0x
+#define ID_SERVO_LF_FEMUR 0x
+#define ID_SERVO_LF_TIBIA 0x
+
+#define ID_SERVO_LM_COXA  0x
+#define ID_SERVO_LM_FEMUR 0x
+#define ID_SERVO_LM_TIBIA 0x
+
+#define ID_SERVO_LR_COXA  0x
+#define ID_SERVO_LR_FEMUR 0x
+#define ID_SERVO_LR_TIBIA 0x
+
+#define ID_SERVO_RF_COXA  0x
+#define ID_SERVO_RF_FEMUR 0x
+#define ID_SERVO_RF_TIBIA 0x
+
+#define ID_SERVO_RM_COXA  0x
+#define ID_SERVO_RM_FEMUR 0x
+#define ID_SERVO_RM_TIBIA 0x
+
+#define ID_SERVO_RR_COXA  0x
+#define ID_SERVO_RR_FEMUR 0x
+#define ID_SERVO_RR_TIBIA 0x
+ */
+
+
+
 
 void DRS0101_Reboot(uint8_t id);
 void DRS0101_Clear(uint8_t id);
