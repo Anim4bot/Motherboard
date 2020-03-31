@@ -2,11 +2,13 @@
 #include "EyeAnimations.h"
 #include "Robot.h"
 
+//SSD1306_fillRoundRectLeft(x, y, width, height, radius, color)
 
-uint8_t Pupil_x		= 22;
-uint8_t Pupil_y 	= 8;
-uint8_t Pupil_width = 20;
-uint8_t Pupil_heigh = 30;
+uint8_t Pupil_x	 	 = 22;
+uint8_t Pupil_y 	 = 8;
+uint8_t Pupil_width  = 24;
+uint8_t Pupil_height = 32;
+uint8_t Pupil_radius = 4;
 
 
 void Eyes_WakingUp(AnimSpeed_enum speed)
@@ -16,27 +18,27 @@ void Eyes_WakingUp(AnimSpeed_enum speed)
 
 	Robot.Eyes.Expression = WakingUp;
 
-	for(i=0 ; i<=30 ; i++)
+	for(i=0 ; i<=Pupil_height ; i++)
 	{
-		SSD1306_fillRoundRectLeft(22, y_offset, 20, i, 4, White);
-		SSD1306_fillRoundRectRight(22, y_offset, 20, i, 4, White);
+		SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
 		osDelay(speed);
 	}
 	osDelay(200);
-	SSD1306_fillRoundRectLeft(22, y_offset, 20, 30, 4, White);
-	SSD1306_fillRoundRectRight(22, y_offset, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	osDelay(200);
-	SSD1306_fillRoundRectLeft(22, y_offset, 20, 0, 4, White);
-	SSD1306_fillRoundRectRight(22, y_offset, 20, 0, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, y_offset, 20, 30, 4, White);
-	SSD1306_fillRoundRectRight(22, y_offset, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, y_offset, 20, 0, 4, White);
-	SSD1306_fillRoundRectRight(22, y_offset, 20, 0, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, y_offset, 20, 30, 4, White);
-	SSD1306_fillRoundRectRight(22, y_offset, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 
 }
 
@@ -48,25 +50,29 @@ void Eyes_GoingToSleep(AnimSpeed_enum speed)
 
 	Robot.Eyes.Expression = GoingToSleep;
 
-	for(i=30 ; i>=1 ; i--)
+	for(i=Pupil_height ; i>=2 ; i--)
 	{
-		SSD1306_fillRoundRectLeft(22, y_offset, 20, i, 4, White);
-		SSD1306_fillRoundRectRight(22, y_offset, 20, i, 4, White);
+		SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
 		osDelay(speed);
 	}
 }
 
 
 
-void Eyes_Sleeping(void)
+void Eyes_Sleeping(uint8_t speed)
 {
-	//SSD1306_dim()
 	osDelay(100);
 
 	Robot.Eyes.Expression = Sleeping;
 
-	SSD1306_fillRoundRectLeft(22, 8, 20, 0, 4, White);
-	SSD1306_fillRoundRectRight(22, 8, 20, 0, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 2, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 2, Pupil_radius, White);
+
+	SSD1306_dim(Robot.Eyes.Contrast, Robot.Eyes.Contrast+50, speed);
+	SSD1306_dim(Robot.Eyes.Contrast, Robot.Eyes.Contrast-50, speed);
+	osDelay(1000);
+
 }
 
 void Eyes_Sleepy(void)
@@ -80,8 +86,8 @@ void Eyes_Neutral(void)
 	Robot.Eyes.Expression = Neutral;
 
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, 8, 20, 30, 4, White);
-	SSD1306_fillRoundRectRight(22, 8, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 }
 
 void Eyes_Blink(void)
@@ -90,11 +96,11 @@ void Eyes_Blink(void)
 	Robot.Eyes.Expression = Blink;
 
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, 8, 20, 0, 4, White);
-	SSD1306_fillRoundRectRight(22, 8, 20, 0, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, 8, 20, 30, 4, White);
-	SSD1306_fillRoundRectRight(22, 8, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	/*
 	SSD1306_SetContrastLeft(0);
 	SSD1306_SetContrastRight(0);
@@ -118,18 +124,18 @@ void Eyes_BlinkLeft(void)
 {
 	Robot.Eyes.Expression = BlinkLeft;
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, 8, 20, 0, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectLeft(22, 8, 20, 30, 4, White);
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 }
 
 void Eyes_BlinkRight(void)
 {
 	Robot.Eyes.Expression = BlinkRight;
 	osDelay(100);
-	SSD1306_fillRoundRectRight(22, 8, 20, 0, 4, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
-	SSD1306_fillRoundRectRight(22, 8, 20, 30, 4, White);
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 }
 
 void Eyes_Happy(void)

@@ -1118,12 +1118,16 @@ void StartTask_Behavior(void const * argument)
 	Robot.Eyes.Contrast = 50;
 
 	osDelay(3000);
-	Eyes_WakingUp(medium);
+	Eyes_WakingUp(fast);
+	osDelay(3000);
+	Eyes_GoingToSleep(medium);
 
 	for(;;)
 	{
-		osDelay(7500);
-		Eyes_Blink();
+		osDelay(500);
+		Eyes_Sleeping(fast);
+		//osDelay(7500);
+		//Eyes_Blink();
 	}
 
 }

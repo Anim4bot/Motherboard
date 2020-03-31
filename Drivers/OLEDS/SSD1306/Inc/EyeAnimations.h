@@ -34,9 +34,10 @@ Expressions_enum;
 
 typedef enum
 {
-	fast   = 1,
-	medium = 2,
-	slow   = 3
+	fast     = 1,
+	medium   = 2,
+	slow     = 3,
+	verySlow = 5
 }
 AnimSpeed_enum;
 

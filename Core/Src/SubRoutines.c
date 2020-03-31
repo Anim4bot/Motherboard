@@ -50,6 +50,7 @@ void BoardShutdownProcedure(void)
 	uint8_t i;
 
 	BIP_3();
+	Eyes_GoingToSleep(medium);
 	osDelay(1000);
 	set_PSU_5V(OFF);
 	osDelay(500);
