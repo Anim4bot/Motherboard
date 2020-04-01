@@ -1,5 +1,5 @@
 #include "SSD1306.h"
-
+#include "Robot.h"
 
 uint8_t SSD1306_Buff_L[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 uint8_t SSD1306_Buff_R[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
@@ -160,12 +160,13 @@ void SSD1306_dim(uint8_t start, uint8_t end, uint8_t speed)
 {
 	uint8_t i=0;
 	uint8_t dimVal;
+	volatile uint8_t test;
 
 	dimVal = ABS(end-start);
 
-	if(start <= end)
+	if(start < end)
 	{
-		for(i=start ; i<=dimVal ; i++)
+		for(i=start ; i<=end ; i++)
 		{
 			SSD1306_WriteCmdRight(0x81);
 			SSD1306_WriteCmdRight(i);
@@ -173,12 +174,12 @@ void SSD1306_dim(uint8_t start, uint8_t end, uint8_t speed)
 			SSD1306_WriteCmdLeft(i);
 			SSD1306_UpdateRight();
 			SSD1306_UpdateLeft();
-			osDelay(speed);
+			HAL_Delay(speed);
 		}
 	}
-	if(start >= end)
+	else if(start > end)
 	{
-		for(i=start ; i>=dimVal ; i--)
+		for(i=start ; i>=end ; i--)
 		{
 			SSD1306_WriteCmdRight(0x81);
 			SSD1306_WriteCmdRight(i);
@@ -186,9 +187,20 @@ void SSD1306_dim(uint8_t start, uint8_t end, uint8_t speed)
 			SSD1306_WriteCmdLeft(i);
 			SSD1306_UpdateRight();
 			SSD1306_UpdateLeft();
-			osDelay(speed);
+			HAL_Delay(speed);
 		}
 	}
+	else
+	{
+		SSD1306_WriteCmdRight(0x81);
+		SSD1306_WriteCmdRight(start);
+		SSD1306_WriteCmdLeft(0x81);
+		SSD1306_WriteCmdLeft(start);
+		SSD1306_UpdateRight();
+		SSD1306_UpdateLeft();
+	}
+
+	Robot.Eyes.Contrast = end;
 }
 
 
@@ -723,7 +735,7 @@ void SSD1306_fillRoundRectLeft(int16_t x, int16_t y, int16_t w, int16_t h, int16
     SSD1306_fillCircleLeft(x+w-r-1, y+r, r, 1, h-2*r-1, color);
     SSD1306_fillCircleLeft(x+r    , y+r, r, 2, h-2*r-1, color);
 
-    SSD1306_UpdateLeft();
+    //SSD1306_UpdateLeft();
 }
 
 void SSD1306_fillRoundRectRight(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
@@ -740,6 +752,6 @@ void SSD1306_fillRoundRectRight(int16_t x, int16_t y, int16_t w, int16_t h, int1
     SSD1306_fillCircleRight(x+w-r-1, y+r, r, 1, h-2*r-1, color);
     SSD1306_fillCircleRight(x+r    , y+r, r, 2, h-2*r-1, color);
 
-    SSD1306_UpdateRight();
+    //SSD1306_UpdateRight();
 }
 

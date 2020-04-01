@@ -1114,18 +1114,20 @@ void StartTask_Bluetooth(void const * argument)
 
 void StartTask_Behavior(void const * argument)
 {
+	int8_t i=0,j=0;
 
 	Robot.Eyes.Contrast = 50;
 
-	osDelay(3000);
-	Eyes_WakingUp(fast);
-	osDelay(3000);
-	Eyes_GoingToSleep(medium);
+	osDelay(1500);
+	Eyes_WakingUp(medium);
+	osDelay(1000);
+	Eyes_Happy();
 
 	for(;;)
 	{
 		osDelay(500);
-		Eyes_Sleeping(fast);
+
+		//Eyes_Sleeping(fast);
 		//osDelay(7500);
 		//Eyes_Blink();
 	}
@@ -1197,6 +1199,7 @@ void I2C_Device_Check(void)
 
 	set_LED_B0(OFF);
 }
+
 
 
 /*******************************************************************************************************************************************************/

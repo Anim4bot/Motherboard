@@ -2,12 +2,16 @@
 #define INC_EYEANIMATIONS_H_
 
 
+#define OLED_WIDTH  64
+#define OLED_HEIGHT 48
+
 typedef enum
 {
 	WakingUp,
 	GoingToSleep,
 	Sleeping,
 	Sleepy,
+	Follow,
 	Neutral,
 	Blink,
 	BlinkHigh,
@@ -37,7 +41,8 @@ typedef enum
 	fast     = 1,
 	medium   = 2,
 	slow     = 3,
-	verySlow = 5
+	verySlow = 5,
+	megaSlow = 7
 }
 AnimSpeed_enum;
 

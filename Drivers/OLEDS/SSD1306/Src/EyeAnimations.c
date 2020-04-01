@@ -4,12 +4,19 @@
 
 //SSD1306_fillRoundRectLeft(x, y, width, height, radius, color)
 
-uint8_t Pupil_x	 	 = 22;
-uint8_t Pupil_y 	 = 8;
-uint8_t Pupil_width  = 24;
-uint8_t Pupil_height = 32;
-uint8_t Pupil_radius = 4;
 
+const uint8_t Pupil_width = 24;
+const uint8_t Pupil_height = 32;
+const uint8_t Pupil_radius = 4;
+
+uint8_t Pupil_x = 22;
+uint8_t Pupil_y = 8;
+
+
+void Eyes_Dim(uint8_t val)
+{
+	SSD1306_dim(val, val, 1);
+}
 
 void Eyes_WakingUp(AnimSpeed_enum speed)
 {
@@ -21,25 +28,39 @@ void Eyes_WakingUp(AnimSpeed_enum speed)
 	for(i=0 ; i<=Pupil_height ; i++)
 	{
 		SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_UpdateLeft();
 		SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_UpdateRight();
 		osDelay(speed);
 	}
 	osDelay(200);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
 	osDelay(200);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateRight();
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateRight();
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
 
+	osDelay(100);
+	Eyes_Neutral();
 }
 
 
@@ -53,11 +74,12 @@ void Eyes_GoingToSleep(AnimSpeed_enum speed)
 	for(i=Pupil_height ; i>=2 ; i--)
 	{
 		SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_UpdateLeft();
 		SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, i, Pupil_radius, White);
+		SSD1306_UpdateRight();
 		osDelay(speed);
 	}
 }
-
 
 
 void Eyes_Sleeping(uint8_t speed)
@@ -66,13 +88,10 @@ void Eyes_Sleeping(uint8_t speed)
 
 	Robot.Eyes.Expression = Sleeping;
 
-	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 2, Pupil_radius, White);
-	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 2, Pupil_radius, White);
-
-	SSD1306_dim(Robot.Eyes.Contrast, Robot.Eyes.Contrast+50, speed);
-	SSD1306_dim(Robot.Eyes.Contrast, Robot.Eyes.Contrast-50, speed);
-	osDelay(1000);
-
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 3, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 3, Pupil_radius, White);
+	SSD1306_UpdateRight();
 }
 
 void Eyes_Sleepy(void)
@@ -81,13 +100,27 @@ void Eyes_Sleepy(void)
 	Robot.Eyes.Expression = Sleepy;
 }
 
+
+void Eyes_Follow(int8_t x, int8_t y)
+{
+	Robot.Eyes.Expression = Follow;
+
+
+	SSD1306_fillRoundRectLeft(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+}
+
+
 void Eyes_Neutral(void)
 {
 	Robot.Eyes.Expression = Neutral;
 
-	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
 }
 
 void Eyes_Blink(void)
@@ -97,17 +130,14 @@ void Eyes_Blink(void)
 
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateRight();
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
-	/*
-	SSD1306_SetContrastLeft(0);
-	SSD1306_SetContrastRight(0);
-	osDelay(100);
-	SSD1306_SetContrastLeft(0x80);
-	SSD1306_SetContrastRight(0x80);
-	*/
+	SSD1306_UpdateRight();
 }
 
 void Eyes_BlinkHigh(void)
@@ -125,8 +155,10 @@ void Eyes_BlinkLeft(void)
 	Robot.Eyes.Expression = BlinkLeft;
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 	osDelay(100);
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
 }
 
 void Eyes_BlinkRight(void)
@@ -136,10 +168,20 @@ void Eyes_BlinkRight(void)
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, 0, Pupil_radius, White);
 	osDelay(100);
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
 }
 
 void Eyes_Happy(void)
 {
+	Robot.Eyes.Expression = Happy;
+
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height-6, Black);
+	SSD1306_UpdateLeft();
+
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_fillRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height-6, Black);
+	SSD1306_UpdateRight();
 
 }
 
