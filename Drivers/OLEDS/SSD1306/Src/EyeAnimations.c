@@ -13,10 +13,102 @@ uint8_t Pupil_x = 22;
 uint8_t Pupil_y = 8;
 
 
+
+void Eyes_SetExpression(Expressions_enum val, AnimSpeed_enum speed)
+{
+	switch (val)
+	{
+		case WakingUp:
+			Eyes_WakingUp(speed);
+		break;
+		case GoingToSleep:
+			Eyes_GoingToSleep(speed);
+		break;
+		case Sleeping:
+			Eyes_Sleeping(speed);
+		break;
+		case Sleepy:
+			Eyes_Sleepy();
+		break;
+		case Neutral:
+			Eyes_Neutral();
+		break;
+		case Blink:
+			Eyes_Blink();
+		break;
+		case BlinkLeft:
+			Eyes_BlinkLeft();
+		break;
+		case BlinkRight:
+			Eyes_BlinkRight();
+		break;
+		case Happy:
+			Eyes_Happy();
+		break;
+		case Sad:
+			Eyes_Sad();
+		break;
+		case Worried:
+			Eyes_Worried();
+		break;
+		case Focused:
+			Eyes_Focused();
+		break;
+		case Annoyed:
+			Eyes_Annoyed();
+		break;
+		case Surprised:
+			Eyes_Surprised();
+		break;
+		case Skeptic:
+			Eyes_Skeptic();
+		break;
+		case Squint:
+			Eyes_Squint();
+		break;
+		case Frustrated:
+			Eyes_Frustrated();
+		break;
+		case Unimpressed:
+			Eyes_Unimpressed();
+		break;
+		case Angry:
+			Eyes_Angry();
+		break;
+		case Furious:
+			Eyes_Furious();
+		break;
+		case Scared:
+			Eyes_Scared();
+		break;
+		case Awe:
+			Eyes_Awe();
+		break;
+		default:
+			Eyes_Neutral();
+		break;
+	}
+}
+
+
+
 void Eyes_Dim(uint8_t val)
 {
 	SSD1306_dim(val, val, 1);
 }
+
+
+void Eyes_Follow(int8_t x, int8_t y)
+{
+	Robot.Eyes.Expression = Follow;
+
+
+	SSD1306_fillRoundRectLeft(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+}
+
 
 void Eyes_WakingUp(AnimSpeed_enum speed)
 {
@@ -101,16 +193,7 @@ void Eyes_Sleepy(void)
 }
 
 
-void Eyes_Follow(int8_t x, int8_t y)
-{
-	Robot.Eyes.Expression = Follow;
 
-
-	SSD1306_fillRoundRectLeft(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
-	SSD1306_UpdateLeft();
-	SSD1306_fillRoundRectRight(Pupil_x+x, Pupil_y+y, Pupil_width, Pupil_height, Pupil_radius, White);
-	SSD1306_UpdateRight();
-}
 
 
 void Eyes_Neutral(void)
@@ -140,16 +223,6 @@ void Eyes_Blink(void)
 	SSD1306_UpdateRight();
 }
 
-void Eyes_BlinkHigh(void)
-{
-
-}
-
-void Eyes_BlinkLow(void)
-{
-
-}
-
 void Eyes_BlinkLeft(void)
 {
 	Robot.Eyes.Expression = BlinkLeft;
@@ -173,8 +246,24 @@ void Eyes_BlinkRight(void)
 
 void Eyes_Happy(void)
 {
+	uint8_t i;
 	Robot.Eyes.Expression = Happy;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+
+	for(i=0 ; i<=Pupil_height-6 ; i++)
+	{
+		SSD1306_fillRectLeft(Pupil_x, Pupil_y, Pupil_width, i, Black);
+		SSD1306_UpdateLeft();
+		SSD1306_fillRectRight(Pupil_x, Pupil_y, Pupil_width, i, Black);
+		SSD1306_UpdateRight();
+		osDelay(1);
+	}
+
+	/*
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	SSD1306_fillRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height-6, Black);
 	SSD1306_UpdateLeft();
@@ -182,6 +271,7 @@ void Eyes_Happy(void)
 	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	SSD1306_fillRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height-6, Black);
 	SSD1306_UpdateRight();
+	*/
 
 }
 
@@ -197,7 +287,22 @@ void Eyes_Worried(void)
 
 void Eyes_Focused(void)
 {
+	uint8_t i;
+	Robot.Eyes.Expression = Focused;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+
+	for(i=0 ; i<=9 ; i++)
+	{
+		SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y+i, Pupil_width, Pupil_height-2*i, Pupil_radius, White);
+		SSD1306_UpdateLeft();
+		SSD1306_fillRoundRectRight(Pupil_x, Pupil_y+i, Pupil_width, Pupil_height-2*i, Pupil_radius, White);
+		SSD1306_UpdateRight();
+		osDelay(1);
+	}
 }
 
 void Eyes_Annoyed(void)
@@ -222,12 +327,46 @@ void Eyes_Squint(void)
 
 void Eyes_Frustrated(void)
 {
+	uint8_t i;
+	Robot.Eyes.Expression = Frustrated;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+
+	for(i=Pupil_height ; i>=Pupil_height-16 ; i--)
+	{
+		SSD1306_fillRectLeft(Pupil_x, i, Pupil_width, Pupil_height, Black);
+		SSD1306_UpdateLeft();
+		SSD1306_fillRectRight(Pupil_x, i, Pupil_width, Pupil_height, Black);
+		SSD1306_UpdateRight();
+		osDelay(1);
+	}
 }
 
 void Eyes_Unimpressed(void)
 {
+	uint8_t i;
+	Robot.Eyes.Expression = Unimpressed;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+
+	for(i=Pupil_height ; i>=Pupil_height-16 ; i--)
+	{
+		SSD1306_fillRectLeft(Pupil_x, i, Pupil_width, Pupil_height, Black);
+		SSD1306_UpdateLeft();
+		if(i>=Pupil_height-10)
+		{
+			SSD1306_fillRectRight(Pupil_x, i, Pupil_width, Pupil_height, Black);
+			SSD1306_UpdateRight();
+		}
+
+		osDelay(1);
+	}
 }
 
 void Eyes_Angry(void)

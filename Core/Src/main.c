@@ -1121,11 +1121,17 @@ void StartTask_Behavior(void const * argument)
 	osDelay(1500);
 	Eyes_WakingUp(medium);
 	osDelay(1000);
-	Eyes_Happy();
 
+	//Eyes_SetExpression(Focused, 0);
+
+	i=5;
 	for(;;)
 	{
-		osDelay(500);
+		Eyes_SetExpression(Neutral, 0);
+		osDelay(2000);
+		Eyes_SetExpression(i, 1);
+		i++;
+
 
 		//Eyes_Sleeping(fast);
 		//osDelay(7500);

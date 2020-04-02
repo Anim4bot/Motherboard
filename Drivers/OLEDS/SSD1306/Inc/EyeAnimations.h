@@ -14,8 +14,6 @@ typedef enum
 	Follow,
 	Neutral,
 	Blink,
-	BlinkHigh,
-	BlinkLow,
 	BlinkLeft,
 	BlinkRight,
 	Happy,
