@@ -50,23 +50,23 @@ void BoardShutdownProcedure(void)
 	uint8_t i;
 
 	BIP_3();
-	Eyes_GoingToSleep(medium);
-	osDelay(1000);
-	set_PSU_5V(OFF);
-	osDelay(500);
-	set_PSU_DRS0101(OFF);
+	Eyes_GoingToSleep(slow);
+	Ears_SetPosition(EarL_Down, EarR_Down, slow);
+	osDelay(3000);
 
 	for(i=Robot.OLED.OLED_Contrast ; i>1 ; i--)
 	{
 		Flex_OLED_setContrast(i);
-		osDelay(2);
+		osDelay(1);
 	}
 
-	osDelay(1500);
+	set_PSU_5V(OFF);
+	osDelay(100);
+	set_PSU_DRS0101(OFF);
+	osDelay(100);
 	set_MAIN_SWITCH(OFF);
-	osDelay(500);
+	osDelay(100);
 	set_PSU_3V3(OFF);
-
 }
 
 

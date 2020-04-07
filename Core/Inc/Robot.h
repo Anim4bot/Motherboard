@@ -68,6 +68,7 @@ typedef struct
 	//Eyes_enum Eyes;
 }
 Head_st;
+Head_st Head;
 
 
 /* Flex OLED DEFINITIONS

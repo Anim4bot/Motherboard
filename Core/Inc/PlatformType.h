@@ -43,12 +43,16 @@
 #define PWM_FAN		TIM2->CCR2
 #define PWM_LED_PI	TIM1->CCR3
 
-#define EAR_L_PULSE  	TIM3->CCR1
-#define EAR_R_PULSE 	TIM3->CCR2
+#define EAR_R_PULSE  	TIM3->CCR1
+#define EAR_L_PULSE 	TIM3->CCR2
 
 #define HEAD_PITCH_PULSE  	TIM4->CCR3
 #define HEAD_YAW_PULSE   	TIM4->CCR2
 #define HOOD_PULSE  	  	TIM4->CCR4
+
+#define wait(x) \
+	for(i=0;i<=(x*10000);i++) \
+	{asm("NOP");}
 
 
 /* VISU PARAM ------------------------------------------------*/
@@ -159,6 +163,17 @@ HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
 #define RPI_SHTDWN_MAX_TIMEOUT	5
 #define RPI_SHTDWN_TIME 		15000
 #define I2C_MAX_TIMEOUT 		250
+
+
+typedef enum
+{
+	fast     = 1,
+	medium   = 2,
+	slow     = 3,
+	verySlow = 5,
+	megaSlow = 7
+}
+AnimSpeed_enum;
 
 
 typedef enum

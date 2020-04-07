@@ -194,8 +194,6 @@ void Eyes_Sleepy(void)
 
 
 
-
-
 void Eyes_Neutral(void)
 {
 	Robot.Eyes.Expression = Neutral;
@@ -260,10 +258,9 @@ void Eyes_Happy(void)
 		SSD1306_UpdateLeft();
 		SSD1306_fillRectRight(Pupil_x, Pupil_y, Pupil_width, i, Black);
 		SSD1306_UpdateRight();
-		osDelay(1);
 	}
 
-	/*
+/*
 	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
 	SSD1306_fillRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height-6, Black);
 	SSD1306_UpdateLeft();
@@ -277,6 +274,21 @@ void Eyes_Happy(void)
 
 void Eyes_Sad(void)
 {
+	int8_t i;
+	Robot.Eyes.Expression = Sad;
+
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	//SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	//SSD1306_UpdateRight();
+
+	for(i=14 ; i>=1 ; i--)
+	{
+		SSD1306_LineLeft(20, 48-i, 48, 38-i, Black);
+		SSD1306_LineRight(20, 38-i, 48, 48-i, Black);
+	}
+	SSD1306_UpdateLeft();
+	SSD1306_UpdateRight();
 
 }
 
@@ -341,7 +353,6 @@ void Eyes_Frustrated(void)
 		SSD1306_UpdateLeft();
 		SSD1306_fillRectRight(Pupil_x, i, Pupil_width, Pupil_height, Black);
 		SSD1306_UpdateRight();
-		osDelay(1);
 	}
 }
 
@@ -371,12 +382,40 @@ void Eyes_Unimpressed(void)
 
 void Eyes_Angry(void)
 {
+	uint8_t i;
+	Robot.Eyes.Expression = Angry;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	//SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	//SSD1306_UpdateRight();
+
+	for(i=16 ; i>=1 ; i--)
+	{
+		SSD1306_LineLeft(20, 42-i, 48, 48-i, Black);
+		SSD1306_LineRight(20, 48-i, 48, 42-i, Black);
+	}
+	SSD1306_UpdateLeft();
+	SSD1306_UpdateRight();
 }
 
 void Eyes_Furious(void)
 {
+	uint8_t i;
+	Robot.Eyes.Expression = Furious;
 
+	SSD1306_fillRoundRectLeft(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	//SSD1306_UpdateLeft();
+	SSD1306_fillRoundRectRight(Pupil_x, Pupil_y, Pupil_width, Pupil_height, Pupil_radius, White);
+	SSD1306_UpdateRight();
+
+	for(i=14 ; i>=1 ; i--)
+	{
+		SSD1306_LineLeft(20, 37-i, 48, 48-i, Black);
+		SSD1306_LineRight(20, 48-i, 48, 37-i, Black);
+	}
+	SSD1306_UpdateLeft();
+	SSD1306_UpdateRight();
 }
 
 void Eyes_Scared(void)

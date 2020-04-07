@@ -34,16 +34,6 @@ typedef enum
 Expressions_enum;
 
 
-typedef enum
-{
-	fast     = 1,
-	medium   = 2,
-	slow     = 3,
-	verySlow = 5,
-	megaSlow = 7
-}
-AnimSpeed_enum;
-
 typedef struct
 {
 	Expressions_enum Expression;

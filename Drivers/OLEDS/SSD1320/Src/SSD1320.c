@@ -718,13 +718,13 @@ void Flex_OLED_Menu_Battery(void)
 		currentMode = 1;
 
 		Flex_OLED_setCursor(60,22);
-		sprintf(buff1,"Vbat: %.2fV", Charger.Power.BatVoltage);
+		sprintf(buff1,"Vbat: %.2fV  ", Charger.Power.BatVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(60,12);
-		sprintf(buff2,"Ibat: %.2fA", Charger.Power.BatCurrent);
+		sprintf(buff2,"Ibat: %.2fA  ", Charger.Power.BatCurrent);
 		Flex_OLED_String(buff2, NORM);
 		Flex_OLED_setCursor(60,2);
-		sprintf(buff2,"Temp: %.2d", (uint16_t)Charger.Power.Die_temp);
+		sprintf(buff2,"Temp: %.2d  ", (uint16_t)Charger.Power.Die_temp);
 		Flex_OLED_String(buff2, NORM);
 
 
@@ -749,13 +749,13 @@ void Flex_OLED_Menu_Battery(void)
 	{
 		currentMode = 0;
 		Flex_OLED_setCursor(10,22);
-		sprintf(buff1,"VBATT : %.2fV", Charger.Power.SysVoltage);
+		sprintf(buff1,"VBATT : %.2fV  ", Charger.Power.SysVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(10,12);
-		sprintf(buff2,"IBATT : %.3fA", Charger.Power.SysCurrent);
+		sprintf(buff2,"IBATT : %.3fA  ", Charger.Power.SysCurrent);
 		Flex_OLED_String(buff2, NORM);
 		Flex_OLED_setCursor(10,2);
-		sprintf(buff3,"Power : %.2fW", Charger.Power.SysPower);
+		sprintf(buff3,"Power : %.2fW  ", Charger.Power.SysPower);
 		Flex_OLED_String(buff3, NORM);
 
 		color = !color;

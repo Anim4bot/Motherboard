@@ -501,9 +501,9 @@ static void MX_TIM3_Init(void)
   TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 640; //32MHz/640000 = 50Hz
+  htim3.Init.Prescaler = 32; //1MHz -> Cnt increases by 1000000 every 1sec -> 1=1µs so 1.5ms = 1500µs | old=32MHz/640000 = 50Hz - 640
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000;
+  htim3.Init.Period = 19999;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -555,9 +555,9 @@ static void MX_TIM4_Init(void)
   TIM_OC_InitTypeDef sConfigOC;
 
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 96; //640; // 32MHz/333Hz = 96096
+  htim4.Init.Prescaler = 32; //640; // 32MHz/333Hz = 96096
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 1000;
+  htim4.Init.Period = 3000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
   {
@@ -832,6 +832,9 @@ void StartTask_System(void const * argument)
 
 	SSD1306_Init();
 	LTC4015_Init();
+	EarsServos_Init();
+
+
 
 	PWM_LED_PI = 0;
 	PWM_FAN = 500;
@@ -885,7 +888,6 @@ void StartTask_Default(void const * argument)
 			Flex_OLED_clearDisplay(CLEAR_ALL);
 			Flex_OLED_Update();
 			osDelay(100);
-
 		}
 		else
 		{
@@ -895,8 +897,20 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
-			NeckServos_Init();
-			Gaits_StandPosition(75);
+			Eyes_SetExpression(Sad, fast);
+			Ears_SetPosition(EarL_Down, EarR_Down, slow);
+			osDelay(2000);
+			Eyes_SetExpression(Neutral, fast);
+			Ears_SetPosition(EarL_Middle, EarL_Middle, slow);
+			osDelay(2000);
+			Eyes_SetExpression(Furious, fast);
+			Ears_SetPosition(EarL_Up, EarR_Up, slow);
+			osDelay(2000);
+			Eyes_SetExpression(Neutral, fast);
+			Ears_SetPosition(EarL_Middle, EarL_Middle, slow);
+
+			//NeckServos_Init();
+			//Gaits_StandPosition(75);
 		}
 		else
 		{
@@ -1119,23 +1133,14 @@ void StartTask_Behavior(void const * argument)
 	Robot.Eyes.Contrast = 50;
 
 	osDelay(1500);
-	Eyes_WakingUp(medium);
+	Eyes_WakingUp(fast);
+	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 	osDelay(1000);
 
-	//Eyes_SetExpression(Focused, 0);
-
-	i=5;
 	for(;;)
 	{
-		Eyes_SetExpression(Neutral, 0);
-		osDelay(2000);
-		Eyes_SetExpression(i, 1);
-		i++;
-
-
-		//Eyes_Sleeping(fast);
-		//osDelay(7500);
-		//Eyes_Blink();
+		osDelay(7500);
+		Eyes_Blink();
 	}
 
 }
