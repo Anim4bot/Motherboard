@@ -8,38 +8,44 @@ void NeckServos_Init(void)
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 
-	set_PWR_SERVO_NECK(ON);
-
 	HEAD_PITCH_PULSE	= PitchNeutral;
 	HEAD_YAW_PULSE   	= YawNeutral;
 
-	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, NECKYAW_INIT_POS);		//Yaw
 	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, NECKPITCH_INIT_POS);		//Pitch
+	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, NECKYAW_INIT_POS);		//Yaw
 
-	Head.NeckYaw_pos  = PitchNeutral;
 	Head.NeckPith_pos = PitchNeutral;
-
-	osDelay(2000);
-	set_PWR_SERVO_NECK(OFF);
+	Head.NeckYaw_pos  = YawNeutral;
 }
 
 
-void Head_setPosition(uint8_t pitch, uint8_t yaw, uint8_t speed)
+void Head_setPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed)
 {
-	uint16_t i;
 	uint16_t temp;
+	uint16_t speedConst = 7500;
+	uint16_t CurrPosPitch=0, CurrPosYaw=0;
+	uint32_t p=0, y=0, i=0, j=0;
 
-	/*
-	 * if current pos > desired pos --> steps to do = current pos - desired pos et..
-	 *
-	set_PWR_SERVO_NECK(ON);
-	for(i = ; i<= ; i++)
+	CurrPosPitch  = Head.NeckPith_pos;
+	CurrPosYaw 	  = Head.NeckYaw_pos;
+
+	if( (NewPosPitch>CurrPosPitch) && ((NewPosYaw<CurrPosYaw)) )			// UP - RIGHT
 	{
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, i);
-		HAL_Delay(15);
+		for(p=CurrPosPitch, y=CurrPosYaw ; p<=NewPosPitch && y>=NewPosYaw ; p++, y--)
+		{
+			HEAD_PITCH_PULSE = p;
+			HEAD_YAW_PULSE = y;
+			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
+			set_PWR_SERVO_NECK(ON);
+		}
 	}
+
+	Head.NeckPith_pos = NewPosPitch;
+	Head.NeckYaw_pos  = NewPosYaw;
+
+	osDelay(750);
 	set_PWR_SERVO_NECK(OFF);
-	*/
+
 }
 
 
@@ -119,74 +125,6 @@ void Ears_SetPosition(uint16_t NewPosL, uint16_t NewPosR, AnimSpeed_enum speed)
 	set_PWR_SERVO_EARS(OFF);
 
 }
-
-void Ear_SetPosition(EarSide_enum side, uint16_t NewPos, AnimSpeed_enum speed)
-{
-	uint16_t ctr=0, i=0;
-	uint16_t CurrentPos=0;
-
-	set_PWR_SERVO_EARS(ON);
-
-	if(side == EarLeft)
-	{
-		CurrentPos = Head.EarL_pos;
-
-		if(NewPos > CurrentPos)
-		{
-			for(ctr=CurrentPos ; ctr<=NewPos ; ctr++)
-			{
-				EAR_L_PULSE = ctr;
-				for(i=0;i<=(speed*10000);i++) {asm("NOP");}
-			}
-		}
-		else if (NewPos < CurrentPos)
-		{
-			for(ctr=CurrentPos ; ctr>=NewPos ; ctr--)
-			{
-				EAR_L_PULSE = ctr;
-				for(i=0;i<=(speed*10000);i++) {asm("NOP");}
-			}
-		}
-		else
-		{
-			asm("NOP");
-		}
-
-		Head.EarL_pos = NewPos;
-	}
-	else
-	{
-		CurrentPos = Head.EarR_pos;
-
-		if(NewPos > CurrentPos)
-		{
-			for(ctr=CurrentPos ; ctr>=NewPos ; ctr--)
-			{
-				EAR_R_PULSE = ctr;
-				for(i=0;i<=(speed*10000);i++) {asm("NOP");}
-			}
-		}
-		else if (NewPos < CurrentPos)
-		{
-			for(ctr=CurrentPos ; ctr<=NewPos ; ctr++)
-			{
-				EAR_R_PULSE = ctr;
-				for(i=0;i<=(speed*10000);i++) {asm("NOP");}
-			}
-		}
-		else
-		{
-			asm("NOP");
-		}
-
-		Head.EarR_pos = NewPos;
-	}
-
-	set_PWR_SERVO_EARS(OFF);
-}
-
-
-
 
 
 void HoodServos_Init(void)

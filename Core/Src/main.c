@@ -897,6 +897,11 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
+
+			NeckServos_Init();
+			Head_setPosition(PitchNeutral+1, YawNeutral-100, slow);
+
+			/*
 			Eyes_SetExpression(Sad, fast);
 			Ears_SetPosition(EarL_Down, EarR_Down, slow);
 			osDelay(2000);
@@ -908,7 +913,7 @@ void StartTask_Default(void const * argument)
 			osDelay(2000);
 			Eyes_SetExpression(Neutral, fast);
 			Ears_SetPosition(EarL_Middle, EarL_Middle, slow);
-
+			 */
 			//NeckServos_Init();
 			//Gaits_StandPosition(75);
 		}
@@ -1135,7 +1140,8 @@ void StartTask_Behavior(void const * argument)
 	osDelay(1500);
 	Eyes_WakingUp(fast);
 	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
-	osDelay(1000);
+	osDelay(3000);
+
 
 	for(;;)
 	{

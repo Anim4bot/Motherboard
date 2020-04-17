@@ -25,11 +25,8 @@ extern TIM_HandleTypeDef htim4;
 
 typedef enum
 {
-	YawHight   = 1400,
-	YawNeutral = 1260, //more = LeftDir
-	YawLow	   = 1600,
-
-	PitchNeutral = 1550 //more = UP
+	PitchNeutral = 1550, 	//more = UP
+	YawNeutral   = 1255		//more = LeftDir
 }
 NeckPos_enum;
 
