@@ -899,7 +899,12 @@ void StartTask_Default(void const * argument)
 		{
 
 			NeckServos_Init();
-			Head_setPosition(PitchNeutral+1, YawNeutral-100, slow);
+			osDelay(1000);
+
+			Head_setPosition((PitchNeutral-30), YawNeutral-150, slow);
+			osDelay(100);
+			Head_setPosition(PitchNeutral+30, YawNeutral+50, slow);
+
 
 			/*
 			Eyes_SetExpression(Sad, fast);

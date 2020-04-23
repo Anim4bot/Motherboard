@@ -9,23 +9,23 @@ extern TIM_HandleTypeDef htim4;
 
 #define INIT_TIME_MS		500
 
-/* Head servos positions after switch ON */
-#define EAR_L_INIT_POS    	75
-#define EAR_R_INIT_POS 	  	75
-#define NECKYAW_INIT_POS  	425
-#define NECKPITCH_INIT_POS  500
 
-/* Head servos positions before switch OFF  */
-#define EAR_L_PARK_POS    	75
-#define EAR_R_PARK_POS 	  	75
-#define NECKYAW_PARK_POS  	425
-#define NECKPITCH_PARK_POS  500
+#define PITCH_MAX_UP    	(PitchNeutral+90)
+#define PITCH_MAX_DOWN    	(PitchNeutral-50)
+#define YAW_MAX_LEFT 	  	(YawNeutral+300)
+#define YAW_MAX_RIGHT 	  	(YawNeutral-300)
+
+
+#define EAR_L_MIN_POS    	1900
+#define EAR_L_MAX_POS    	1100
+#define EAR_R_MIN_POS 	  	1100
+#define EAR_R_MAX_POS 	  	1900
 
 
 
 typedef enum
 {
-	PitchNeutral = 1550, 	//more = UP
+	PitchNeutral = 1553, 	//more = UP
 	YawNeutral   = 1255		//more = LeftDir
 }
 NeckPos_enum;

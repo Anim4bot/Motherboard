@@ -50,8 +50,10 @@ void BoardShutdownProcedure(void)
 	uint8_t i;
 
 	BIP_3();
-	Eyes_GoingToSleep(slow);
 	Ears_SetPosition(EarL_Down, EarR_Down, slow);
+	Head_setPosition(PitchNeutral, YawNeutral, slow);
+	Eyes_GoingToSleep(slow);
+	set_EYES_RST(ON);
 	osDelay(3000);
 
 	for(i=Robot.OLED.OLED_Contrast ; i>1 ; i--)
