@@ -217,46 +217,30 @@ ServoStatus;
 
 
 //SERVOS ID
-#define ID_COXA_RF		0x01
-#define ID_COXA_RM		0x02
-#define ID_COXA_RR		0x03
-#define ID_COXA_LF		0x06
-#define ID_COXA_LM		0x05
-#define ID_COXA_LR		0x04
+#define ID_LF_COXA  0x06
+#define ID_LF_FEMUR 0x12
+#define ID_LF_TIBIA 0x11
 
-#define ID_FEMUR_RF		0x09
-#define ID_FEMUR_RM		0x11
-#define ID_FEMUR_RR		0x16
-#define ID_FEMUR_LF		0x08
-#define ID_FEMUR_LM		0x14
-#define ID_FEMUR_LR		0x18
+#define ID_LM_COXA  0x05
+#define ID_LM_FEMUR 0x0E
+#define ID_LM_TIBIA 0x0D
 
+#define ID_LR_COXA  0x04
+#define ID_LR_FEMUR 0x08
+#define ID_LR_TIBIA 0x07
 
-/*
-#define ID_SERVO_LF_COXA  0x
-#define ID_SERVO_LF_FEMUR 0x
-#define ID_SERVO_LF_TIBIA 0x
+#define ID_RF_COXA  0x01
+#define ID_RF_FEMUR 0x0A
+#define ID_RF_TIBIA 0x09
 
-#define ID_SERVO_LM_COXA  0x
-#define ID_SERVO_LM_FEMUR 0x
-#define ID_SERVO_LM_TIBIA 0x
+#define ID_RM_COXA  0x02
+#define ID_RM_FEMUR 0x0C
+#define ID_RM_TIBIA 0x0B
 
-#define ID_SERVO_LR_COXA  0x
-#define ID_SERVO_LR_FEMUR 0x
-#define ID_SERVO_LR_TIBIA 0x
+#define ID_RR_COXA  0x03
+#define ID_RR_FEMUR 0x10
+#define ID_RR_TIBIA 0x0F
 
-#define ID_SERVO_RF_COXA  0x
-#define ID_SERVO_RF_FEMUR 0x
-#define ID_SERVO_RF_TIBIA 0x
-
-#define ID_SERVO_RM_COXA  0x
-#define ID_SERVO_RM_FEMUR 0x
-#define ID_SERVO_RM_TIBIA 0x
-
-#define ID_SERVO_RR_COXA  0x
-#define ID_SERVO_RR_FEMUR 0x
-#define ID_SERVO_RR_TIBIA 0x
- */
 
 
 
@@ -265,7 +249,7 @@ void DRS0101_Reboot(uint8_t id);
 void DRS0101_Clear(uint8_t id);
 void DRS0101_setTorque(uint8_t id, uint8_t cmdTorque);
 void DRS0101_setPosition(uint8_t id, uint16_t position_ui16, uint8_t playtime_ui8, uint8_t setLED);
-void DRS0101_setAngle(uint8_t id, uint8_t angle, uint8_t playtime_ui8, uint8_t setLED);
+void DRS0101_setAngle(uint8_t id, int16_t angle, uint8_t playtime_ui8, uint8_t setLED);
 
 
 #endif /* DRS0101_INC_DRS0101_H_ */

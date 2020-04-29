@@ -50,8 +50,9 @@ void BoardShutdownProcedure(void)
 	uint8_t i;
 
 	BIP_3();
+	Gaits_PackPosition(100);
 	Ears_SetPosition(EarL_Down, EarR_Down, slow);
-	Head_setPosition(PitchNeutral, YawNeutral, slow);
+	Head_SetPosition(PitchNeutral, YawNeutral, slow);
 	Eyes_GoingToSleep(slow);
 	set_EYES_RST(ON);
 	osDelay(3000);

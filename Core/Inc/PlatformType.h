@@ -7,18 +7,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "math.h"
-/*
-#include "DRS0101.h"
-#include "SSD1306.h"
-#include "SSD1320.h"
-#include "APDS9960.h"
-#include "LM75B.h"
-#include "LTC4015.h"
-#include "ADC101.h"
-#include "LSM9DS1.h"
-#include "Servos.h"
-#include "EyeAnimations.h"
-*/
+
 
 #define ON  	1
 #define HIGH 	1

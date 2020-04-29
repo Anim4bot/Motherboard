@@ -790,7 +790,7 @@ void StartTask_PwrMngt(void const * argument)
 		LTC4015_GetLimitAlerts(&limitAlerts);
 		LTC4015_GetPowerVal();
 
-		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.75)) && (Input.SIG_SYS == GPIO_PIN_SET) )
+		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.50)) && (Input.SIG_SYS == GPIO_PIN_SET) )
 		{
 			set_LED_ERR(ON);
 			BIP_0();
@@ -897,14 +897,9 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
-
-			NeckServos_Init();
-			osDelay(1000);
-
-			Head_setPosition((PitchNeutral-30), YawNeutral-150, slow);
-			osDelay(100);
-			Head_setPosition(PitchNeutral+30, YawNeutral+50, slow);
-
+			Gaits_PackPosition(70);
+			osDelay(2000);
+			Gaits_DefaultPosition(70);
 
 			/*
 			Eyes_SetExpression(Sad, fast);
@@ -1145,8 +1140,8 @@ void StartTask_Behavior(void const * argument)
 	osDelay(1500);
 	Eyes_WakingUp(fast);
 	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
-	osDelay(3000);
-
+	osDelay(1500);
+	Gaits_DefaultPosition(100);
 
 	for(;;)
 	{

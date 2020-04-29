@@ -25,7 +25,7 @@ void NeckServos_Init(void)
 }
 
 
-void Head_setPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed)
+void Head_SetPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed)
 {
 	uint16_t speedConst = 10000;
 	uint16_t CurrPosPitch=0, CurrPosYaw=0;
