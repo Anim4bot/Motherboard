@@ -897,9 +897,14 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
-			Gaits_PackPosition(70);
-			osDelay(2000);
+
 			Gaits_DefaultPosition(70);
+			DRS0101_setTorque(BROADCAST_ID, TORQUE_FREE);
+			DRS0101_setTorque(ID_LF_COXA,  TORQUE_ON);
+			DRS0101_setTorque(ID_LF_FEMUR, TORQUE_ON);
+			DRS0101_setTorque(ID_LF_TIBIA, TORQUE_ON);
+
+			LegIK(LEFT_FRONT, 150, 50, 10);
 
 			/*
 			Eyes_SetExpression(Sad, fast);
@@ -1141,7 +1146,7 @@ void StartTask_Behavior(void const * argument)
 	Eyes_WakingUp(fast);
 	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 	osDelay(1500);
-	Gaits_DefaultPosition(100);
+	//Gaits_DefaultPosition(100);
 
 	for(;;)
 	{

@@ -11,6 +11,7 @@
 #include "LSM9DS1.h"
 #include "Servos.h"
 #include "EyeAnimations.h"
+#include "Kinematics.h"
 
 
 /* SENSORS DEFINITIONS
