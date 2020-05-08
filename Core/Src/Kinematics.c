@@ -58,36 +58,39 @@ void WriteLegPos(uint8_t speed)
 
 const float initCoxaAngle = 0;
 
-void LegIK (int legIKNr, float ikFeetPosX, float ikFeetPosY, float ikFeetPosZ)
+void LegIK (int legNr, float PosX, float PosY, float PosZ)
 {
-    float ikSW;                       // Length between Femur and Tibia
-    float ikRadiansFemurTibiaGround;  // Angle of the line Femur and Tibia with respect to the ground in radians
-    float ikRadiansFemurTibia;        // Angle of the line Femur and Tibia with respect to the femur in radians
-    float ikFeetPosXZ;                // Distance between the Coxa and Ground Contact
+	float LegLentgh;
+	float HF;
+	float A1, A1Deg;
+	float A2, A2Deg;
+	float B1, B1Deg;
+	float CoxaAngle, FemurAngle, TibiaAngle;
 
-    // Distance between the Coxa and Ground Contact
-    ikFeetPosXZ = sqrt ( pow (ikFeetPosX, 2 ) + pow (ikFeetPosZ, 2 ) );
+	LegLentgh = sqrtf( pow(PosX,2) + pow(PosY,2) );
+	HF = sqrtf( pow((LegLentgh-COXA_LENGTH),2) + pow(PosZ,2) );
+	A1 = atan2f( (LegLentgh-COXA_LENGTH), PosZ );
+	A2 = acos( (pow(TIBIA_LENGTH,2) - pow(FEMUR_LENGTH,2) - pow(HF,2) ) / (-2*FEMUR_LENGTH*TIBIA_LENGTH) );
+	B1 = acos( (pow(HF,2) - pow(TIBIA_LENGTH,2) - pow(FEMUR_LENGTH,2) ) / (-2*FEMUR_LENGTH*TIBIA_LENGTH) );
 
-    // ikSW - Length between Femur axis and Tibia
-    ikSW = sqrt ( pow ( ( ikFeetPosXZ - COXA_LENGTH ) , 2 ) + pow ( ikFeetPosY , 2 ) );
+	A1Deg = RadtoDeg(A1);
+	A2Deg = RadtoDeg(A2);
+	B1Deg = RadtoDeg(B1);
 
-    // ikRadiansFemurTibiaGround - Angle between Femur and Tibia line and the ground in radians
-    ikRadiansFemurTibiaGround = atan2 ( ikFeetPosXZ - COXA_LENGTH, ikFeetPosY );
-
-    // ikRadiansFemurTibia - Angle of the line Femur and Tibia with respect to the Femur in radians
-    ikRadiansFemurTibia = acos ( ( ( pow ( FEMUR_LENGTH, 2 ) - pow ( TIBIA_LENGTH, 2 ) ) + pow ( ikSW, 2 ) ) / ( 2 * FEMUR_LENGTH * ikSW ) );
-
-    // ikCoxaAngle in degrees
-    Leg[legIKNr].Joint.CoxaJointAngle = atan2 ( ikFeetPosZ, ikFeetPosX ) * 180 / PI + initCoxaAngle;
-
-    // ikFemurAngle in degrees
-    Leg[legIKNr].Joint.FemurJointAngle = -( ikRadiansFemurTibiaGround + ikRadiansFemurTibia ) * 180 / PI  + 90;
-
-    // ikTibiaAngle in degrees
-    Leg[legIKNr].Joint.TibiaJointAngle = -( 90 - ( ( ( acos ( ( pow (FEMUR_LENGTH, 2 ) + pow ( TIBIA_LENGTH, 2 ) - pow ( ikSW, 2 ) ) / ( 2 * FEMUR_LENGTH * TIBIA_LENGTH ) ) ) * 180 ) / PI ) );
+	CoxaAngle  = atan2(PosX, PosY);
+	FemurAngle = 90 - (A1Deg + A2Deg);
+	TibiaAngle = 90 - B1Deg;
 
 
-    WriteLegPos(70);
+	Leg[legNr].Joint.CoxaJointAngle  = CoxaAngle;
+	Leg[legNr].Joint.FemurJointAngle = FemurAngle;
+	Leg[legNr].Joint.TibiaJointAngle = TibiaAngle;
+
+	DRS0101_setAngle(ID_LF_COXA,  Leg[LEFT_FRONT].Joint.CoxaJointAngle,  70, DRS0101_PLED);
+	DRS0101_setAngle(ID_LF_FEMUR, Leg[LEFT_FRONT].Joint.FemurJointAngle, 70, DRS0101_PLED);
+	DRS0101_setAngle(ID_LF_TIBIA, Leg[LEFT_FRONT].Joint.TibiaJointAngle, 70, DRS0101_PLED);
+
+    //WriteLegPos(70);
 
 /*
 	//Right Side

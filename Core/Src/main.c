@@ -898,13 +898,13 @@ void StartTask_Default(void const * argument)
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
 
-			Gaits_DefaultPosition(70);
+			//Gaits_DefaultPosition(70);
 			DRS0101_setTorque(BROADCAST_ID, TORQUE_FREE);
 			DRS0101_setTorque(ID_LF_COXA,  TORQUE_ON);
 			DRS0101_setTorque(ID_LF_FEMUR, TORQUE_ON);
 			DRS0101_setTorque(ID_LF_TIBIA, TORQUE_ON);
 
-			LegIK(LEFT_FRONT, 150, 50, 10);
+			LegIK(LEFT_FRONT, 0, 120, 120);
 
 			/*
 			Eyes_SetExpression(Sad, fast);
