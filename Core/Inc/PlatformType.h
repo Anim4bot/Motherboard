@@ -25,7 +25,7 @@
 #define MIN(x,y)	((x)<(y)?(x):(y))
 #define MAX(x,y)	((x)>(y)?(x):(y))
 
-#define PI	(3.141592)
+#define PI	(3.141592653589)
 #define RadtoDeg(rad)		( (rad)*(180.0 / PI) )
 
 #define PWM_BUZZ	TIM2->CCR3

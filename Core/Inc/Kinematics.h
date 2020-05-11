@@ -35,8 +35,8 @@
 #define LEFT_FRONT    5
 
 #define COXA_LENGTH		46.20
-#define FEMUR_LENGTH	73.67
-#define TIBIA_LENGTH	119.34
+#define FEMUR_LENGTH	73.68
+#define TIBIA_LENGTH	119.15
 
 #define LEG_FRONT_X		95.61
 #define LEG_FRONT_Y		69.86
@@ -84,7 +84,8 @@ Body_st;
 
 
 
-
+void LegIK (int legNr, float PosX, float PosY, float PosZ);
+void WriteLegIK(uint8_t speed);
 
 
 #endif /* INC_KINEMATICS_H_ */

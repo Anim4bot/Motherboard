@@ -249,7 +249,7 @@ void DRS0101_Reboot(uint8_t id);
 void DRS0101_Clear(uint8_t id);
 void DRS0101_setTorque(uint8_t id, uint8_t cmdTorque);
 void DRS0101_setPosition(uint8_t id, uint16_t position_ui16, uint8_t playtime_ui8, uint8_t setLED);
-void DRS0101_setAngle(uint8_t id, int16_t angle, uint8_t playtime_ui8, uint8_t setLED);
+void DRS0101_setAngle(uint8_t id, float angle, uint8_t playtime_ui8, uint8_t setLED);
 
 
 #endif /* DRS0101_INC_DRS0101_H_ */

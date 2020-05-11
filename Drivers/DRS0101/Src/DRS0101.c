@@ -113,13 +113,16 @@ void DRS0101_setPosition(uint8_t id, uint16_t position_ui16, uint8_t playtime_ui
 }
 
 
-void DRS0101_setAngle(uint8_t id, int16_t angle, uint8_t playtime_ui8, uint8_t setLED)
+void DRS0101_setAngle(uint8_t id, float angle, uint8_t playtime_ui8, uint8_t setLED)
 {
 	uint8_t Payload[12];
 	uint16_t position_ui16;
 
-	//if (angle > 160.0 || angle < -160.0) { return; }
+	//if (angle > 120.0 || angle < -120.0) { return; }
 	//if(playtime_ui8 > 255)   { playtime_ui8 = 255; }
+
+	if (angle > +120.0) { angle = +120; }
+	if (angle < -120.0) { angle = -120; }
 
 	position_ui16 = (uint16_t)round((angle/0.325) + 512);
 	position_ui16 = position_ui16;

@@ -875,6 +875,7 @@ void StartTask_Default(void const * argument)
 	uint16_t RegVAl;
 	uint16_t IR_Val;
 	uint16_t ChargerState = 0xFF;
+	float x, y, z;
 
 	for(;;)
 	{
@@ -899,12 +900,49 @@ void StartTask_Default(void const * argument)
 		{
 
 			//Gaits_DefaultPosition(70);
-			DRS0101_setTorque(BROADCAST_ID, TORQUE_FREE);
-			DRS0101_setTorque(ID_LF_COXA,  TORQUE_ON);
-			DRS0101_setTorque(ID_LF_FEMUR, TORQUE_ON);
-			DRS0101_setTorque(ID_LF_TIBIA, TORQUE_ON);
+			DRS0101_setTorque(BROADCAST_ID, TORQUE_ON);
 
-			LegIK(LEFT_FRONT, 0, 120, 120);
+			LegIK(RIGHT_FRONT,  0.0, 80.0, 40.0);
+			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 40.0);
+			LegIK(RIGHT_REAR,   0.0, 80.0, 40.0);
+			LegIK(LEFT_FRONT,   0.0, 80.0, 40.0);
+			LegIK(LEFT_MIDDLE,  0.0, 80.0, 40.0);
+			LegIK(LEFT_REAR,    0.0, 80.0, 40.0);
+			WriteLegIK(120);
+			osDelay(3000);
+			LegIK(RIGHT_FRONT,  0.0, 80.0, 140.0);
+			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 140.0);
+			LegIK(RIGHT_REAR,   0.0, 80.0, 140.0);
+			LegIK(LEFT_FRONT,   0.0, 80.0, 140.0);
+			LegIK(LEFT_MIDDLE,  0.0, 80.0, 140.0);
+			LegIK(LEFT_REAR,    0.0, 80.0, 140.0);
+			WriteLegIK(120);
+			osDelay(1000);
+			LegIK(RIGHT_FRONT,  -40.0, 80.0, 140.0);
+			LegIK(RIGHT_MIDDLE, -40.0, 80.0, 140.0);
+			LegIK(RIGHT_REAR,   -40.0, 80.0, 140.0);
+			LegIK(LEFT_FRONT,   -40.0, 80.0, 140.0);
+			LegIK(LEFT_MIDDLE,  -40.0, 80.0, 140.0);
+			LegIK(LEFT_REAR,    -40.0, 80.0, 140.0);
+			WriteLegIK(180);
+			osDelay(3000);
+			LegIK(RIGHT_FRONT,  0.0, 80.0, 140.0);
+			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 140.0);
+			LegIK(RIGHT_REAR,   0.0, 80.0, 140.0);
+			LegIK(LEFT_FRONT,   0.0, 80.0, 140.0);
+			LegIK(LEFT_MIDDLE,  0.0, 80.0, 140.0);
+			LegIK(LEFT_REAR,    0.0, 80.0, 140.0);
+			WriteLegIK(180);
+			osDelay(3000);
+			LegIK(RIGHT_FRONT,  0.0, 80.0, 40.0);
+			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 40.0);
+			LegIK(RIGHT_REAR,   0.0, 80.0, 40.0);
+			LegIK(LEFT_FRONT,   0.0, 80.0, 40.0);
+			LegIK(LEFT_MIDDLE,  0.0, 80.0, 40.0);
+			LegIK(LEFT_REAR,    0.0, 80.0, 40.0);
+			WriteLegIK(120);
+
+
 
 			/*
 			Eyes_SetExpression(Sad, fast);
@@ -1144,7 +1182,7 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);
 
