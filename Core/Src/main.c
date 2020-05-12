@@ -908,41 +908,7 @@ void StartTask_Default(void const * argument)
 			LegIK(LEFT_FRONT,   0.0, 80.0, 40.0);
 			LegIK(LEFT_MIDDLE,  0.0, 80.0, 40.0);
 			LegIK(LEFT_REAR,    0.0, 80.0, 40.0);
-			WriteLegIK(120);
-			osDelay(3000);
-			LegIK(RIGHT_FRONT,  0.0, 80.0, 140.0);
-			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 140.0);
-			LegIK(RIGHT_REAR,   0.0, 80.0, 140.0);
-			LegIK(LEFT_FRONT,   0.0, 80.0, 140.0);
-			LegIK(LEFT_MIDDLE,  0.0, 80.0, 140.0);
-			LegIK(LEFT_REAR,    0.0, 80.0, 140.0);
-			WriteLegIK(120);
-			osDelay(1000);
-			LegIK(RIGHT_FRONT,  -40.0, 80.0, 140.0);
-			LegIK(RIGHT_MIDDLE, -40.0, 80.0, 140.0);
-			LegIK(RIGHT_REAR,   -40.0, 80.0, 140.0);
-			LegIK(LEFT_FRONT,   -40.0, 80.0, 140.0);
-			LegIK(LEFT_MIDDLE,  -40.0, 80.0, 140.0);
-			LegIK(LEFT_REAR,    -40.0, 80.0, 140.0);
-			WriteLegIK(180);
-			osDelay(3000);
-			LegIK(RIGHT_FRONT,  0.0, 80.0, 140.0);
-			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 140.0);
-			LegIK(RIGHT_REAR,   0.0, 80.0, 140.0);
-			LegIK(LEFT_FRONT,   0.0, 80.0, 140.0);
-			LegIK(LEFT_MIDDLE,  0.0, 80.0, 140.0);
-			LegIK(LEFT_REAR,    0.0, 80.0, 140.0);
-			WriteLegIK(180);
-			osDelay(3000);
-			LegIK(RIGHT_FRONT,  0.0, 80.0, 40.0);
-			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 40.0);
-			LegIK(RIGHT_REAR,   0.0, 80.0, 40.0);
-			LegIK(LEFT_FRONT,   0.0, 80.0, 40.0);
-			LegIK(LEFT_MIDDLE,  0.0, 80.0, 40.0);
-			LegIK(LEFT_REAR,    0.0, 80.0, 40.0);
-			WriteLegIK(120);
-
-
+			WriteLegIK(160);
 
 			/*
 			Eyes_SetExpression(Sad, fast);

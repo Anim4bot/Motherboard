@@ -38,53 +38,56 @@
 #define FEMUR_LENGTH	73.68
 #define TIBIA_LENGTH	119.15
 
-#define LEG_FRONT_X		95.61
-#define LEG_FRONT_Y		69.86
-#define LEG_MIDDLE_X	0
-#define LEG_MIDDLE_Y	79.38
-#define LEG_REAR_X		-95.61
-#define LEG_REAR_Y		69.86
+#define X_COXA				95.61
+#define Y_COXA_MIDDLE		79.38
+#define Y_COXA_FRONT_REAR	69.86
+#define COXA_ANGLE			20
+
 
 
 typedef struct
 {
-	float PosX;
-	float PosY;
-	float PosZ;
+	float x;
+	float y;
+	float z;
 }
-FeetPos_st;
+Coord_st;
 
 typedef struct
 {
-	float CoxaJointAngle;
-	float FemurJointAngle;
-	float TibiaJointAngle;
+	float CoxaAngle;
+	float FemurAngle;
+	float TibiaAngle;
 }
 Joints_st;
 
 typedef struct
 {
-	FeetPos_st Foot;
+	Coord_st InitFootPos;
+	Coord_st LegBasePos;
+	Coord_st CalcFootPos;
 	Joints_st Joint;
 }
 Leg_st;
 
-
 typedef struct
 {
-	float PosX;
-	float PosY;
-	float PosZ;
-	float RotX;
-	float RotY;
-	float RotZ;
+	  int   Xspeed;
+	  int   Yspeed;
+	  int   Rspeed;
+	  float bodyTransX;
+	  float bodyTransY;
+	  float bodyTransZ;
+	  float bodyRotX;
+	  float bodyRotY;
+	  float bodyRotZ;
 }
-Body_st;
+BodyCmd_st;
 
 
 
 
-void LegIK (int legNr, float PosX, float PosY, float PosZ);
+void LegIK (uint8_t legNr, float PosX, float PosY, float PosZ);
 void WriteLegIK(uint8_t speed);
 
 
