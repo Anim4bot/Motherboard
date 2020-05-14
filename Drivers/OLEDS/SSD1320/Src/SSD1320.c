@@ -740,7 +740,7 @@ void Flex_OLED_Menu_Battery(void)
 			{
 				Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
 				Flex_OLED_Update();
-				osDelay(5);
+				osDelay(10);
 			}
 		}
 

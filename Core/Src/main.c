@@ -772,11 +772,10 @@ void StartTask_PwrMngt(void const * argument)
 
 	set_PSU_3V3(ON);
 	set_MAIN_SWITCH(ON);
-	osDelay(500);
+	osDelay(250);
 	set_PSU_5V(ON);
-	osDelay(1000);
+	osDelay(250);
 	set_PSU_DRS0101(ON);
-
 	BIP_0();
 
 
@@ -898,18 +897,34 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
+			IK_LegInit();
 
-			//Gaits_DefaultPosition(70);
-			DRS0101_setTorque(BROADCAST_ID, TORQUE_ON);
+			Robot.BodyCmd.TransX	= 0;
+			Robot.BodyCmd.TransY	= 0;
+			Robot.BodyCmd.TransZ	= -70;
+			Robot.BodyCmd.RotX	= 0;
+			Robot.BodyCmd.RotY	= 0;
+			Robot.BodyCmd.RotZ	= 0;
+			IK_Run();
 
-			LegIK(RIGHT_FRONT,  0.0, 80.0, 40.0);
-			LegIK(RIGHT_MIDDLE, 0.0, 80.0, 40.0);
-			LegIK(RIGHT_REAR,   0.0, 80.0, 40.0);
-			LegIK(LEFT_FRONT,   0.0, 80.0, 40.0);
-			LegIK(LEFT_MIDDLE,  0.0, 80.0, 40.0);
-			LegIK(LEFT_REAR,    0.0, 80.0, 40.0);
-			WriteLegIK(160);
+			osDelay(2000);
+			Robot.BodyCmd.RotZ	= 10;
+			IK_Run();
+			osDelay(1000);
+			Robot.BodyCmd.RotZ	= -10;
+			IK_Run();
 
+			/*
+			Robot.BodyCmd.TransX	= 20;
+			osDelay(2000);
+			Robot.BodyCmd.TransY	= 0;
+			osDelay(2000);
+			Robot.BodyCmd.RotX	= 10;
+			osDelay(2000);
+			Robot.BodyCmd.RotY	= 10;
+			osDelay(2000);
+			Robot.BodyCmd.RotZ	= 10;
+*/
 			/*
 			Eyes_SetExpression(Sad, fast);
 			Ears_SetPosition(EarL_Down, EarR_Down, slow);
@@ -1130,6 +1145,10 @@ void StartTask_Bluetooth(void const * argument)
 	uint8_t buff[16];
 	uint8_t rxbuff[16];
 
+	set_BT_RST(OFF);
+	osDelay(250);
+	set_BT_RST(ON);
+
 	for(;;)
 	{
 		//sprintf(buff, "Bluetooth test");
@@ -1148,7 +1167,7 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);
 
@@ -1164,11 +1183,25 @@ void StartTask_Behavior(void const * argument)
 void StartTask_Kinematic(void const * argument)
 {
 
+	osDelay(1000);
+	IK_LegInit();
+	DRS0101_Clear(BROADCAST_ID);
+	DRS0101_setTorque(BROADCAST_ID, TORQUE_ON);
+
+	//Gaits_DefaultPosition(70);
+
+	Robot.BodyCmd.TransX	= 0;
+	Robot.BodyCmd.TransY	= 0;
+	Robot.BodyCmd.TransZ	= 0;
+	Robot.BodyCmd.RotX	= 0;
+	Robot.BodyCmd.RotY	= 0;
+	Robot.BodyCmd.RotZ	= 0;
 
 	for(;;)
 	{
 
-		osDelay(50);
+		//IK_Run();
+		osDelay(100);
 	}
 
 }

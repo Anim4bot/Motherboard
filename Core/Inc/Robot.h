@@ -14,6 +14,7 @@
 #include "Kinematics.h"
 
 
+
 /* SENSORS DEFINITIONS
 *********************************************/
 typedef struct
@@ -47,6 +48,7 @@ Sensors_st;
 Sensors_st Sensor;
 
 
+
 /* HOOD DEFINITIONS
 *********************************************/
 typedef enum
@@ -56,6 +58,7 @@ typedef enum
 	Undef    = 2
 }
 HoodStatus_em;
+
 
 
 /* HEAD DEFINITIONS
@@ -70,6 +73,7 @@ typedef struct
 }
 Head_st;
 Head_st Head;
+
 
 
 /* Flex OLED DEFINITIONS
@@ -92,6 +96,7 @@ typedef struct
 }
 OLED_st;
 OLED_st OLED;
+
 
 
 /* CHARGER DEFINITIONS
@@ -137,6 +142,23 @@ Charger_st Charger;
 
 
 
+/* KINEMATICS DEFINITIONS
+*********************************************/
+typedef struct
+{
+	  int   Xspeed;
+	  int   Yspeed;
+	  int   Rspeed;
+	  float TransX;
+	  float TransY;
+	  float TransZ;
+	  float RotX;
+	  float RotY;
+	  float RotZ;
+}
+BodyCmd_st;
+
+
 
 /* ROBOT GLOBAL STRUCTURE
 *********************************************/
@@ -147,6 +169,7 @@ typedef struct
 	OLED_st OLED;
 	Sensors_st Sensors;
 	Charger_st Charger;
+	BodyCmd_st BodyCmd;
 }
 Robot_st;
 Robot_st Robot;

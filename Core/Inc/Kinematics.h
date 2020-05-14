@@ -8,21 +8,23 @@
 /******************************************************************************
  *
  *
- * FRONT VIEW       ^        ==0         0==
- *     /\___/\      |       |  0==[___]==0  |
- *    /       \     -Z      |               |
+ * FRONT VIEW
+ *      			^        ==0\           /0==
+ *     /\___/\      |       |    0==[___]==0    |
+ *    /       \     -Z      |                   |
  *
  *
  *
  * TOP VIEW
- *    \       /      ^
- *     \_____/       |
- *     |     |
- *  ___|     |___    X
- *     |     |
- *     |_____|
- *     /     \       Y--->
- *    /       \
+ *
+ *  5  \       / 0      ^
+ *      \_____/         |
+ *      | |_| |         |
+ * 4 ___|     |___ 1    X
+ *      |     |
+ *      |_____|
+ *     /      \        Y--->
+ *  3 /        \ 2
  *
  *****************************************************************************/
 
@@ -63,6 +65,7 @@ Joints_st;
 
 typedef struct
 {
+	Coord_st FootPos;
 	Coord_st InitFootPos;
 	Coord_st LegBasePos;
 	Coord_st CalcFootPos;
@@ -70,25 +73,15 @@ typedef struct
 }
 Leg_st;
 
-typedef struct
-{
-	  int   Xspeed;
-	  int   Yspeed;
-	  int   Rspeed;
-	  float bodyTransX;
-	  float bodyTransY;
-	  float bodyTransZ;
-	  float bodyRotX;
-	  float bodyRotY;
-	  float bodyRotZ;
-}
-BodyCmd_st;
 
 
 
-
-void LegIK (uint8_t legNr, float PosX, float PosY, float PosZ);
-void WriteLegIK(uint8_t speed);
+void IK_Run(void);
+void IK_LegInit(void);
+void IK_Body(void);
+void IK_BodyLegs();
+void IK_Leg (uint8_t legNr, float PosX, float PosY, float PosZ);
+void IK_DriveServos(uint8_t speed);
 
 
 #endif /* INC_KINEMATICS_H_ */
