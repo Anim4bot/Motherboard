@@ -162,7 +162,7 @@ int main(void)
 	Task_DefaultHandle = osThreadCreate(osThread(Task_Default), NULL);
 
 	/* definition and creation of Task_Oled */
-	osThreadDef(Task_FlexOled, StartTask_FlexOled, osPriorityNormal, 0, 256);
+	osThreadDef(Task_FlexOled, StartTask_FlexOled, osPriorityBelowNormal, 0, 256);
 	Task_FlexOledHandle = osThreadCreate(osThread(Task_FlexOled), NULL);
 
 	/* definition and creation of Task_Sensors */
@@ -360,7 +360,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1141,18 +1141,29 @@ void StartTask_Rpi(void const * argument)
 
 void StartTask_Bluetooth(void const * argument)
 {
+	uint8_t header_master1[5U] = {0x0A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t header_master2[5U] = {0x0B, 0x00, 0x00, 0x00, 0x00};
+	uint8_t header_slave[5U]  = {0x00, 0x00, 0x00, 0x00, 0x00};
 
-	uint8_t buff[16];
-	uint8_t rxbuff[16];
+	osDelay(1500);
 
-	set_BT_RST(OFF);
-	osDelay(250);
 	set_BT_RST(ON);
+	osDelay(10);
+
+	set_BT_CS(LOW);
+	osDelay(1);
+	//HAL_SPI_TransmitReceive(&hspi3, &header_master1, &header_slave, 5, 100);
+	HAL_SPI_Transmit(&hspi3, &header_master2, 5, 100);
+	HAL_SPI_Receive(&hspi3, &header_slave,5, 100);
+	asm("NOP");
+	HAL_SPI_TransmitReceive(&hspi3, &header_master2, &header_slave, 5, 100);
+	asm("NOP");
+	set_BT_CS(HIGH);
+	asm("NOP");
 
 	for(;;)
 	{
-		//sprintf(buff, "Bluetooth test");
-		//HAL_SPI_TransmitReceive(&hspi3, buff, &rxbuff, sizeof(buff), 100);
+
 		osDelay(300);
 	}
 
@@ -1167,7 +1178,7 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);
 

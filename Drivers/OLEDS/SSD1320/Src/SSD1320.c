@@ -53,7 +53,7 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-	status = HAL_SPI_Transmit(&hspi2, (uint8_t*)&cmd, 1, 1000);
+	status = HAL_SPI_Transmit(&hspi2, (uint8_t*)&cmd, 1, 50);
 
 	set_OLED_SYS_CS(HIGH);
 
@@ -740,7 +740,7 @@ void Flex_OLED_Menu_Battery(void)
 			{
 				Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
 				Flex_OLED_Update();
-				osDelay(10);
+				osDelay(7);
 			}
 		}
 
