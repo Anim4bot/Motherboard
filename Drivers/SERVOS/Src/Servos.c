@@ -5,14 +5,11 @@
 
 void NeckServos_Init(void)
 {
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);	//Yaw
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);	//Pitch
 
 	HEAD_PITCH_PULSE	= PitchNeutral;
 	HEAD_YAW_PULSE   	= YawNeutral;
-
-	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, NECKPITCH_INIT_POS);		//Pitch
-	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, NECKYAW_INIT_POS);		//Yaw
 
 	set_PWR_SERVO_NECK(ON);
 	HEAD_PITCH_PULSE = PitchNeutral;
@@ -141,9 +138,6 @@ void EarsServos_Init(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
-	//EAR_L_PULSE = EarL_Down;
-	//EAR_R_PULSE = EarR_Down;
-
 	Head.EarL_pos = EarL_Down;
 	Head.EarR_pos = EarR_Down;
 }
@@ -216,26 +210,39 @@ void Ears_SetPosition(uint16_t NewPosL, uint16_t NewPosR, AnimSpeed_enum speed)
 
 void HoodServos_Init(void)
 {
-	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 75);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+
+	HOOD_PULSE = HoodOpen;
 
 	set_PWR_SERVO_HOOD(ON);
-	osDelay(INIT_TIME_MS);
+	HOOD_PULSE = HoodOpen;
+	osDelay(350);
 	set_PWR_SERVO_HOOD(OFF);
 }
 
 
-void Head_Init(uint8_t speed)
+void Hood_Set(HoodStatus_em stat)
 {
-	uint16_t i;
-	uint16_t temp;
-
-	/*
-	set_PWR_SERVO_NECK(ON);
-	for(i = ; i<= ; i++)
+	switch (stat)
 	{
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, i);
-		HAL_Delay(15);
+		case Close:
+			set_PWR_SERVO_HOOD(ON);
+			HOOD_PULSE = HoodClose;
+			osDelay(500);
+			set_PWR_SERVO_HOOD(OFF);
+			Hood = Close;
+		break;
+
+		case Open:
+			set_PWR_SERVO_HOOD(ON);
+			HOOD_PULSE = HoodOpen;
+			osDelay(500);
+			set_PWR_SERVO_HOOD(OFF);
+			Hood = Open;
+		break;
+
+		default:
+		break;
 	}
-	set_PWR_SERVO_NECK(OFF);
-	*/
+
 }

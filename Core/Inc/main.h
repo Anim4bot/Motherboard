@@ -23,8 +23,6 @@
 #define STM_FAN_GPIO_Port GPIOA
 #define STM_BUZZ_Pin GPIO_PIN_2
 #define STM_BUZZ_GPIO_Port GPIOA
-#define PI_SPI_CS_Pin GPIO_PIN_4
-#define PI_SPI_CS_GPIO_Port GPIOA
 #define PI_SPI_SCK_Pin GPIO_PIN_5
 #define PI_SPI_SCK_GPIO_Port GPIOA
 #define PI_SPI_MISO_Pin GPIO_PIN_6

@@ -3,7 +3,7 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
-#include "task.h"
+//#include "task.h"
 
 #include "PlatformType.h"
 #include "SubRoutines.h"
@@ -26,19 +26,44 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 osThreadId Task_DefaultHandle;
+uint32_t Task_DefaultBuffer[ 512 ];
+osStaticThreadDef_t Task_DefaultControlBlock;
 osThreadId Task_ActivityHandle;
+uint32_t Task_ActivityBuffer[ 256 ];
+osStaticThreadDef_t Task_ActivityControlBlock;
 osThreadId Task_SystemHandle;
+uint32_t Task_SystemBuffer[ 512 ];
+osStaticThreadDef_t Task_SystemControlBlock;
 osThreadId Task_FlexOledHandle;
+uint32_t Task_FlexOledBuffer[ 512 ];
+osStaticThreadDef_t Task_FlexOledControlBlock;
 osThreadId Task_PwrMngtHandle;
+uint32_t Task_PwrMngtBuffer[ 512 ];
+osStaticThreadDef_t Task_PwrMngtControlBlock;
 osThreadId Task_SensorsHandle;
+uint32_t Task_SensorsBuffer[ 512 ];
+osStaticThreadDef_t Task_SensorsControlBlock;
 osThreadId Task_RpiHandle;
+uint32_t Task_RpiBuffer[ 512 ];
+osStaticThreadDef_t Task_RpiControlBlock;
 osThreadId Task_BluetoothHandle;
+uint32_t Task_BluetoothBuffer[ 256 ];
+osStaticThreadDef_t Task_BluetoothControlBlock;
 osThreadId Task_BehaviorHandle;
+uint32_t Task_BehaviorBuffer[ 512 ];
+osStaticThreadDef_t Task_BehaviorControlBlock;
 osThreadId Task_KinematicHandle;
+uint32_t Task_KinematicBuffer[ 512 ];
+osStaticThreadDef_t Task_KinematicControlBlock;
 osMessageQId myQueue01Handle;
+uint8_t myQueue01Buffer[ 16 * sizeof( uint16_t ) ];
+osStaticMessageQDef_t myQueue01ControlBlock;
 osSemaphoreId myBinarySem01Handle;
+osStaticSemaphoreDef_t myBinarySem01ControlBlock;
 osSemaphoreId myBinarySem02Handle;
+osStaticSemaphoreDef_t myBinarySem02ControlBlock;
 osSemaphoreId myBinarySem03Handle;
+osStaticSemaphoreDef_t myBinarySem03ControlBlock;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -104,6 +129,12 @@ Flex_Oled_Menu_em Flex_Oled_Menu = Battery;
 
 uint16_t Rpi_Shutdown_ctr = 0;
 uint16_t Board_Shutdown_ctr = 0;
+uint16_t LowBattery_ctr = 0;
+
+#define BUFFERSIZE 8
+uint8_t RPI_TxBuff[BUFFERSIZE];
+uint8_t RPI_RxBuff[BUFFERSIZE];
+uint16_t j=0;
 
 
 /*******************************************************************************************************************************************************/
@@ -131,62 +162,62 @@ int main(void)
 	MX_TIM1_Init();
 	MX_USART2_UART_Init();
 
-	/* definition and creation of myBinarySem01 */
-	osSemaphoreDef(myBinarySem01);
-	myBinarySem01Handle = osSemaphoreCreate(osSemaphore(myBinarySem01), 1);
+  /* definition and creation of myBinarySem01 */
+  osSemaphoreStaticDef(myBinarySem01, &myBinarySem01ControlBlock);
+  myBinarySem01Handle = osSemaphoreCreate(osSemaphore(myBinarySem01), 1);
 
-	/* definition and creation of myBinarySem02 */
-	osSemaphoreDef(myBinarySem02);
-	myBinarySem02Handle = osSemaphoreCreate(osSemaphore(myBinarySem02), 1);
+  /* definition and creation of myBinarySem02 */
+  osSemaphoreStaticDef(myBinarySem02, &myBinarySem02ControlBlock);
+  myBinarySem02Handle = osSemaphoreCreate(osSemaphore(myBinarySem02), 1);
 
-	/* definition and creation of myBinarySem03 */
-	osSemaphoreDef(myBinarySem03);
-	myBinarySem03Handle = osSemaphoreCreate(osSemaphore(myBinarySem03), 1);
+  /* definition and creation of myBinarySem03 */
+  osSemaphoreStaticDef(myBinarySem03, &myBinarySem03ControlBlock);
+  myBinarySem03Handle = osSemaphoreCreate(osSemaphore(myBinarySem03), 1);
 
-	/* Create the thread(s) */
 
-	/* definition and creation of Task_PwrMngt */
-	osThreadDef(Task_PwrMngt, StartTask_PwrMngt, osPriorityHigh, 0, 256);
-	Task_PwrMngtHandle = osThreadCreate(osThread(Task_PwrMngt), NULL);
+  /* Create the thread(s) */
+  /* definition and creation of Task_Default */
+  osThreadStaticDef(Task_Default, StartTask_Default, osPriorityNormal, 0, 512, Task_DefaultBuffer, &Task_DefaultControlBlock);
+  Task_DefaultHandle = osThreadCreate(osThread(Task_Default), NULL);
 
-	/* definition and creation of Task_System */
-	osThreadDef(Task_System, StartTask_System, osPriorityHigh, 0, 256);
-	Task_SystemHandle = osThreadCreate(osThread(Task_System), NULL);
+  /* definition and creation of Task_Activity */
+  osThreadStaticDef(Task_Activity, StartTask_Activity, osPriorityLow, 0, 256, Task_ActivityBuffer, &Task_ActivityControlBlock);
+  Task_ActivityHandle = osThreadCreate(osThread(Task_Activity), NULL);
 
-	/* definition and creation of Task_Activity */
-	osThreadDef(Task_Activity, StartTask_Activity, osPriorityLow, 0, 128);
-	Task_ActivityHandle = osThreadCreate(osThread(Task_Activity), NULL);
+  /* definition and creation of Task_System */
+  osThreadStaticDef(Task_System, StartTask_System, osPriorityNormal, 0, 512, Task_SystemBuffer, &Task_SystemControlBlock);
+  Task_SystemHandle = osThreadCreate(osThread(Task_System), NULL);
 
-	/* definition and creation of Task_Default */
-	osThreadDef(Task_Default, StartTask_Default, osPriorityNormal, 0, 256);
-	Task_DefaultHandle = osThreadCreate(osThread(Task_Default), NULL);
+  /* definition and creation of Task_FlexOled */
+  osThreadStaticDef(Task_FlexOled, StartTask_FlexOled, osPriorityNormal, 0, 512, Task_FlexOledBuffer, &Task_FlexOledControlBlock);
+  Task_FlexOledHandle = osThreadCreate(osThread(Task_FlexOled), NULL);
 
-	/* definition and creation of Task_Oled */
-	osThreadDef(Task_FlexOled, StartTask_FlexOled, osPriorityBelowNormal, 0, 256);
-	Task_FlexOledHandle = osThreadCreate(osThread(Task_FlexOled), NULL);
+  /* definition and creation of Task_PwrMngt */
+  osThreadStaticDef(Task_PwrMngt, StartTask_PwrMngt, osPriorityHigh, 0, 512, Task_PwrMngtBuffer, &Task_PwrMngtControlBlock);
+  Task_PwrMngtHandle = osThreadCreate(osThread(Task_PwrMngt), NULL);
 
-	/* definition and creation of Task_Sensors */
-	osThreadDef(Task_Sensors, StartTask_Sensors, osPriorityHigh, 0, 256);
-	Task_SensorsHandle = osThreadCreate(osThread(Task_Sensors), NULL);
+  /* definition and creation of Task_Sensors */
+  osThreadStaticDef(Task_Sensors, StartTask_Sensors, osPriorityHigh, 0, 512, Task_SensorsBuffer, &Task_SensorsControlBlock);
+  Task_SensorsHandle = osThreadCreate(osThread(Task_Sensors), NULL);
 
-	/* definition and creation of Task_Rpi */
-	osThreadDef(Task_Rpi, StartTask_Rpi, osPriorityNormal, 0, 256);
-	Task_RpiHandle = osThreadCreate(osThread(Task_Rpi), NULL);
+  /* definition and creation of Task_Rpi */
+  osThreadStaticDef(Task_Rpi, StartTask_Rpi, osPriorityHigh, 0, 512, Task_RpiBuffer, &Task_RpiControlBlock);
+  Task_RpiHandle = osThreadCreate(osThread(Task_Rpi), NULL);
 
-	/* definition and creation of Task_Bluetooth */
-	osThreadDef(Task_Bluetooth, StartTask_Bluetooth, osPriorityNormal, 0, 256);
-	Task_BluetoothHandle = osThreadCreate(osThread(Task_Bluetooth), NULL);
+  /* definition and creation of Task_Bluetooth */
+  osThreadStaticDef(Task_Bluetooth, StartTask_Bluetooth, osPriorityNormal, 0, 256, Task_BluetoothBuffer, &Task_BluetoothControlBlock);
+  Task_BluetoothHandle = osThreadCreate(osThread(Task_Bluetooth), NULL);
 
-	/* definition and creation of Task_Behavior */
-	osThreadDef(Task_Behavior, StartTask_Behavior, osPriorityNormal, 0, 256);
-	Task_BehaviorHandle = osThreadCreate(osThread(Task_Behavior), NULL);
+  /* definition and creation of Task_Behavior */
+  osThreadStaticDef(Task_Behavior, StartTask_Behavior, osPriorityHigh, 0, 512, Task_BehaviorBuffer, &Task_BehaviorControlBlock);
+  Task_BehaviorHandle = osThreadCreate(osThread(Task_Behavior), NULL);
 
-	/* definition and creation of Task_Kinematic */
-	osThreadDef(Task_Kinematic, StartTask_Kinematic, osPriorityNormal, 0, 256);
-	Task_KinematicHandle = osThreadCreate(osThread(Task_Kinematic), NULL);
+  /* definition and creation of Task_Kinematic */
+  osThreadStaticDef(Task_Kinematic, StartTask_Kinematic, osPriorityHigh, 0, 512, Task_KinematicBuffer, &Task_KinematicControlBlock);
+  Task_KinematicHandle = osThreadCreate(osThread(Task_Kinematic), NULL);
 
 	/* definition and creation of myQueue01 */
-	osMessageQDef(myQueue01, 16, uint16_t);
+  osMessageQStaticDef(myQueue01, 16, uint16_t, myQueue01Buffer, &myQueue01ControlBlock);
 	myQueue01Handle = osMessageCreate(osMessageQ(myQueue01), NULL);
 	osKernelStart();
 
@@ -300,19 +331,18 @@ static void MX_I2C2_Init(void)
 
 }
 
-/* SPI1 init function */
+/* SPI1 init function - (Raspberry Pi) */
 static void MX_SPI1_Init(void)
 {
 
   /* SPI1 parameter configuration*/
   hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Mode = SPI_MODE_SLAVE;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.NSS = SPI_NSS_HARD_INPUT;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -324,7 +354,7 @@ static void MX_SPI1_Init(void)
 
 }
 
-/* SPI2 init function */
+/* SPI2 init function - (Flex OLED) */
 static void MX_SPI2_Init(void)
 {
 
@@ -336,7 +366,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -348,7 +378,7 @@ static void MX_SPI2_Init(void)
 
 }
 
-/* SPI3 init function */
+/* SPI3 init function - (Bluetooth Module) */
 static void MX_SPI3_Init(void)
 {
 
@@ -360,7 +390,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -643,7 +673,13 @@ static void MX_USART3_UART_Init(void)
 
 }
 
-
+/** Configure pins as 
+        * Analog 
+        * Input 
+        * Output
+        * EVENT_OUT
+        * EXTI
+*/
 static void MX_GPIO_Init(void)
 {
 
@@ -660,17 +696,15 @@ static void MX_GPIO_Init(void)
 	HAL_GPIO_WritePin(GPIOE, SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin
 						  |PI_GPIO_A_Pin|PI_SIG_OFF_Pin|PI_SIG_ON_Pin|PI_PWR_ON_OFF_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, PI_SPI_CS_Pin|LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin
-						  |PSU_EN_Pin, GPIO_PIN_RESET);
-
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOB, PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin, GPIO_PIN_RESET);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOD, MAIN_SWITCH_Pin|EYES_RST_Pin|REG_5V_EN_Pin|BT_CS_Pin
 						  |BT_RESET_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, LED_ACT_Pin|LED_B0_Pin|LED_ERR_Pin|PSU_EN_Pin, GPIO_PIN_RESET);
 	/*Configure GPIO pins : SERVO_PWR_EARS_Pin SERVO_PWR_NECK_Pin SERVO_PWR_HOOD_Pin REG_3V3_EN_Pin */
 	GPIO_InitStruct.Pin = SERVO_PWR_EARS_Pin|SERVO_PWR_NECK_Pin|SERVO_PWR_HOOD_Pin|REG_3V3_EN_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -684,12 +718,6 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : PI_SPI_CS_Pin */
-	GPIO_InitStruct.Pin = PI_SPI_CS_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(PI_SPI_CS_GPIO_Port, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PI_I2C_LINE_Pin FLEX_OLED_CS_Pin FLEX_OLED_RST_Pin */
 	GPIO_InitStruct.Pin = PI_I2C_LINE_Pin|FLEX_OLED_CS_Pin|FLEX_OLED_RST_Pin;
@@ -784,34 +812,27 @@ void StartTask_PwrMngt(void const * argument)
 		RPi_PwrMngt();
 		Board_PwrMngt();
 
-		LTC4015_GetChargerState(&chargerState);
-		LTC4015_GetChargeStatus(&chargeStatus);
-		LTC4015_GetLimitAlerts(&limitAlerts);
+		//LTC4015_GetChargerState(&chargerState);
+		//LTC4015_GetChargeStatus(&chargeStatus);
+		//LTC4015_GetLimitAlerts(&limitAlerts);
 		LTC4015_GetPowerVal();
 
 		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.50)) && (Input.SIG_SYS == GPIO_PIN_SET) )
 		{
 			set_LED_ERR(ON);
-			BIP_0();
-			//Board_Shutdown_ctr++;
-		}
-/*
-		else
-		{
-			set_LED_ERR(OFF);
-			Board_Shutdown_ctr = 0;
-		}
+			LowBattery_ctr ++;
 
-		if(Board_Shutdown_ctr == 15)
-		{
-			BoardShutdownProcedure();
+			if(LowBattery_ctr>=50)
+			{
+				LowBattery_ctr = 0;
+				BIP_4();
+			}
 		}
-*/
 
 		PWM_FAN = (uint16_t)(Sensor.TempPSU*15);
 		Sensor.Fan_Speed = PWM_FAN;
 
-		osDelay(75);
+		osDelay(100);
 	}
 
 }
@@ -825,15 +846,11 @@ void StartTask_System(void const * argument)
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);	// Rpi LED
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);	// BUZZ
 
-	//NeckServos_Init();
-	//EarsServos_Init();
-	//HoodServos_Init();
-
 	SSD1306_Init();
 	LTC4015_Init();
 	EarsServos_Init();
-
-
+	NeckServos_Init();
+	//HoodServos_Init();
 
 	PWM_LED_PI = 0;
 	PWM_FAN = 500;
@@ -851,7 +868,6 @@ void StartTask_System(void const * argument)
 
 void StartTask_Activity(void const * argument)
 {
-
 	for(;;)
 	{
 		set_LED_ACT(ON);
@@ -862,9 +878,7 @@ void StartTask_Activity(void const * argument)
 		osDelay(75);
 		set_LED_ACT(OFF);
 		osDelay(1000);
-
 	}
-
 }
 
 
@@ -884,7 +898,7 @@ void StartTask_Default(void const * argument)
 			set_LED_B0(ON);
 
 			Flex_Oled_Menu ++;
-			if(Flex_Oled_Menu > 2) { Flex_Oled_Menu = 0; }
+			if(Flex_Oled_Menu > 3) { Flex_Oled_Menu = 0; }
 			Flex_OLED_clearDisplay(CLEAR_ALL);
 			Flex_OLED_Update();
 			osDelay(100);
@@ -897,22 +911,38 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
+
+
+			Gaits_DefaultPosition(100);
+			osDelay(2000);
+
 			IK_LegInit();
 
 			Robot.BodyCmd.TransX	= 0;
 			Robot.BodyCmd.TransY	= 0;
-			Robot.BodyCmd.TransZ	= -70;
+			Robot.BodyCmd.TransZ	= -20;
 			Robot.BodyCmd.RotX	= 0;
 			Robot.BodyCmd.RotY	= 0;
 			Robot.BodyCmd.RotZ	= 0;
 			IK_Run();
 
-			osDelay(2000);
-			Robot.BodyCmd.RotZ	= 10;
-			IK_Run();
 			osDelay(1000);
-			Robot.BodyCmd.RotZ	= -10;
+			Robot.BodyCmd.RotZ	= 5;
 			IK_Run();
+			osDelay(250);
+			Head_SetPosition(PitchNeutral, YawNeutral+75, megaSlow);
+
+			osDelay(1000);
+			Robot.BodyCmd.RotZ	= -5;
+			IK_Run();
+			osDelay(250);
+			Head_SetPosition(PitchNeutral, YawNeutral-75, megaSlow);
+
+			osDelay(1000);
+			Robot.BodyCmd.RotZ	= 0;
+			IK_Run();
+			osDelay(250);
+			Head_SetPosition(PitchNeutral, YawNeutral, megaSlow);
 
 			/*
 			Robot.BodyCmd.TransX	= 20;
@@ -970,10 +1000,6 @@ void Board_PwrMngt(void)
 
 	if(Board_Shutdown_ctr == 15)
 	{
-		// Park Head and Ears
-		// Park Hood ?
-		// Park Legs
-
 		for(i =0 ; i<10 ; i++)
 		{
 			set_LED_ERR(OFF);
@@ -1075,6 +1101,9 @@ void StartTask_FlexOled(void const * argument)
 				case Sensors:
 					Flex_OLED_Menu_Sensors();
 				break;
+				case SPI_1:
+					Flex_OLED_Menu_SPI1(&RPI_RxBuff);
+				break;
 
 				default:
 				break;
@@ -1130,10 +1159,15 @@ void StartTask_Sensors(void const * argument)
 
 void StartTask_Rpi(void const * argument)
 {
+	uint8_t aTxBuffer[16];
+	uint8_t aRxBuffer[16];
+
+	SPI1_init_IT();
 
 	for(;;)
 	{
-		osDelay(50);
+		HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, BUFFERSIZE);
+		osDelay(75);
 	}
 
 }
@@ -1144,7 +1178,7 @@ void StartTask_Bluetooth(void const * argument)
 	uint8_t header_master1[5U] = {0x0A, 0x00, 0x00, 0x00, 0x00};
 	uint8_t header_master2[5U] = {0x0B, 0x00, 0x00, 0x00, 0x00};
 	uint8_t header_slave[5U]  = {0x00, 0x00, 0x00, 0x00, 0x00};
-
+	/*
 	osDelay(1500);
 
 	set_BT_RST(ON);
@@ -1160,11 +1194,12 @@ void StartTask_Bluetooth(void const * argument)
 	asm("NOP");
 	set_BT_CS(HIGH);
 	asm("NOP");
+ 	*/
 
 	for(;;)
 	{
 
-		osDelay(300);
+		osDelay(1000);
 	}
 
 }
@@ -1178,7 +1213,8 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);
 
@@ -1222,6 +1258,53 @@ void StartTask_Kinematic(void const * argument)
 /*******************************************************************************************************************************************************/
 
 
+// SPI first call occurs first, put 00 into the buffer until the host to take
+void SPI1_init_IT(void)
+{
+	memset(RPI_TxBuff, 0, BUFFERSIZE);
+	memset(RPI_RxBuff, 0, BUFFERSIZE);
+	HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, BUFFERSIZE);
+}
+
+
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
+{
+	if(hspi==&hspi1)
+	{
+		set_LED_ERR(ON);
+		BIP_3();
+	}
+}
+
+
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	uint32_t i;
+
+	if(hspi==&hspi1)
+	{
+		RPI_TxBuff[0] = 0x01+j;
+		RPI_TxBuff[1] = 0x02+j;
+		RPI_TxBuff[2] = 0x03+j;
+		RPI_TxBuff[3] = 0x04+j;
+		RPI_TxBuff[4] = 0x05+j;
+		RPI_TxBuff[5] = 0x06+j;
+		RPI_TxBuff[6] = 0x07+j;
+		RPI_TxBuff[7] = 0x08+j;
+
+		j++;
+		HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, 8);
+
+		for(i=0; i<=1000000; i++)
+		{
+			asm("NOP");
+		}
+	}
+
+
+}
+
+
 void CheckInputs(void)
 {
 	Input.SW1 			= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
@@ -1234,6 +1317,7 @@ void CheckInputs(void)
 	Input.SIG_SYS		= HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);
 	Input.SIG_DOCK		= HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1);
 	Input.CHARGER_FAULT = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3);
+	Input.PI_GPIO_B		= HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_8);
 }
 
 

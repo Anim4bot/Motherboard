@@ -3,6 +3,7 @@
 
 uint8_t previousMode = 0, currentMode = 0;
 uint8_t color = 1;
+uint16_t battLevel_Cursor = 0;
 
 
 //uint8_t screenMemory[FLEX_OLED_BUFF_SIZE] = {0};
@@ -41,6 +42,7 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
 
 	set_OLED_SYS_CS(LOW);
 
+	//Bit banging
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);		//MOSI
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);		//CLK
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);		//CLK
@@ -53,7 +55,7 @@ HAL_StatusTypeDef ssd1320_WriteCommand(uint8_t cmd)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-	status = HAL_SPI_Transmit(&hspi2, (uint8_t*)&cmd, 1, 50);
+	status = HAL_SPI_Transmit_IT(&hspi2, (uint8_t*)&cmd, 1);
 
 	set_OLED_SYS_CS(HIGH);
 
@@ -678,6 +680,25 @@ void Flex_OLED_Menu_Modes()
 }
 
 
+void Flex_OLED_Menu_SPI1(uint8_t data[])
+{
+	uint8_t buff1[32], buff2[32];
+	uint8_t xPos = 16;
+
+	Flex_OLED_setCursor(1,22);
+	sprintf(buff1, "SPI1 Rx");
+	Flex_OLED_String(buff1, NORM);
+
+	Flex_OLED_setCursor(1,12);
+	sprintf(buff2, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+	Flex_OLED_String(buff2, NORM);
+
+	Flex_OLED_Update();
+	osDelay(50);
+}
+
+
+
 void Flex_OLED_Menu_Sensors(void)
 {
 	uint8_t buff1[48], buff2[48], buff3[48];
@@ -709,9 +730,8 @@ void Flex_OLED_Menu_Battery(void)
 	volatile uint8_t test[2];
 	volatile uint16_t tdata;
 
-
-
 	Flex_OLED_setContrast(50);
+
 
 	if( (Charger.Power.InputVoltage > 11.50) && (Charger.Power.InputVoltage < 14.00) )
 	{
@@ -731,18 +751,16 @@ void Flex_OLED_Menu_Battery(void)
 		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
 		Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
 
-		Flex_OLED_Update();
-
-		for(loop = 0; loop<1 ; loop++)
+		Flex_OLED_rectFill(6, 6, 28, 20, BLACK, NORM);
+		battLevel_Cursor++;
+		if (battLevel_Cursor == 28)
 		{
-			Flex_OLED_rectFill(6, 6, 28, 20, BLACK, NORM);
-			for (i=0 ; i<=28 ; i++)
-			{
-				Flex_OLED_rectFill(6, 6, i, 20, WHITE, NORM);
-				Flex_OLED_Update();
-				osDelay(7);
-			}
+			battLevel_Cursor = 0;
 		}
+		Flex_OLED_rectFill(6, 6, battLevel_Cursor, 20, WHITE, NORM);
+		osDelay(5);
+
+		Flex_OLED_Update();
 
 	}
 	else
@@ -764,13 +782,14 @@ void Flex_OLED_Menu_Battery(void)
 
 		Flex_OLED_Update();
 	}
-
+	/*
 	if(previousMode != currentMode)
 	{
 		Flex_OLED_clearDisplay(CLEAR_ALL);
 		Flex_OLED_Update();
 		osDelay(100);
 	}
+	*/
 
 	previousMode = currentMode;
 }

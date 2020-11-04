@@ -197,6 +197,8 @@ typedef struct
 	GPIO_PinState SIG_SYS;
 	GPIO_PinState SIG_DOCK;
 	GPIO_PinState CHARGER_FAULT;
+	GPIO_PinState PI_I2C_BUSY;
+	GPIO_PinState PI_GPIO_B;
 }
 Input_st;
 

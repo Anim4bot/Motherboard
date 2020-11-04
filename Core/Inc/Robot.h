@@ -53,12 +53,11 @@ Sensors_st Sensor;
 *********************************************/
 typedef enum
 {
-	Closed  = 0,
-	Opened   = 1,
-	Undef    = 2
+	Close  = 0,
+	Open   = 1
 }
 HoodStatus_em;
-
+HoodStatus_em Hood;
 
 
 /* HEAD DEFINITIONS
@@ -82,7 +81,8 @@ typedef enum
 {
 	Battery  = 0,
 	Sensors  = 1,
-	Modes    = 2
+	Modes    = 2,
+	SPI_1	 = 3
 
 }
 Flex_Oled_Menu_em;
@@ -167,6 +167,7 @@ typedef struct
 	Eyes_st Eyes;
 	Head_st Head;
 	OLED_st OLED;
+	HoodStatus_em Hood;
 	Sensors_st Sensors;
 	Charger_st Charger;
 	BodyCmd_st BodyCmd;

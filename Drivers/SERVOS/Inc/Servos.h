@@ -31,6 +31,13 @@ typedef enum
 NeckPos_enum;
 
 
+typedef enum
+{
+	HoodOpen  = 1400, 	//less = opening
+	HoodClose = 1800	//more = closing
+}
+HoodPos_enum;
+
 
 typedef enum
 {
@@ -64,5 +71,6 @@ void EarsServos_Init(void);
 void HoodServos_Init(void);
 
 void Ears_SetPosition(uint16_t NewPosL, uint16_t NewPosR, AnimSpeed_enum speed);
+void Head_SetPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed);
 
 #endif /* SERVOS_H_ */

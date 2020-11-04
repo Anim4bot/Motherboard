@@ -10,6 +10,7 @@ void BIP_0(void);
 void BIP_1(void);
 void BIP_2(void);
 void BIP_3(void);
+void BIP_4(void);
 
 void BoardShutdownProcedure(void);
 

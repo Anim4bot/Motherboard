@@ -44,6 +44,13 @@ void BIP_3(void)
 	PWM_BUZZ = 0;
 }
 
+void BIP_4(void)
+{
+	PWM_BUZZ = 50;
+	osDelay(200);
+	PWM_BUZZ = 0;
+}
+
 
 void BoardShutdownProcedure(void)
 {
