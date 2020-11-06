@@ -3,7 +3,9 @@
 
 uint8_t previousMode = 0, currentMode = 0;
 uint8_t color = 1;
-uint16_t battLevel_Cursor = 0;
+uint16_t battLvl_CursorUp = 0;
+uint16_t battLvl_CursorDown = 28;
+uint16_t battLevel_ctr = 0;
 
 
 //uint8_t screenMemory[FLEX_OLED_BUFF_SIZE] = {0};
@@ -671,10 +673,16 @@ void Flex_OLED_Menu_Modes()
 	int ctr;
 	uint8_t buff1[16];
 
-	Flex_OLED_setPixel(1, 1, WHITE, NORM);
-	Flex_OLED_setPixel(148, 1, WHITE, NORM);
-	Flex_OLED_setPixel(1, 31, WHITE, NORM);
-	Flex_OLED_setPixel(148, 31, WHITE, NORM);
+
+	uint8_t buff1[32], buff2[32];
+	uint8_t xPos = 16;
+
+	Flex_OLED_setCursor(1,22);
+	sprintf(buff1, "MODES");
+	Flex_OLED_String(buff1, NORM);
+
+	color = !color;
+	Flex_OLED_lineV(155, 1, 32, color, NORM);
 
 	Flex_OLED_Update();
 }
@@ -693,8 +701,10 @@ void Flex_OLED_Menu_SPI1(uint8_t data[])
 	sprintf(buff2, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 	Flex_OLED_String(buff2, NORM);
 
+	color = !color;
+	Flex_OLED_lineV(155, 1, 32, color, NORM);
+
 	Flex_OLED_Update();
-	osDelay(50);
 }
 
 
@@ -702,29 +712,31 @@ void Flex_OLED_Menu_SPI1(uint8_t data[])
 void Flex_OLED_Menu_Sensors(void)
 {
 	uint8_t buff1[48], buff2[48], buff3[48];
-	uint8_t xPos = 16;
+	uint8_t xPos = 8;
 
-	Flex_OLED_setCursor(xPos,22);
+	Flex_OLED_setCursor(xPos, 22);
 	sprintf(buff1, "Pitch: %+.2d   PSU: %+.2d  ", (int16_t)Sensor.IMU.Pitch, (int16_t)Sensor.TempPSU);
 	Flex_OLED_String(buff1, NORM);
 
-	Flex_OLED_setCursor(xPos,12);
+	Flex_OLED_setCursor(xPos, 12);
 	sprintf(buff2, "Roll : %+.2d   CHG: %+.2d  ", (int16_t)Sensor.IMU.Roll, (int16_t)Sensor.TempCharger);
 	Flex_OLED_String(buff2, NORM);
 
-	Flex_OLED_setCursor(xPos,2);
+	Flex_OLED_setCursor(xPos, 2);
 	sprintf(buff3, "IR: %.4d     FAN: %.3d  ", (int16_t)Sensor.dist_IR, (int16_t)Sensor.Fan_Speed);
 	Flex_OLED_String(buff3, NORM);
 
-	Flex_OLED_Update();
-	osDelay(50);
+	color = !color;
+	Flex_OLED_lineV(155, 1, 32, color, NORM);
 
+	Flex_OLED_Update();
 }
 
 
 void Flex_OLED_Menu_Battery(void)
 {
 	uint8_t xOffset = 80;
+	uint8_t xPos = 8;
 	uint8_t loop, i, j;
 	uint8_t buff1[32], buff2[32], buff3[32];
 	volatile uint8_t test[2];
@@ -733,63 +745,78 @@ void Flex_OLED_Menu_Battery(void)
 	Flex_OLED_setContrast(50);
 
 
-	if( (Charger.Power.InputVoltage > 11.50) && (Charger.Power.InputVoltage < 14.00) )
+	if( (Charger.Power.InputVoltage > 11.75) /*&& (Charger.Power.InputVoltage < 14.00)*/ )
 	{
 		currentMode = 1;
 
-		Flex_OLED_setCursor(60,22);
-		sprintf(buff1,"Vbat: %.2fV  ", Charger.Power.BatVoltage);
-		Flex_OLED_String(buff1, NORM);
-		Flex_OLED_setCursor(60,12);
-		sprintf(buff2,"Ibat: %.2fA  ", Charger.Power.BatCurrent);
-		Flex_OLED_String(buff2, NORM);
-		Flex_OLED_setCursor(60,2);
-		sprintf(buff2,"Temp: %.2d  ", (uint16_t)Charger.Power.Die_temp);
-		Flex_OLED_String(buff2, NORM);
-
-
-		Flex_OLED_rect(4, 4, 32, 24, WHITE, NORM);			// battery housing
-		Flex_OLED_rectFill(36, 10, 3, 12, WHITE, NORM);		// battery housing head
-
-		Flex_OLED_rectFill(6, 6, 28, 20, BLACK, NORM);
-		battLevel_Cursor++;
-		if (battLevel_Cursor == 28)
+		if(previousMode != currentMode)
 		{
-			battLevel_Cursor = 0;
+			Flex_OLED_clearDisplay(CLEAR_ALL);
+			Flex_OLED_Update();
 		}
-		Flex_OLED_rectFill(6, 6, battLevel_Cursor, 20, WHITE, NORM);
-		osDelay(5);
+
+		Flex_OLED_setCursor(xPos, 22);
+		sprintf(buff1,"VBAT: %.2fV  ", Charger.Power.BatVoltage);
+		Flex_OLED_String(buff1, NORM);
+		Flex_OLED_setCursor(xPos, 12);
+		sprintf(buff2,"IBAT: %.2fA  ", Charger.Power.BatCurrent);
+		Flex_OLED_String(buff2, NORM);
+		Flex_OLED_setCursor(xPos, 2);
+		sprintf(buff2,"TEMP: %.2d  ", (uint16_t)Charger.Power.Die_temp);
+		Flex_OLED_String(buff2, NORM);
+
+
+		Flex_OLED_rect(4+100, 4, 32, 24, WHITE, NORM);			// battery housing
+		Flex_OLED_rectFill(36+100, 10, 3, 12, WHITE, NORM);		// battery housing head
+
+		if(Charger.Power.BatVoltage >= 11.20)
+		{
+			battLevel_ctr ++;
+			if (battLevel_ctr >= 75)
+			{
+				Flex_OLED_rectFill(6+100, 6, 28, 20, WHITE, NORM);
+			}
+
+		}
+		else
+		{
+			battLvl_CursorUp++;
+			if (battLvl_CursorUp >= 28)
+			{
+				battLvl_CursorUp = 0;
+			}
+			Flex_OLED_rectFill(6+100, 6, battLvl_CursorUp, 20, WHITE, NORM);
+		}
 
 		Flex_OLED_Update();
+		osDelay(5);
 
 	}
 	else
 	{
 		currentMode = 0;
+
+		if(previousMode != currentMode)
+		{
+			Flex_OLED_clearDisplay(CLEAR_ALL);
+			Flex_OLED_Update();
+		}
+
 		Flex_OLED_setCursor(10,22);
-		sprintf(buff1,"VBATT : %.2fV  ", Charger.Power.SysVoltage);
+		sprintf(buff1,"VBAT : %.2fV  ", Charger.Power.BatVoltage);
 		Flex_OLED_String(buff1, NORM);
 		Flex_OLED_setCursor(10,12);
-		sprintf(buff2,"IBATT : %.3fA  ", Charger.Power.SysCurrent);
+		sprintf(buff2,"IBAT : %.2fA  ", Charger.Power.BatCurrent);
 		Flex_OLED_String(buff2, NORM);
 		Flex_OLED_setCursor(10,2);
-		sprintf(buff3,"Power : %.2fW  ", Charger.Power.SysPower);
+		sprintf(buff3,"PWR  : %.2fW  ", (Charger.Power.BatVoltage*Charger.Power.BatCurrent));
 		Flex_OLED_String(buff3, NORM);
 
 		color = !color;
-		Flex_OLED_setPixel(149, 1, color, NORM);
-		Flex_OLED_setPixel(149, 31, color, NORM);
+		Flex_OLED_lineV(155, 1, 32, color, NORM);
 
 		Flex_OLED_Update();
 	}
-	/*
-	if(previousMode != currentMode)
-	{
-		Flex_OLED_clearDisplay(CLEAR_ALL);
-		Flex_OLED_Update();
-		osDelay(100);
-	}
-	*/
 
 	previousMode = currentMode;
 }

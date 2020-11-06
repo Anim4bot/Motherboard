@@ -291,13 +291,13 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
-/* I2C1 init function */
+/* I2C1 init function - (SSD1306) */
 static void MX_I2C1_Init(void)
 {
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 600000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_16_9;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -311,12 +311,12 @@ static void MX_I2C1_Init(void)
 
 }
 
-/* I2C2 init function */
+/* I2C2 init function - (All Sensors) */
 static void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 400000;
+  hi2c2.Init.ClockSpeed = 200000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -822,7 +822,7 @@ void StartTask_PwrMngt(void const * argument)
 			set_LED_ERR(ON);
 			LowBattery_ctr ++;
 
-			if(LowBattery_ctr>=50)
+			if(LowBattery_ctr>=250)
 			{
 				LowBattery_ctr = 0;
 				BIP_4();
@@ -1095,14 +1095,14 @@ void StartTask_FlexOled(void const * argument)
 				case Battery:
 					Flex_OLED_Menu_Battery();
 				break;
-				case Modes:
-					Flex_OLED_Menu_Modes();
-				break;
 				case Sensors:
 					Flex_OLED_Menu_Sensors();
 				break;
 				case SPI_1:
 					Flex_OLED_Menu_SPI1(&RPI_RxBuff);
+				break;
+				case Modes:
+					Flex_OLED_Menu_Modes();
 				break;
 
 				default:
@@ -1213,7 +1213,7 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);

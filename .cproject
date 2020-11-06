@@ -47,11 +47,9 @@
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/APDS9960/Inc"/>
-									<listOptionValue builtIn="false" value="../Drivers/BT/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/DRS0101/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/OLEDS/SSD1306/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/OLEDS/SSD1320/Inc"/>
-									<listOptionValue builtIn="false" value="../Drivers/10DOF/ITG3205/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/LM75B/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/LTC4015/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/ADC101/Inc"/>

@@ -13,7 +13,7 @@ SSD1306_RIGHT_st SSD1306_Right;
 HAL_StatusTypeDef SSD1306_WriteCmdRight(uint8_t command)
 {
 	HAL_StatusTypeDef status;
-	status = HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_RIGHT, 0x00, 1, &command, 1, 100);
+	status = HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_RIGHT, 0x00, 1, &command, 1, 50);
 	return status;
 }
 
@@ -21,7 +21,7 @@ HAL_StatusTypeDef SSD1306_WriteCmdRight(uint8_t command)
 HAL_StatusTypeDef SSD1306_WriteCmdLeft(uint8_t command)
 {
 	HAL_StatusTypeDef status;
-	status = HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_LEFT, 0x00, 1, &command, 1, 100);
+	status = HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_LEFT, 0x00, 1, &command, 1, 50);
 	return status;
 }
 

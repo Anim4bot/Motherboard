@@ -106,8 +106,8 @@ typedef struct
 	float Die_temp;
 	float InputVoltage;
 	float SysVoltage;
-	float SysCurrent;
-	float SysPower;
+	float InputCurrent;
+	float InputPower;
 	float BatVoltage;
 	float BatCurrent;
 	float BatPower;
