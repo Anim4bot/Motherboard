@@ -797,6 +797,7 @@ void StartTask_PwrMngt(void const * argument)
 	LTC4015_ChargeStateAlerts stateAlerts = 0x0000;
 	LTC4015_ChargeStatusAlerts statusAlerts = 0x0000;
 	LTC4015_SystemStatus systemStatus = 0x0000;
+	LTC4015_InitValues();
 
 	set_PSU_3V3(ON);
 	set_MAIN_SWITCH(ON);
@@ -812,9 +813,8 @@ void StartTask_PwrMngt(void const * argument)
 		RPi_PwrMngt();
 		Board_PwrMngt();
 
-		//LTC4015_GetChargerState(&chargerState);
-		//LTC4015_GetChargeStatus(&chargeStatus);
-		//LTC4015_GetLimitAlerts(&limitAlerts);
+		LTC4015_GetChargerState(&chargerState);
+		LTC4015_GetChargeStatus(&chargeStatus);
 		LTC4015_GetPowerVal();
 
 		if( ((Charger.Power.BatVoltage > 7) && (Charger.Power.BatVoltage < 9.50)) && (Input.SIG_SYS == GPIO_PIN_SET) )

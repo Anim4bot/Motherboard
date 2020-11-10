@@ -671,9 +671,6 @@ uint8_t Flex_OLED_StartupAnimation(uint8_t speed)
 void Flex_OLED_Menu_Modes()
 {
 	int ctr;
-	uint8_t buff1[16];
-
-
 	uint8_t buff1[32], buff2[32];
 	uint8_t xPos = 16;
 
@@ -745,7 +742,7 @@ void Flex_OLED_Menu_Battery(void)
 	Flex_OLED_setContrast(50);
 
 
-	if( (Charger.Power.InputVoltage > 11.75) /*&& (Charger.Power.InputVoltage < 14.00)*/ )
+	if( (Charger.Power.InputVoltage > 11.50) /*&& (Charger.Power.InputVoltage < 14.00)*/ )
 	{
 		currentMode = 1;
 
@@ -778,15 +775,14 @@ void Flex_OLED_Menu_Battery(void)
 			}
 
 		}
-		else
+
+		battLvl_CursorUp++;
+		if (battLvl_CursorUp >= 28)
 		{
-			battLvl_CursorUp++;
-			if (battLvl_CursorUp >= 28)
-			{
-				battLvl_CursorUp = 0;
-			}
-			Flex_OLED_rectFill(6+100, 6, battLvl_CursorUp, 20, WHITE, NORM);
+			battLvl_CursorUp = 0;
+			Flex_OLED_rectFill(6+100, 6, 28, 20, BLACK, NORM);
 		}
+		Flex_OLED_rectFill(6+100, 6, battLvl_CursorUp, 20, WHITE, NORM);
 
 		Flex_OLED_Update();
 		osDelay(5);
