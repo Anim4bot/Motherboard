@@ -56,6 +56,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/SERVOS/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/LSM9DS1/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/SPBTLE-RF/inc"/>
+									<listOptionValue builtIn="false" value="../Drivers/PID/Inc"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1670122205" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
@@ -184,6 +185,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/LSM9DS1/Inc"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST"/>
 									<listOptionValue builtIn="false" value="../Drivers/SPBTLE-RF/inc"/>
+									<listOptionValue builtIn="false" value="../Drivers/PID/Inc"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1670122205" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>

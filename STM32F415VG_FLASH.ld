@@ -41,8 +41,9 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 MEMORY
 {
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
-CCMRAM (rw)      : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
+CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH = 64K
+FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 1022K
+EEPROM (rx)    : ORIGIN = 0x800FF800, LENGTH = 2K
 }
 
 /* Define output sections */
@@ -171,6 +172,14 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(4);
   } >RAM
+  
+  
+ .user_data :
+  {
+    . = ALIGN(4);
+     KEEP(*(.user_data))
+    . = ALIGN(4);
+  } > EEPROM
 
   
 

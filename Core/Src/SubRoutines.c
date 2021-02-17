@@ -15,7 +15,6 @@ void BIP_0(void)
 	PWM_BUZZ = 0;
 }
 
-
 void BIP_1(void)
 {
 	PWM_BUZZ = 50;
@@ -28,7 +27,6 @@ void BIP_1(void)
 	osDelay(20);
 	PWM_BUZZ = 0;
 }
-
 
 void BIP_2(void)
 {
@@ -51,28 +49,31 @@ void BIP_4(void)
 	PWM_BUZZ = 0;
 }
 
+void BIP_5(void)
+{
+	PWM_BUZZ = 50;
+	osDelay(25);
+	PWM_BUZZ = 0;
+}
+
+
+
 
 void BoardShutdownProcedure(void)
 {
-	uint8_t i;
-
 	BIP_3();
-	Gaits_PackPosition(100);
+	Flex_OLED_StartupAnimation(10);
+	Gaits_PackPosition(150);
 	Ears_SetPosition(EarL_Down, EarR_Down, slow);
-	Head_SetPosition(PitchNeutral, YawNeutral, slow);
+	Head_SetPosition(TiltNeutral, PanNeutral, slow);
 	Eyes_GoingToSleep(slow);
 	set_EYES_RST(ON);
-	osDelay(3000);
 
-	for(i=Robot.OLED.OLED_Contrast ; i>1 ; i--)
-	{
-		Flex_OLED_setContrast(i);
-		osDelay(1);
-	}
+	osDelay(1000);
 
-	set_PSU_5V(OFF);
-	osDelay(100);
 	set_PSU_DRS0101(OFF);
+	osDelay(100);
+	set_PSU_5V(OFF);
 	osDelay(100);
 	set_MAIN_SWITCH(OFF);
 	osDelay(100);

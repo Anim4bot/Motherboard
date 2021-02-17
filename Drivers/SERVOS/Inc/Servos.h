@@ -10,10 +10,10 @@ extern TIM_HandleTypeDef htim4;
 #define INIT_TIME_MS		500
 
 
-#define PITCH_MAX_UP    	(PitchNeutral+90)
-#define PITCH_MAX_DOWN    	(PitchNeutral-50)
-#define YAW_MAX_LEFT 	  	(YawNeutral+300)
-#define YAW_MAX_RIGHT 	  	(YawNeutral-300)
+#define TILT_MAX_UP    	  (TiltNeutral+90)
+#define TILT_MAX_DOWN     (TiltNeutral-50)
+#define PAN_MAX_LEFT 	  (PanNeutral+300)
+#define PAN_MAX_RIGHT 	  (PanNeutral-300)
 
 
 #define EAR_L_MIN_POS    	1900
@@ -25,8 +25,8 @@ extern TIM_HandleTypeDef htim4;
 
 typedef enum
 {
-	PitchNeutral = 1553, 	//more = UP
-	YawNeutral   = 1255		//more = LeftDir
+	TiltNeutral = 1553, 	//more = UP
+	PanNeutral   = 1255		//more = LeftDir
 }
 NeckPos_enum;
 
@@ -71,6 +71,6 @@ void EarsServos_Init(void);
 void HoodServos_Init(void);
 
 void Ears_SetPosition(uint16_t NewPosL, uint16_t NewPosR, AnimSpeed_enum speed);
-void Head_SetPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed);
+void Head_SetPosition(uint16_t NewPosTilt, uint16_t NewPosPan, AnimSpeed_enum speed);
 
 #endif /* SERVOS_H_ */

@@ -67,8 +67,7 @@ typedef struct
 	uint16_t EarL_pos;
 	uint16_t EarR_pos;
 	uint16_t NeckPith_pos;
-	uint16_t NeckYaw_pos;
-	//Eyes_enum Eyes;
+	uint16_t NeckPan_pos;
 }
 Head_st;
 Head_st Head;
@@ -81,8 +80,8 @@ typedef enum
 {
 	Battery  = 0,
 	Sensors  = 1,
-	Modes    = 2,
-	SPI_1	 = 3
+	SPI_1	 = 2,
+	Modes    = 3
 
 }
 Flex_Oled_Menu_em;
@@ -160,6 +159,16 @@ BodyCmd_st;
 
 
 
+/* RASPBERRY PI STATE
+*********************************************/
+typedef enum
+{
+	RPi_OFF = 0,
+	RPi_ON  = 1
+}
+RPiState_enum;
+
+
 /* ROBOT GLOBAL STRUCTURE
 *********************************************/
 typedef struct
@@ -171,6 +180,8 @@ typedef struct
 	Sensors_st Sensors;
 	Charger_st Charger;
 	BodyCmd_st BodyCmd;
+	RPiState_enum RPiState;
+
 }
 Robot_st;
 Robot_st Robot;

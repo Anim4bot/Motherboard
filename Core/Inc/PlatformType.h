@@ -26,8 +26,8 @@
 #define MAX(x,y)	((x)>(y)?(x):(y))
 
 #define PI				(3.141592653589)
-#define RadtoDeg(rad)	( (rad) * (180.0 / PI) )
-#define DegtoRad(deg)	( (deg) * (PI / 180.0) )
+#define RadtoDeg(rad)	( (rad) * (180.0 / 3.14159) )
+#define DegtoRad(deg)	( (deg) * (3.14159 / 180.0) )
 
 
 #define PWM_BUZZ	TIM2->CCR3
@@ -37,8 +37,8 @@
 #define EAR_R_PULSE  	TIM3->CCR1
 #define EAR_L_PULSE 	TIM3->CCR2
 
-#define HEAD_PITCH_PULSE  	TIM4->CCR3
-#define HEAD_YAW_PULSE   	TIM4->CCR2
+#define HEAD_TILT_PULSE  	TIM4->CCR3
+#define HEAD_PAN_PULSE   	TIM4->CCR2
 #define HOOD_PULSE  	  	TIM4->CCR4
 
 #define wait(x) \

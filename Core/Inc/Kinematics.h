@@ -38,12 +38,13 @@
 
 #define COXA_LENGTH		46.20
 #define FEMUR_LENGTH	73.68
-#define TIBIA_LENGTH	119.15
+#define TIBIA_LENGTH	119.65
 
-#define X_COXA				95.61
-#define Y_COXA_MIDDLE		79.38
-#define Y_COXA_FRONT_REAR	69.86
-#define COXA_ANGLE			20
+#define X_COXA			95.61
+#define Y_COXA_MIDDLE	79.38
+#define Y_COXA_FRONT	69.86
+#define Y_COXA_REAR		69.86
+#define COXA_ANGLE		20
 
 
 
@@ -68,7 +69,7 @@ typedef struct
 	Coord_st FootPos;
 	Coord_st InitFootPos;
 	Coord_st LegBasePos;
-	Coord_st CalcFootPos;
+	Coord_st InputFootPos;
 	Joints_st Joint;
 }
 Leg_st;
@@ -78,10 +79,16 @@ Leg_st;
 
 void IK_Run(void);
 void IK_LegInit(void);
-void IK_Body(void);
-void IK_BodyLegs();
+void IK_Body_Complex(void);
+void IK_Body_Light(void);
+void IK_BodyLegs(void);
+void IK_BodyLegs2(void);
 void IK_Leg (uint8_t legNr, float PosX, float PosY, float PosZ);
 void IK_DriveServos(uint8_t speed);
+void IK_SingleLegDrive(uint8_t legNr, float PosX, float PosY, float PosZ, uint8_t speed);
+
+void IK_SingleLegDrive2(uint8_t legNr, float PosX, float PosY, float PosZ, uint8_t speed);
+
 
 
 #endif /* INC_KINEMATICS_H_ */

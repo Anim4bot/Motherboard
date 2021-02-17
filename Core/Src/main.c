@@ -125,16 +125,16 @@ I2C2_Bus_enum I2C2_Bus = I2C2_Free;
 
 uint8_t CPUChargeBuff[8];
 uint8_t Flex_OLED_Initialized = FALSE;
-Flex_Oled_Menu_em Flex_Oled_Menu = Battery;
+Flex_Oled_Menu_em Flex_Oled_Menu = Battery; //Menu displayed on Startup
 
 uint16_t Rpi_Shutdown_ctr = 0;
 uint16_t Board_Shutdown_ctr = 0;
 uint16_t LowBattery_ctr = 0;
 
-#define BUFFERSIZE 8
-uint8_t RPI_TxBuff[BUFFERSIZE];
-uint8_t RPI_RxBuff[BUFFERSIZE];
-uint16_t j=0;
+#define RPI_SPI_BUFF 8
+uint8_t RPI_TxBuff[RPI_SPI_BUFF];
+uint8_t RPI_RxBuff[RPI_SPI_BUFF];
+uint8_t j=0;
 
 
 /*******************************************************************************************************************************************************/
@@ -808,6 +808,8 @@ void StartTask_PwrMngt(void const * argument)
 	BIP_0();
 
 
+	Robot.RPiState = RPi_OFF;
+
 	for(;;)
 	{
 		RPi_PwrMngt();
@@ -889,6 +891,12 @@ void StartTask_Default(void const * argument)
 	uint16_t IR_Val;
 	uint16_t ChargerState = 0xFF;
 	float x, y, z;
+	uint8_t i;
+
+	int8_t bodyheight = -80;
+
+	osDelay(2000);
+	Servos_ZeroPosition(100);
 
 	for(;;)
 	{
@@ -911,50 +919,39 @@ void StartTask_Default(void const * argument)
 
 		if(Input.SW1 == GPIO_PIN_SET)
 		{
+/*
+			RPI_RxBuff[0] = 0x01;
+			RPI_RxBuff[1] = 0x42;
+			RPI_RxBuff[2] = 0x01;
+			RPI_RxBuff[3] = 140;
+			RPI_RxBuff[4] = 0x00;
+			RPI_RxBuff[5] = 23;
+			RPI_RxBuff[6] = 14;
+			RPI_RxBuff[7] = 0x00;
 
-
-			Gaits_DefaultPosition(100);
-			osDelay(2000);
-
-			IK_LegInit();
-
-			Robot.BodyCmd.TransX	= 0;
-			Robot.BodyCmd.TransY	= 0;
-			Robot.BodyCmd.TransZ	= -20;
-			Robot.BodyCmd.RotX	= 0;
-			Robot.BodyCmd.RotY	= 0;
-			Robot.BodyCmd.RotZ	= 0;
-			IK_Run();
-
-			osDelay(1000);
-			Robot.BodyCmd.RotZ	= 5;
-			IK_Run();
-			osDelay(250);
-			Head_SetPosition(PitchNeutral, YawNeutral+75, megaSlow);
-
-			osDelay(1000);
-			Robot.BodyCmd.RotZ	= -5;
-			IK_Run();
-			osDelay(250);
-			Head_SetPosition(PitchNeutral, YawNeutral-75, megaSlow);
-
-			osDelay(1000);
-			Robot.BodyCmd.RotZ	= 0;
-			IK_Run();
-			osDelay(250);
-			Head_SetPosition(PitchNeutral, YawNeutral, megaSlow);
-
-			/*
-			Robot.BodyCmd.TransX	= 20;
-			osDelay(2000);
-			Robot.BodyCmd.TransY	= 0;
-			osDelay(2000);
-			Robot.BodyCmd.RotX	= 10;
-			osDelay(2000);
-			Robot.BodyCmd.RotY	= 10;
-			osDelay(2000);
-			Robot.BodyCmd.RotZ	= 10;
+			Tracking_ArUco(RPI_RxBuff[1], RPI_RxBuff[2], RPI_RxBuff[3], RPI_RxBuff[4], RPI_RxBuff[5], RPI_RxBuff[6]);
 */
+
+			x = 0;
+			y = 110;
+			z = -154;
+
+			IK_SingleLegDrive2(0, x, y, z, 100);
+			IK_SingleLegDrive2(1, x, y, z, 100);
+			IK_SingleLegDrive2(2, x, y, z, 100);
+			IK_SingleLegDrive2(3, x, y, z, 100);
+			IK_SingleLegDrive2(4, x, y, z, 100);
+			IK_SingleLegDrive2(5, x, y, z, 100);
+			osDelay(2000);
+
+			z = -70;
+			IK_SingleLegDrive2(0, x, y, z, 100);
+			IK_SingleLegDrive2(1, x, y, z, 100);
+			IK_SingleLegDrive2(2, x, y, z, 100);
+			IK_SingleLegDrive2(3, x, y, z, 100);
+			IK_SingleLegDrive2(4, x, y, z, 100);
+			IK_SingleLegDrive2(5, x, y, z, 100);
+
 			/*
 			Eyes_SetExpression(Sad, fast);
 			Ears_SetPosition(EarL_Down, EarR_Down, slow);
@@ -998,7 +995,7 @@ void Board_PwrMngt(void)
 		Board_Shutdown_ctr = 0;
 	}
 
-	if(Board_Shutdown_ctr == 15)
+	if( (Board_Shutdown_ctr == 15) && (Robot.RPiState == RPi_OFF) )
 	{
 		for(i =0 ; i<10 ; i++)
 		{
@@ -1021,9 +1018,11 @@ void RPi_PwrMngt(void)
 	if( (Input.SW_PI_BOOT == GPIO_PIN_SET) && (Rpi_Shutdown_ctr < RPI_SHTDWN_MAX_TIMEOUT) )
 	{
 		Rpi_Shutdown_ctr++;
-		set_RPI_PWR(ON);
-		set_PI_SIG_ON(TRUE);
+		//set_PI_SIG_ON(TRUE);
 		set_PI_SIG_OFF(FALSE);
+		set_RPI_PWR(ON);
+
+		Robot.RPiState = RPi_ON;
 	}
 	else
 	{
@@ -1036,38 +1035,39 @@ void RPi_PwrMngt(void)
 		for(i=0 ; i<500 ; i++)
 		{
 			PWM_LED_PI = i;
-			HAL_Delay(3);
+			osDelay(3);
 		}
 	}
 
 
 	if( (Rpi_Shutdown_ctr >= RPI_SHTDWN_MAX_TIMEOUT) /*&& (Input.RPI_RUNNING == GPIO_PIN_SET)*/ )
 	{
-		set_RPI_PWR(FALSE);
+		//set_RPI_PWR(FALSE);
 		set_PI_SIG_OFF(TRUE);
-
 		set_LED_ERR(ON);
 
 		for(j=0 ; j<=3 ; j++)
 		{
 			PWM_LED_PI = 0;
-			HAL_Delay(50);
+			osDelay(50);
 			PWM_LED_PI = 500;
-			HAL_Delay(50);
+			osDelay(50);
 		}
 
 		// Delay for the Rpi to shutdown (30ms x 500 = 15s)
 		for(i=500 ; i>0 ; i--)
 		{
 			PWM_LED_PI = i;
-			HAL_Delay(30);
+			osDelay(30);
 		}
 		PWM_LED_PI = 0;
 
 		set_LED_ERR(OFF);
 
-		set_RPI_PWR(OFF);
 		set_PI_SIG_OFF(FALSE);
+		set_RPI_PWR(OFF);
+
+		Robot.RPiState = RPi_OFF;
 
 		Rpi_Shutdown_ctr = 0;
 	}
@@ -1084,7 +1084,8 @@ void StartTask_FlexOled(void const * argument)
 	Flex_OLED_Init();
 	Robot.OLED.OLED_Contrast = 50;
 	Flex_OLED_setContrast(Robot.OLED.OLED_Contrast);
-	OLED_Ready = Flex_OLED_StartupAnimation(10);
+	OLED_Ready = Flex_OLED_StartupAnimation(5);
+	osDelay(500);
 
 	for(;;)
 	{
@@ -1099,7 +1100,7 @@ void StartTask_FlexOled(void const * argument)
 					Flex_OLED_Menu_Sensors();
 				break;
 				case SPI_1:
-					Flex_OLED_Menu_SPI1(&RPI_RxBuff);
+					Flex_OLED_Menu_SPI1(&RPI_RxBuff, &RPI_TxBuff);
 				break;
 				case Modes:
 					Flex_OLED_Menu_Modes();
@@ -1162,12 +1163,24 @@ void StartTask_Rpi(void const * argument)
 	uint8_t aTxBuffer[16];
 	uint8_t aRxBuffer[16];
 
+	osDelay(1000);
 	SPI1_init_IT();
 
 	for(;;)
 	{
-		HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, BUFFERSIZE);
-		osDelay(75);
+		//HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, RPI_SPI_BUFF);
+
+		if (Robot.RPiState == RPi_ON )
+		{
+			//ArUco markers
+			if(RPI_RxBuff[0] == 0x01)
+			{
+				//             ID             dir_x          pixel_x,        dir_y         pixel_y        dist
+				Tracking_ArUco(RPI_RxBuff[1], RPI_RxBuff[2], RPI_RxBuff[3], RPI_RxBuff[4], RPI_RxBuff[5], RPI_RxBuff[6]);
+			}
+		}
+		osDelay(100);
+		asm("NOP");
 	}
 
 }
@@ -1213,7 +1226,7 @@ void StartTask_Behavior(void const * argument)
 
 	osDelay(1500);
 	Eyes_WakingUp(fast);
-	//Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
+	Ears_SetPosition(EarL_Middle, EarR_Middle, verySlow);
 
 	osDelay(1500);
 	//Gaits_DefaultPosition(100);
@@ -1261,9 +1274,9 @@ void StartTask_Kinematic(void const * argument)
 // SPI first call occurs first, put 00 into the buffer until the host to take
 void SPI1_init_IT(void)
 {
-	memset(RPI_TxBuff, 0, BUFFERSIZE);
-	memset(RPI_RxBuff, 0, BUFFERSIZE);
-	HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, BUFFERSIZE);
+	memset(RPI_TxBuff, 0xFF, RPI_SPI_BUFF);
+	memset(RPI_RxBuff, 0xFF, RPI_SPI_BUFF);
+	HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, RPI_SPI_BUFF);
 }
 
 
@@ -1272,7 +1285,7 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 	if(hspi==&hspi1)
 	{
 		set_LED_ERR(ON);
-		BIP_3();
+		//BIP_3();
 	}
 }
 
@@ -1293,12 +1306,14 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 		RPI_TxBuff[7] = 0x08+j;
 
 		j++;
-		HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, 8);
-
+		//memset(RPI_RxBuff, 0xFF, RPI_SPI_BUFF);
+		HAL_SPI_TransmitReceive_IT(&hspi1, RPI_TxBuff, RPI_RxBuff, RPI_SPI_BUFF);
+		/*
 		for(i=0; i<=1000000; i++)
 		{
 			asm("NOP");
 		}
+		*/
 	}
 
 

@@ -635,7 +635,7 @@ uint8_t Flex_OLED_StartupAnimation(uint8_t speed)
 	uint8_t LogoDelay = 10;
 	int ctr;
 
-	ready = 0;
+	ready = NOK;
 
 	Flex_OLED_setContrast(0);
 
@@ -644,22 +644,26 @@ uint8_t Flex_OLED_StartupAnimation(uint8_t speed)
 	  ssd1320_WriteData(AnimabotLogo2[ctr]); //Write byte directly to display
 	}
 
+	osDelay(100);
+
 	for (i=0 ; i<Robot.OLED.OLED_Contrast ; i++)
 	{
 		Flex_OLED_setContrast(i);
 		osDelay(speed);
 	}
-
+/*
 	osDelay(500);
 	for (i=Robot.OLED.OLED_Contrast ; i>1 ; i--)
 	{
 		Flex_OLED_setContrast(i);
 		osDelay(speed);
 	}
-
+*/
+	osDelay(500);
 	Flex_OLED_clearDisplay(CLEAR_ALL);
-	osDelay(300);
-	ready = 1;
+	Flex_OLED_Update();
+	osDelay(250);
+	ready = OK;
 
 	return ready;
 }
@@ -685,18 +689,22 @@ void Flex_OLED_Menu_Modes()
 }
 
 
-void Flex_OLED_Menu_SPI1(uint8_t data[])
+void Flex_OLED_Menu_SPI1(uint8_t dataRx[], uint8_t dataTx[])
 {
-	uint8_t buff1[32], buff2[32];
+	uint8_t buff1[32], buff2[32], buff3[32];
 	uint8_t xPos = 16;
 
-	Flex_OLED_setCursor(1,22);
-	sprintf(buff1, "SPI1 Rx");
+	Flex_OLED_setCursor(1,24);
+	sprintf(buff1, "SPI1");
 	Flex_OLED_String(buff1, NORM);
 
-	Flex_OLED_setCursor(1,12);
-	sprintf(buff2, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+	Flex_OLED_setCursor(1,14);
+	sprintf(buff2, "Rx: %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X", dataRx[0], dataRx[1], dataRx[2], dataRx[3], dataRx[4], dataRx[5], dataRx[6], dataRx[7]);
 	Flex_OLED_String(buff2, NORM);
+
+	Flex_OLED_setCursor(1,4);
+	sprintf(buff3, "Tx: %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X", dataTx[0], dataTx[1], dataTx[2], dataTx[3], dataTx[4], dataTx[5], dataTx[6], dataTx[7]);
+	Flex_OLED_String(buff3, NORM);
 
 	color = !color;
 	Flex_OLED_lineV(155, 1, 32, color, NORM);

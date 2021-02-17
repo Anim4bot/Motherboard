@@ -881,7 +881,7 @@ void StartTask_PwrMngt(void const * argument)
 
 void StartTask_Sensors(void const * argument)
 {
-	float Pitch, Roll;
+	float Tilt, Roll;
 	float Rx, Ry, Rz;
 	float IMU_temp;
 	uint32_t val;
@@ -902,7 +902,7 @@ void StartTask_Sensors(void const * argument)
 			if(ADXL345_Status == Ready)
 			{
 				I2C2_Bus = I2C2_Busy;
-				ADXL345B_readAngle(&Roll, &Pitch);
+				ADXL345B_readAngle(&Roll, &Tilt);
 				I2C2_Bus = I2C2_Free;
 			}
 
@@ -916,7 +916,7 @@ void StartTask_Sensors(void const * argument)
 
 		}
 
-		Sensor.IMU.Pitch   = Pitch;
+		Sensor.IMU.Tilt   = Tilt;
 		Sensor.IMU.Roll    = Roll;
 		Sensor.IMU.TempIMU = IMU_temp;
 

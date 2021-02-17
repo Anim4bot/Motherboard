@@ -71,10 +71,10 @@
 #define EYES_RST_GPIO_Port GPIOD
 #define REG_5V_EN_Pin GPIO_PIN_12
 #define REG_5V_EN_GPIO_Port GPIOD
-#define HEAD_YAW_Pin GPIO_PIN_13
-#define HEAD_YAW_GPIO_Port GPIOD
-#define HEAD_PITCH_Pin GPIO_PIN_14
-#define HEAD_PITCH_GPIO_Port GPIOD
+#define HEAD_PAN_Pin GPIO_PIN_13
+#define HEAD_PAN_GPIO_Port GPIOD
+#define HEAD_TILT_Pin GPIO_PIN_14
+#define HEAD_TILT_GPIO_Port GPIOD
 #define PWM_HOOD_Pin GPIO_PIN_15
 #define PWM_HOOD_GPIO_Port GPIOD
 #define PWM_EAR_R_Pin GPIO_PIN_6

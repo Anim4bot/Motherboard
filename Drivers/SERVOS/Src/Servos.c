@@ -1,131 +1,132 @@
 #include "Servos.h"
 #include "Robot.h"
 
-
+uint16_t NewPosTilt = TiltNeutral;
+uint16_t NewPosPan = PanNeutral;
 
 void NeckServos_Init(void)
 {
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);	//Yaw
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);	//Pitch
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);	//Pan
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);	//Tilt
 
-	HEAD_PITCH_PULSE	= PitchNeutral;
-	HEAD_YAW_PULSE   	= YawNeutral;
+	HEAD_TILT_PULSE	= TiltNeutral;
+	HEAD_PAN_PULSE   	= PanNeutral;
 
 	set_PWR_SERVO_NECK(ON);
-	HEAD_PITCH_PULSE = PitchNeutral;
-	HEAD_YAW_PULSE = YawNeutral;
+	HEAD_TILT_PULSE = TiltNeutral;
+	HEAD_PAN_PULSE = PanNeutral;
 	osDelay(350);
 	set_PWR_SERVO_NECK(OFF);
 
-	Head.NeckPith_pos = PitchNeutral;
-	Head.NeckYaw_pos  = YawNeutral;
+	Head.NeckPith_pos = TiltNeutral;
+	Head.NeckPan_pos  = PanNeutral;
 }
 
 
-void Head_SetPosition(uint16_t NewPosPitch, uint16_t NewPosYaw, AnimSpeed_enum speed)
+void Head_SetPosition(uint16_t NewPosTilt, uint16_t NewPosPan, AnimSpeed_enum speed)
 {
 	uint16_t speedConst = 10000;
-	uint16_t CurrPosPitch=0, CurrPosYaw=0;
+	uint16_t CurrPosTilt=0, CurrPosPan=0;
 	uint32_t p=0, y=0, i=0;
 
-	CurrPosPitch  = Head.NeckPith_pos;
-	CurrPosYaw 	  = Head.NeckYaw_pos;
+	CurrPosTilt  = Head.NeckPith_pos;
+	CurrPosPan 	  = Head.NeckPan_pos;
 
-	//if(NewPosPitch > PITCH_MAX_UP) 	 {NewPosPitch = PITCH_MAX_UP;}
-	//if(NewPosPitch < PITCH_MAX_DOWN) {NewPosPitch = PITCH_MAX_DOWN;}
-	if(NewPosYaw > PITCH_MAX_UP) 	 {NewPosYaw = YAW_MAX_LEFT;}
-	if(NewPosYaw < YAW_MAX_RIGHT) 	 {NewPosYaw = YAW_MAX_RIGHT;}
+	if(NewPosTilt > TILT_MAX_UP) 	 {NewPosTilt = TILT_MAX_UP;}
+	if(NewPosTilt < TILT_MAX_DOWN) {NewPosTilt = TILT_MAX_DOWN;}
+	if(NewPosPan > PAN_MAX_LEFT) 	 {NewPosPan = PAN_MAX_LEFT;}
+	if(NewPosPan < PAN_MAX_RIGHT) 	 {NewPosPan = PAN_MAX_RIGHT;}
 
-	if( (NewPosPitch>CurrPosPitch) && (NewPosYaw<CurrPosYaw) )			// UP - RIGHT
+	if( (NewPosTilt>CurrPosTilt) && (NewPosPan<CurrPosPan) )			// UP - RIGHT
 	{
-		for(p=CurrPosPitch, y=CurrPosYaw ; p<=NewPosPitch || y>=NewPosYaw ; p++, y--)
+		for(p=CurrPosTilt, y=CurrPosPan ; p<=NewPosTilt || y>=NewPosPan ; p++, y--)
 		{
-			HEAD_PITCH_PULSE = p;
-			HEAD_YAW_PULSE = y;
+			HEAD_TILT_PULSE = p;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
-	else if( (NewPosPitch>CurrPosPitch) && (NewPosYaw>CurrPosYaw) )		// UP - LEFT
+	else if( (NewPosTilt>CurrPosTilt) && (NewPosPan>CurrPosPan) )		// UP - LEFT
 	{
-		for(p=CurrPosPitch, y=CurrPosYaw ; p<=NewPosPitch || y<=NewPosYaw ; p++, y++)
+		for(p=CurrPosTilt, y=CurrPosPan ; p<=NewPosTilt || y<=NewPosPan ; p++, y++)
 		{
-			HEAD_PITCH_PULSE = p;
-			HEAD_YAW_PULSE = y;
+			HEAD_TILT_PULSE = p;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
-	else if( (NewPosPitch<CurrPosPitch) && (NewPosYaw<CurrPosYaw) )		// DOWN - RIGHT
+	else if( (NewPosTilt<CurrPosTilt) && (NewPosPan<CurrPosPan) )		// DOWN - RIGHT
 	{
-		for(p=CurrPosPitch, y=CurrPosYaw ; p>=NewPosPitch || y>=NewPosYaw ; p--, y--)
+		for(p=CurrPosTilt, y=CurrPosPan ; p>=NewPosTilt || y>=NewPosPan ; p--, y--)
 		{
-			HEAD_PITCH_PULSE = p;
-			HEAD_YAW_PULSE = y;
-			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
-			set_PWR_SERVO_NECK(ON);
-		}
-	}
-
-	else if( (NewPosPitch<CurrPosPitch) && (NewPosYaw>CurrPosYaw) )		// DOWN - LEFT
-	{
-		for(p=CurrPosPitch, y=CurrPosYaw ; p>=NewPosPitch || y<=NewPosYaw ; p--, y++)
-		{
-			HEAD_PITCH_PULSE = p;
-			HEAD_YAW_PULSE = y;
+			HEAD_TILT_PULSE = p;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
 
-	else if( (NewPosPitch==CurrPosPitch) && (NewPosYaw<CurrPosYaw) )		// RIGHT
+	else if( (NewPosTilt<CurrPosTilt) && (NewPosPan>CurrPosPan) )		// DOWN - LEFT
 	{
-		for(y=CurrPosYaw ; y>=NewPosYaw ; y--)
+		for(p=CurrPosTilt, y=CurrPosPan ; p>=NewPosTilt || y<=NewPosPan ; p--, y++)
 		{
-			HEAD_YAW_PULSE = y;
+			HEAD_TILT_PULSE = p;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
 
-	else if( (NewPosPitch==CurrPosPitch) && (NewPosYaw>CurrPosYaw) )		// LEFT
+	else if( (NewPosTilt==CurrPosTilt) && (NewPosPan<CurrPosPan) )		// RIGHT
 	{
-		for(y=CurrPosYaw ; y<=NewPosYaw ; y++)
+		for(y=CurrPosPan ; y>=NewPosPan ; y--)
 		{
-			HEAD_YAW_PULSE = y;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
 
-	else if( (NewPosPitch>CurrPosPitch) && (NewPosYaw==CurrPosYaw) )		// UP
+	else if( (NewPosTilt==CurrPosTilt) && (NewPosPan>CurrPosPan) )		// LEFT
 	{
-		for (p=CurrPosPitch ; p<=NewPosPitch ; p++)
+		for(y=CurrPosPan ; y<=NewPosPan ; y++)
 		{
-			HEAD_PITCH_PULSE = p;
+			HEAD_PAN_PULSE = y;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
 
-	else if( (NewPosPitch<CurrPosPitch) && (NewPosYaw==CurrPosYaw) )		// DOWN
+	else if( (NewPosTilt>CurrPosTilt) && (NewPosPan==CurrPosPan) )		// UP
 	{
-		for(p=CurrPosPitch ; p>=NewPosPitch ; p--)
+		for (p=CurrPosTilt ; p<=NewPosTilt ; p++)
 		{
-			HEAD_PITCH_PULSE = p;
+			HEAD_TILT_PULSE = p;
+			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
+			set_PWR_SERVO_NECK(ON);
+		}
+	}
+
+	else if( (NewPosTilt<CurrPosTilt) && (NewPosPan==CurrPosPan) )		// DOWN
+	{
+		for(p=CurrPosTilt ; p>=NewPosTilt ; p--)
+		{
+			HEAD_TILT_PULSE = p;
 			for(i=0;i<=(speed*speedConst);i++) {asm("NOP");}
 			set_PWR_SERVO_NECK(ON);
 		}
 	}
 	else
 	{
-		Head.NeckPith_pos = CurrPosPitch;
-		Head.NeckYaw_pos  = CurrPosYaw;
+		Head.NeckPith_pos = CurrPosTilt;
+		Head.NeckPan_pos  = CurrPosPan;
 	}
 
 
-	Head.NeckPith_pos = NewPosPitch;
-	Head.NeckYaw_pos  = NewPosYaw;
+	Head.NeckPith_pos = NewPosTilt;
+	Head.NeckPan_pos  = NewPosPan;
 
 	osDelay(350);
 	set_PWR_SERVO_NECK(OFF);
@@ -244,5 +245,47 @@ void Hood_Set(HoodStatus_em stat)
 		default:
 		break;
 	}
+}
+
+
+void Tracking_ArUco(uint8_t ID, uint8_t dir_x, uint8_t pixel_x, uint8_t dir_y, uint8_t pixel_y, uint8_t dist)
+{
+	int16_t newPix_x = 0;
+	int16_t newPix_y = 0;
+
+	if(dir_x == 0) { newPix_x = pixel_x;} 	// positive value
+	if(dir_x == 1) { newPix_x = -pixel_x;}	// negative value
+
+	if(dir_y == 0) { newPix_y = pixel_y;} 	// positive value
+	if(dir_y == 1) { newPix_y = -pixel_y;}  // negative value
+
+
+	if(newPix_x >= 75)	//on the Right
+		NewPosPan -=10;
+	if(newPix_x <= -75) //on the Left
+		NewPosPan +=10;
+
+	if(newPix_y >= 75)	//to the Bottom
+		NewPosTilt -=10;
+	if(newPix_y <= -75)	//to the Top
+		NewPosTilt +=10;
+
+	//Head_SetPosition(NewPosTilt, NewPosPan, 10);
+
+
+
+
+
+/*
+	if(dir_x == 0) // positive
+		NewPosPan = PanNeutral + ((uint8_t)pixel_x/4);
+	else
+		NewPosPan = PanNeutral - ((uint8_t)pixel_x/4);	//pixel x coord negative so move servo Right
+
+	if(dir_y == 0) // positive
+		NewPosTilt = TiltNeutral - ((uint8_t)pixel_y/4);
+	else
+		NewPosTilt = TiltNeutral + ((uint8_t)pixel_y/4); //pixel y coord negative so move servo Up
+*/
 
 }
