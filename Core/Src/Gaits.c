@@ -104,31 +104,21 @@ void Servos_ZeroPosition(uint8_t speed)
 }
 
 
-void Servos_FrontLegTest(uint8_t speed)
+
+void IK_StandbyPos(uint8_t speed)
 {
-	int16_t angleCoxa = 0;
-	int16_t angleFemur = 45;
-	int16_t angleTibia = 45;
 
-	DRS0101_setTorque(BROADCAST_ID, TORQUE_ON);
-	DRS0101_Clear(BROADCAST_ID);
+	Robot.LegPos.Init_X = 0;
+	Robot.LegPos.Init_Y = 100;
+	Robot.LegPos.Init_Z = -25;
 
-	DRS0101_setAngle(ID_LF_COXA, -angleCoxa, speed, DRS0101_PLED);
-	DRS0101_setAngle(ID_RF_COXA, +angleCoxa, speed, DRS0101_PLED);
 
-	osDelay(500);
-
-	DRS0101_setAngle(ID_LF_FEMUR, -angleFemur, speed, DRS0101_PLED);
-	DRS0101_setAngle(ID_RF_FEMUR, +angleFemur, speed, DRS0101_PLED);
-
-	DRS0101_setAngle(ID_LF_TIBIA, -angleTibia, speed, DRS0101_PLED);
-	DRS0101_setAngle(ID_RF_TIBIA, +angleTibia, speed, DRS0101_PLED);
+	IK_SingleLegDrive(0, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
+	IK_SingleLegDrive(1, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
+	IK_SingleLegDrive(2, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
+	IK_SingleLegDrive(3, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
+	IK_SingleLegDrive(4, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
+	IK_SingleLegDrive(5, Robot.LegPos.Init_X, Robot.LegPos.Init_Y, Robot.LegPos.Init_Z, speed);
 
 }
-
-
-
-
-
-
 

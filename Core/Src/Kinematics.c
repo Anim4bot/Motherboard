@@ -23,27 +23,27 @@ void IK_LegInit(void)
 	const int16_t initLegStretch = 200;
 	const int16_t HeightOffset = 0;
 
-    Leg[RIGHT_FRONT].LegBasePos.x = X_COXA;
+    Leg[RIGHT_FRONT].LegBasePos.x = X_COXA_FRONT;
     Leg[RIGHT_FRONT].LegBasePos.y = Y_COXA_FRONT;
     Leg[RIGHT_FRONT].LegBasePos.z = 0;
 
-    Leg[RIGHT_MIDDLE].LegBasePos.x = 0;
+    Leg[RIGHT_MIDDLE].LegBasePos.x = X_COXA_MIDDLE;
     Leg[RIGHT_MIDDLE].LegBasePos.y = Y_COXA_MIDDLE;
     Leg[RIGHT_MIDDLE].LegBasePos.z = 0;
 
-    Leg[RIGHT_REAR].LegBasePos.x = -X_COXA;
+    Leg[RIGHT_REAR].LegBasePos.x = -X_COXA_REAR;
     Leg[RIGHT_REAR].LegBasePos.y = Y_COXA_REAR;
     Leg[RIGHT_REAR].LegBasePos.z = 0;
 
-    Leg[LEFT_REAR].LegBasePos.x = -X_COXA;
+    Leg[LEFT_REAR].LegBasePos.x = -X_COXA_REAR;
     Leg[LEFT_REAR].LegBasePos.y = -Y_COXA_REAR;
     Leg[LEFT_REAR].LegBasePos.z = 0;
 
-    Leg[LEFT_MIDDLE].LegBasePos.x = 0;
+    Leg[LEFT_MIDDLE].LegBasePos.x = X_COXA_MIDDLE;
     Leg[LEFT_MIDDLE].LegBasePos.y = -Y_COXA_MIDDLE;
     Leg[LEFT_MIDDLE].LegBasePos.z = 0;
 
-    Leg[LEFT_FRONT].LegBasePos.x = X_COXA;
+    Leg[LEFT_FRONT].LegBasePos.x = X_COXA_FRONT;
     Leg[LEFT_FRONT].LegBasePos.y = -Y_COXA_FRONT;
     Leg[LEFT_FRONT].LegBasePos.z = 0;
 
@@ -403,71 +403,6 @@ void IK_DriveServos(uint8_t speed)
 
 void IK_SingleLegDrive(uint8_t legNr, float PosX, float PosY, float PosZ, uint8_t speed)
 {
-	volatile float LegLentgh;
-	volatile float HF;
-	volatile float A1, A1Deg;
-	volatile float A2, A2Deg;
-	volatile float B1, B1Deg;
-	volatile float CoxaAngle, FemurAngle, TibiaAngle;
-
-	LegLentgh = sqrt( pow(PosX,2) + pow(PosY,2) );
-	HF = sqrt( pow((LegLentgh-COXA_LENGTH),2) + pow(PosZ,2) );
-	A1 = atan2( (LegLentgh-COXA_LENGTH), PosZ );
-	A2 = acos( (pow(TIBIA_LENGTH,2) - pow(FEMUR_LENGTH,2) - pow(HF,2) ) / (-2*FEMUR_LENGTH*HF) );
-	B1 = acos( (pow(HF,2) - pow(TIBIA_LENGTH,2) - pow(FEMUR_LENGTH,2) ) / (-2*FEMUR_LENGTH*TIBIA_LENGTH) );
-
-	A1Deg = RadtoDeg(A1);
-	A2Deg = RadtoDeg(A2);
-	B1Deg = RadtoDeg(B1);
-
-	CoxaAngle  = RadtoDeg(atan2(PosX, PosY));
-	FemurAngle = 135.0 - (A1Deg + A2Deg) +20;
-	TibiaAngle = 90.0 - B1Deg + 14.45;
-
-
-	switch(legNr)
-	{
-		case 0:
-			Leg[legNr].Joint.CoxaAngle  = CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -(FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = (TibiaAngle);
-		break;
-		case 1:
-			Leg[legNr].Joint.CoxaAngle  = CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -(FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = (TibiaAngle);
-		break;
-		case 2:
-			Leg[legNr].Joint.CoxaAngle  = CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -(FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = (TibiaAngle);
-		break;
-		case 3:
-			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = (FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = -(TibiaAngle);
-		break;
-		case 4:
-			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = (FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = -(TibiaAngle);
-		break;
-		case 5:
-			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = (FemurAngle);
-			Leg[legNr].Joint.TibiaAngle = -(TibiaAngle);
-		break;
-		default:
-		break;
-	}
-
-	IK_DriveServos(speed);
-	asm("NOP");
-}
-
-
-void IK_SingleLegDrive2(uint8_t legNr, float PosX, float PosY, float PosZ, uint8_t speed)
-{
 	volatile float L0, L1, L2, L3;
 	volatile float Theta_T, Theta_F, Theta_C, Ups_F, Phi_F, Phi_T, var_F;
 	volatile float CoxaAngle, FemurAngle, TibiaAngle;
@@ -476,48 +411,48 @@ void IK_SingleLegDrive2(uint8_t legNr, float PosX, float PosY, float PosZ, uint8
 	L1 = FEMUR_LENGTH;
 	L2 = TIBIA_LENGTH;
 	L3 = sqrt( pow(L0,2) + pow(PosZ,2) );
-	Phi_T = acos( (pow(L1,2)+pow(L2,2)-pow(L3,2)) / (2*L1*L2) );
-	Phi_F = acos( (pow(L1,2)+pow(L3,2)-pow(L2,2)) / (2*L1*L3) );
-	Ups_F = atan(PosZ/L0);
+	Phi_T = acos( (pow(L1,2)+pow(L2,2)-pow(L3,2)) / (2.0*L1*L2) );
+	Phi_F = acos( (pow(L1,2)+pow(L3,2)-pow(L2,2)) / (2.0*L1*L3) );
+	Ups_F = atan2(PosZ, L0);
 
 	Phi_T = RadtoDeg(Phi_T);
 	Phi_F = RadtoDeg(Phi_F);
 	Ups_F = RadtoDeg(Ups_F);
 
-	CoxaAngle  = RadtoDeg(atan(PosY/PosX)) - 90;
-	FemurAngle = (Phi_F - ABS(Ups_F)) - 10;
-	TibiaAngle = 90 - Phi_T + 4.8  + 10;
+	CoxaAngle  = RadtoDeg(atan2(PosX, PosY));
+	FemurAngle = (Phi_F - ABS(Ups_F)) - 10.0;
+	TibiaAngle = 90.0 - Phi_T + 4.8  + 10.0;
 
 	switch(legNr)
 	{
 		case 0:
 			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = FemurAngle+10;
+			Leg[legNr].Joint.FemurAngle = FemurAngle+10.0;
 			Leg[legNr].Joint.TibiaAngle = TibiaAngle;
 		break;
 		case 1:
 			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = FemurAngle+10;
+			Leg[legNr].Joint.FemurAngle = FemurAngle+10.0;
 			Leg[legNr].Joint.TibiaAngle = TibiaAngle;
 		break;
 		case 2:
 			Leg[legNr].Joint.CoxaAngle  = -CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = FemurAngle+10;
+			Leg[legNr].Joint.FemurAngle = FemurAngle+10.0;
 			Leg[legNr].Joint.TibiaAngle = TibiaAngle;
 		break;
 		case 3:
 			Leg[legNr].Joint.CoxaAngle  = +CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -FemurAngle-10;
+			Leg[legNr].Joint.FemurAngle = -FemurAngle-10.0;
 			Leg[legNr].Joint.TibiaAngle = -TibiaAngle;
 		break;
 		case 4:
 			Leg[legNr].Joint.CoxaAngle  = +CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -FemurAngle-10;
+			Leg[legNr].Joint.FemurAngle = -FemurAngle-10.0;
 			Leg[legNr].Joint.TibiaAngle = -TibiaAngle;
 		break;
 		case 5:
 			Leg[legNr].Joint.CoxaAngle  = +CoxaAngle;
-			Leg[legNr].Joint.FemurAngle = -FemurAngle-10;
+			Leg[legNr].Joint.FemurAngle = -FemurAngle-10.0;
 			Leg[legNr].Joint.TibiaAngle = -TibiaAngle;
 		break;
 		default:

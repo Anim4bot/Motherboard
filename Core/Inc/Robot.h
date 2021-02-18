@@ -157,6 +157,17 @@ typedef struct
 }
 BodyCmd_st;
 
+typedef struct
+{
+	  float Init_X;
+	  float Init_Y;
+	  float Init_Z;
+	  float Pos_X;
+	  float Pos_Y;
+	  float Pos_Z;
+}
+LegPos_st;
+
 
 
 /* RASPBERRY PI STATE
@@ -180,6 +191,7 @@ typedef struct
 	Sensors_st Sensors;
 	Charger_st Charger;
 	BodyCmd_st BodyCmd;
+	LegPos_st LegPos;
 	RPiState_enum RPiState;
 
 }

@@ -893,10 +893,7 @@ void StartTask_Default(void const * argument)
 	float x, y, z;
 	uint8_t i;
 
-	int8_t bodyheight = -80;
-
-	osDelay(2000);
-	Servos_ZeroPosition(100);
+	osDelay(250);
 
 	for(;;)
 	{
@@ -931,27 +928,91 @@ void StartTask_Default(void const * argument)
 
 			Tracking_ArUco(RPI_RxBuff[1], RPI_RxBuff[2], RPI_RxBuff[3], RPI_RxBuff[4], RPI_RxBuff[5], RPI_RxBuff[6]);
 */
+			x = Robot.LegPos.Init_X;
+			y = Robot.LegPos.Init_Y;
+			z = Robot.LegPos.Init_Z;
 
-			x = 0;
-			y = 110;
-			z = -154;
-
-			IK_SingleLegDrive2(0, x, y, z, 100);
-			IK_SingleLegDrive2(1, x, y, z, 100);
-			IK_SingleLegDrive2(2, x, y, z, 100);
-			IK_SingleLegDrive2(3, x, y, z, 100);
-			IK_SingleLegDrive2(4, x, y, z, 100);
-			IK_SingleLegDrive2(5, x, y, z, 100);
-			osDelay(2000);
-
-			z = -70;
-			IK_SingleLegDrive2(0, x, y, z, 100);
-			IK_SingleLegDrive2(1, x, y, z, 100);
-			IK_SingleLegDrive2(2, x, y, z, 100);
-			IK_SingleLegDrive2(3, x, y, z, 100);
-			IK_SingleLegDrive2(4, x, y, z, 100);
-			IK_SingleLegDrive2(5, x, y, z, 100);
-
+			for(z = Robot.LegPos.Init_Z ; z >= -80 ; z-=5 )
+			{
+				IK_SingleLegDrive(0, x, y, z, 20);
+				IK_SingleLegDrive(1, x, y, z, 20);
+				IK_SingleLegDrive(2, x, y, z, 20);
+				IK_SingleLegDrive(3, x, y, z, 20);
+				IK_SingleLegDrive(4, x, y, z, 20);
+				IK_SingleLegDrive(5, x, y, z, 20);
+			}
+			osDelay(1000);
+/*
+			for(y = 0 ; y <= 40 ; y+=5 )
+			{
+				IK_SingleLegDrive(0, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(1, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(2, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(3, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(4, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(5, x, Robot.LegPos.Init_Y-y, z, 20);
+			}
+			for(y = 0 ; y <= 40 ; y+=5 )
+			{
+				IK_SingleLegDrive(0, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(1, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(2, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(3, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(4, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(5, x, Robot.LegPos.Init_Y+y, z, 20);
+			}
+			for(y = 40 ; y >= 0 ; y-=5 )
+			{
+				IK_SingleLegDrive(0, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(1, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(2, x, Robot.LegPos.Init_Y-y, z, 20);
+				IK_SingleLegDrive(3, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(4, x, Robot.LegPos.Init_Y+y, z, 20);
+				IK_SingleLegDrive(5, x, Robot.LegPos.Init_Y+y, z, 20);
+			}
+			*/
+/*
+  			osDelay(1000);
+			for(x = 0 ; x <= 30 ; x+=5 )
+			{
+				IK_SingleLegDrive(0, x, y, z, 20);
+				IK_SingleLegDrive(1, x, y, z, 20);
+				IK_SingleLegDrive(2, x, y, z, 20);
+				IK_SingleLegDrive(3, x, y, z, 20);
+				IK_SingleLegDrive(4, x, y, z, 20);
+				IK_SingleLegDrive(5, x, y, z, 20);
+			}
+			for(x = 30 ; x >= -30 ; x-=5 )
+			{
+				IK_SingleLegDrive(0, x, y, z, 20);
+				IK_SingleLegDrive(1, x, y, z, 20);
+				IK_SingleLegDrive(2, x, y, z, 20);
+				IK_SingleLegDrive(3, x, y, z, 20);
+				IK_SingleLegDrive(4, x, y, z, 20);
+				IK_SingleLegDrive(5, x, y, z, 20);
+			}
+			for(x = -30 ; x <= 0 ; x+=5 )
+			{
+				IK_SingleLegDrive(0, x, y, z, 20);
+				IK_SingleLegDrive(1, x, y, z, 20);
+				IK_SingleLegDrive(2, x, y, z, 20);
+				IK_SingleLegDrive(3, x, y, z, 20);
+				IK_SingleLegDrive(4, x, y, z, 20);
+				IK_SingleLegDrive(5, x, y, z, 20);
+			}
+			osDelay(1000);
+*/
+			/*
+			for(z = -100 ; z <= -20 ; z+=5 )
+			{
+				IK_SingleLegDrive(0, x, y, z, 20);
+				IK_SingleLegDrive(1, x, y, z, 20);
+				IK_SingleLegDrive(2, x, y, z, 20);
+				IK_SingleLegDrive(3, x, y, z, 20);
+				IK_SingleLegDrive(4, x, y, z, 20);
+				IK_SingleLegDrive(5, x, y, z, 20);
+			}
+*/
 			/*
 			Eyes_SetExpression(Sad, fast);
 			Ears_SetPosition(EarL_Down, EarR_Down, slow);
@@ -966,7 +1027,6 @@ void StartTask_Default(void const * argument)
 			Ears_SetPosition(EarL_Middle, EarL_Middle, slow);
 			 */
 			//NeckServos_Init();
-			//Gaits_StandPosition(75);
 		}
 		else
 		{
@@ -1244,18 +1304,20 @@ void StartTask_Kinematic(void const * argument)
 {
 
 	osDelay(1000);
-	IK_LegInit();
+	//IK_LegInit();
 	DRS0101_Clear(BROADCAST_ID);
 	DRS0101_setTorque(BROADCAST_ID, TORQUE_ON);
 
+	IK_StandbyPos(100);
+
 	//Gaits_DefaultPosition(70);
 
-	Robot.BodyCmd.TransX	= 0;
-	Robot.BodyCmd.TransY	= 0;
-	Robot.BodyCmd.TransZ	= 0;
-	Robot.BodyCmd.RotX	= 0;
-	Robot.BodyCmd.RotY	= 0;
-	Robot.BodyCmd.RotZ	= 0;
+	Robot.BodyCmd.TransX = 0;
+	Robot.BodyCmd.TransY = 0;
+	Robot.BodyCmd.TransZ = 0;
+	Robot.BodyCmd.RotX	 = 0;
+	Robot.BodyCmd.RotY	 = 0;
+	Robot.BodyCmd.RotZ	 = 0;
 
 	for(;;)
 	{

@@ -37,14 +37,19 @@
 #define LEFT_FRONT    5
 
 #define COXA_LENGTH		46.20
-#define FEMUR_LENGTH	73.68
-#define TIBIA_LENGTH	119.65
+#define FEMUR_LENGTH	73.67
+#define TIBIA_LENGTH	119.38
 
-#define X_COXA			95.61
+
+#define X_COXA_FRONT	95.61
+#define X_COXA_MIDDLE	0
+#define Y_COXA_FRONT	69.87
+
+#define X_COXA_REAR		95.61
 #define Y_COXA_MIDDLE	79.38
-#define Y_COXA_FRONT	69.86
-#define Y_COXA_REAR		69.86
-#define COXA_ANGLE		20
+#define Y_COXA_REAR		69.87
+
+#define COXA_ANGLE		70
 
 
 
